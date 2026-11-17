@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/card";
 async function confirmBooking(formData: FormData) {
   "use server";
   const admin = await requireUser(["admin"]);
-  if (!admin) redirect("/login");
   const id = String(formData.get("id") || "");
   await prisma.practicumBooking.update({
     where: { id },

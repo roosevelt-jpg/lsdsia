@@ -8,13 +8,17 @@ import { Card } from "@/components/ui/card";
 
 async function updatePackage(formData: FormData) {
   "use server";
-  await requireUser(["admin"]);
+  const admin = await requireUser(["admin"]);
   const id = String(formData.get("id") || "");
   const amountCents = Math.round(Number(formData.get("amount")) * 100);
   if (!id || !Number.isFinite(amountCents)) redirect("/admin/levels");
   await prisma.levelPackage.update({ where: { id }, data: { amountCents } });
   await prisma.auditLog.create({
-    data: { action: "admin.package_price", metaJson: JSON.stringify({ id, amountCents }) },
+    data: {
+      userId: admin.id,
+      action: "admin.package_price",
+      metaJson: JSON.stringify({ id, amountCents }),
+    },
   });
   redirect("/admin/levels?saved=1");
 }

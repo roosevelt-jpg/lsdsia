@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
@@ -71,10 +72,25 @@ export async function getSession(): Promise<SessionUser | null> {
   }
 }
 
-export async function requireUser(roles?: Role[]) {
+/**
+ * Soft auth check for API routes that must return JSON 401 (not a redirect).
+ * Returns null when missing/wrong role.
+ */
+export async function getAuthorizedUser(roles?: Role[]): Promise<SessionUser | null> {
   const session = await getSession();
   if (!session) return null;
   if (roles && !roles.includes(session.role)) return null;
+  return session;
+}
+
+/**
+ * Hard auth gate for pages and server actions.
+ * Always redirects to /login when the session is missing or the role is wrong.
+ * Admin mutations must call requireUser(["admin"]) so unauthorized callers cannot proceed.
+ */
+export async function requireUser(roles?: Role[]): Promise<SessionUser> {
+  const session = await getAuthorizedUser(roles);
+  if (!session) redirect("/login");
   return session;
 }
 

@@ -1,10 +1,8 @@
-import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { AppNav } from "@/components/app-nav";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const user = await requireUser();
-  if (!user) redirect("/login");
+  await requireUser();
 
   return (
     <div className="min-h-screen bg-[var(--mist)] md:flex">

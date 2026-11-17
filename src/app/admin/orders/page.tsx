@@ -9,7 +9,6 @@ import { Card } from "@/components/ui/card";
 async function markPaid(formData: FormData) {
   "use server";
   const admin = await requireUser(["admin"]);
-  if (!admin) redirect("/login");
   const orderId = String(formData.get("orderId") || "");
   await markOrderPaid(orderId);
   await prisma.auditLog.create({

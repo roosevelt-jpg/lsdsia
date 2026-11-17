@@ -21,7 +21,6 @@ async function logout() {
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser(["admin"]);
-  if (!user) redirect("/login");
 
   return (
     <div className="min-h-screen bg-[var(--mist)] md:flex">

@@ -8,19 +8,33 @@ import { Card } from "@/components/ui/card";
 
 async function saveLessonPrice(formData: FormData) {
   "use server";
-  await requireUser(["admin"]);
+  const admin = await requireUser(["admin"]);
   const id = String(formData.get("id") || "");
   const amountCents = Math.round(Number(formData.get("amount")) * 100);
   await prisma.lessonPrice.update({ where: { id }, data: { amountCents } });
+  await prisma.auditLog.create({
+    data: {
+      userId: admin.id,
+      action: "admin.lesson_price",
+      metaJson: JSON.stringify({ id, amountCents }),
+    },
+  });
   redirect("/admin/pricing?saved=1");
 }
 
 async function savePracticalPrice(formData: FormData) {
   "use server";
-  await requireUser(["admin"]);
+  const admin = await requireUser(["admin"]);
   const id = String(formData.get("id") || "");
   const amountCents = Math.round(Number(formData.get("amount")) * 100);
   await prisma.practicalPrice.update({ where: { id }, data: { amountCents } });
+  await prisma.auditLog.create({
+    data: {
+      userId: admin.id,
+      action: "admin.practical_price",
+      metaJson: JSON.stringify({ id, amountCents }),
+    },
+  });
   redirect("/admin/pricing?saved=1");
 }
 

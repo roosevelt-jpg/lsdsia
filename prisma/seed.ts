@@ -404,7 +404,8 @@ async function main() {
     ],
   });
 
-  const quizBankPath = path.join(process.cwd(), "content", "quiz-bank.json");
+  // Seed-only path (not under public/) — answer key must never be a static download.
+  const quizBankPath = path.join(process.cwd(), "prisma", "data", "quiz-bank.json");
   const bank = JSON.parse(fs.readFileSync(quizBankPath, "utf8")) as QuizBankItem[];
   const quiz = await prisma.quiz.create({
     data: {
@@ -434,8 +435,13 @@ async function main() {
 
   const adminEmail = (process.env.ADMIN_EMAIL || "admin@lifestar.academy").toLowerCase();
   const demoEmail = (process.env.DEMO_EMAIL || "demo@lifestar.academy").toLowerCase();
-  const adminPassword = process.env.ADMIN_PASSWORD || "LifeStarAdmin!2026";
-  const demoPassword = process.env.DEMO_PASSWORD || "DemoCandidate!2026";
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const demoPassword = process.env.DEMO_PASSWORD;
+  if (!adminPassword || !demoPassword) {
+    throw new Error(
+      "Set ADMIN_PASSWORD and DEMO_PASSWORD in the environment (see .env.example). Seed refuses hardcoded defaults.",
+    );
+  }
 
   const admin = await prisma.user.create({
     data: {

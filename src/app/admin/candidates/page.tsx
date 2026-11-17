@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 async function grantLesson(formData: FormData) {
   "use server";
   const admin = await requireUser(["admin"]);
-  if (!admin) redirect("/login");
   const userId = String(formData.get("userId") || "");
   const lessonId = String(formData.get("lessonId") || "");
   if (!userId || !lessonId) redirect("/admin/candidates");
@@ -28,7 +27,7 @@ async function grantLesson(formData: FormData) {
 
 async function setCompetency(formData: FormData) {
   "use server";
-  await requireUser(["admin"]);
+  const admin = await requireUser(["admin"]);
   const userId = String(formData.get("userId") || "");
   const classroomDate = String(formData.get("classroomDate") || "") || null;
   const laboratoryDate = String(formData.get("laboratoryDate") || "") || null;
@@ -40,6 +39,13 @@ async function setCompetency(formData: FormData) {
     data: {
       classroomCompetencyDate: classroomDate ?? undefined,
       laboratoryCompetencyDate: laboratoryDate ?? undefined,
+    },
+  });
+  await prisma.auditLog.create({
+    data: {
+      userId: admin.id,
+      action: "admin.set_competency",
+      metaJson: JSON.stringify({ userId, classroomDate, laboratoryDate }),
     },
   });
   redirect("/admin/candidates?comp=1");
