@@ -1,0 +1,345 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("candidate") // candidate | coach | admin
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile           Profile?
+  enrollments       Enrollment[]
+  orders            Order[]
+  entitlements      Entitlement[]
+  lessonProgress    LessonProgress[]
+  quizAttempts      QuizAttempt[]
+  applicationPacket ApplicationPacket?
+  competencyRecords CompetencyRecord[]
+  practicumBookings PracticumBooking[]
+  auditLogs         AuditLog[]
+}
+
+model Profile {
+  id       String  @id @default(cuid())
+  userId   String  @unique
+  phone    String?
+  address1 String?
+  address2 String?
+  city     String?
+  state    String?
+  zip      String?
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EnrollmentLevel {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  name        String
+  description String
+  sortOrder   Int     @default(0)
+  isActive    Boolean @default(true)
+
+  enrollments     Enrollment[]
+  lessonPrices    LessonPrice[]
+  practicalPrices PracticalPrice[]
+  packages        LevelPackage[]
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  levelId   String
+  startedAt DateTime @default(now())
+  status    String   @default("active") // active | paused | completed
+
+  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level EnrollmentLevel @relation(fields: [levelId], references: [id])
+
+  @@unique([userId, levelId])
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  sortOrder   Int      @default(0)
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id           String          @id @default(cuid())
+  moduleId     String
+  slug         String
+  title        String
+  summary      String
+  bodyMarkdown String
+  sortOrder    Int             @default(0)
+  module       Module          @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  prices       LessonPrice[]
+  progress     LessonProgress[]
+  entitlements Entitlement[]
+  orderItems   OrderItem[]
+
+  @@unique([moduleId, slug])
+}
+
+model LessonPrice {
+  id          String          @id @default(cuid())
+  lessonId    String
+  levelId     String
+  amountCents Int
+  lesson      Lesson          @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  level       EnrollmentLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, levelId])
+}
+
+model PracticalSku {
+  id           String           @id @default(cuid())
+  code         String           @unique
+  name         String
+  description  String
+  durationDays Int              @default(5)
+  locationNote String           @default("Life Star Driving School — Minnesota main campus")
+  prices       PracticalPrice[]
+  entitlements Entitlement[]
+  orderItems   OrderItem[]
+  sessions     PracticumSession[]
+  packages     LevelPackage[]
+}
+
+model PracticalPrice {
+  id             String          @id @default(cuid())
+  practicalSkuId String
+  levelId        String
+  amountCents    Int
+  practicalSku   PracticalSku    @relation(fields: [practicalSkuId], references: [id], onDelete: Cascade)
+  level          EnrollmentLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@unique([practicalSkuId, levelId])
+}
+
+model LevelPackage {
+  id                     String       @id @default(cuid())
+  levelId                String
+  name                   String
+  description            String
+  amountCents            Int
+  includesAllLessons     Boolean      @default(true)
+  includesPracticalSkuId String?
+  level                  EnrollmentLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  includesPracticalSku   PracticalSku?   @relation(fields: [includesPracticalSkuId], references: [id])
+  orderItems             OrderItem[]
+}
+
+model Order {
+  id                    String        @id @default(cuid())
+  userId                String
+  status                String        @default("pending") // pending | paid | refunded | canceled
+  totalCents            Int
+  taxCents              Int           @default(0)
+  currency              String        @default("usd")
+  stripeSessionId       String?       @unique
+  stripePaymentIntentId String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  paidAt                DateTime?
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items                 OrderItem[]
+  entitlements          Entitlement[]
+}
+
+model OrderItem {
+  id             String        @id @default(cuid())
+  orderId        String
+  type           String // lesson | practical | package
+  label          String
+  amountCents    Int
+  lessonId       String?
+  practicalSkuId String?
+  packageId      String?
+  order          Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  lesson         Lesson?       @relation(fields: [lessonId], references: [id])
+  practicalSku   PracticalSku? @relation(fields: [practicalSkuId], references: [id])
+  package        LevelPackage? @relation(fields: [packageId], references: [id])
+}
+
+model Entitlement {
+  id               String        @id @default(cuid())
+  userId           String
+  lessonId         String?
+  practicalSkuId   String?
+  creditsRemaining Int           @default(0)
+  sourceOrderId    String?
+  createdAt        DateTime      @default(now())
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson           Lesson?       @relation(fields: [lessonId], references: [id])
+  practicalSku     PracticalSku? @relation(fields: [practicalSkuId], references: [id])
+  sourceOrder      Order?        @relation(fields: [sourceOrderId], references: [id])
+}
+
+model LessonProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  lessonId    String
+  completedAt DateTime?
+  percent     Int       @default(0)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Quiz {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  description      String
+  passPercent      Int           @default(80)
+  timeLimitMinutes Int?          @default(240)
+  questions        Question[]
+  attempts         QuizAttempt[]
+}
+
+model Question {
+  id               String          @id @default(cuid())
+  quizId           String
+  number           Int
+  prompt           String
+  type             String // multiple_choice | short_answer
+  choicesJson      String?
+  correctIndex     Int?
+  acceptedKeywords String?
+  explanation      String
+  topic            String
+  quiz             Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers          AttemptAnswer[]
+
+  @@unique([quizId, number])
+}
+
+model QuizAttempt {
+  id           String          @id @default(cuid())
+  userId       String
+  quizId       String
+  startedAt    DateTime        @default(now())
+  submittedAt  DateTime?
+  scorePercent Int?
+  passed       Boolean?
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz         Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers      AttemptAnswer[]
+}
+
+model AttemptAnswer {
+  id         String      @id @default(cuid())
+  attemptId  String
+  questionId String
+  response   String
+  isCorrect  Boolean     @default(false)
+  attempt    QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+}
+
+model ApplicationPacket {
+  id                       String               @id @default(cuid())
+  userId                   String               @unique
+  fullName                 String?
+  birthDate                String?
+  address1                 String?
+  address2                 String?
+  city                     String?
+  state                    String?
+  zip                      String?
+  dlNumber                 String?
+  ssnLast4                 String?
+  phone                    String?
+  employingSchoolName      String?              @default("Life Star Driving School")
+  employingSchoolAddress   String?              @default("Minnesota main campus")
+  classroomCompetencyDate  String?
+  laboratoryCompetencyDate String?
+  educationProvider        String?
+  educationLocation        String?
+  applicantCertified       Boolean              @default(false)
+  privacyAcknowledged      Boolean              @default(false)
+  completenessPercent      Int                  @default(0)
+  updatedAt                DateTime             @updatedAt
+  createdAt                DateTime             @default(now())
+  user                     User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents                ApplicationDocument[]
+}
+
+model ApplicationDocument {
+  id        String            @id @default(cuid())
+  packetId  String
+  kind      String
+  fileName  String
+  filePath  String
+  createdAt DateTime          @default(now())
+  packet    ApplicationPacket @relation(fields: [packetId], references: [id], onDelete: Cascade)
+}
+
+model CompetencyRecord {
+  id             String  @id @default(cuid())
+  userId         String
+  classroomDate  String?
+  laboratoryDate String?
+  provider       String  @default("Life Star Driving School")
+  notes          String?
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PracticumSession {
+  id             String             @id @default(cuid())
+  practicalSkuId String
+  title          String
+  startDate      String
+  endDate        String
+  capacity       Int                @default(8)
+  notes          String?
+  practicalSku   PracticalSku       @relation(fields: [practicalSkuId], references: [id], onDelete: Cascade)
+  bookings       PracticumBooking[]
+}
+
+model PracticumBooking {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String
+  status    String   @default("requested") // not_eligible | eligible | payment_required | requested | confirmed | completed | canceled
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  adminNote String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session   PracticumSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sessionId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  metaJson  String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model SchoolSetting {
+  id           String @id @default("default")
+  name         String @default("Life Star Driving School")
+  address      String @default("Minnesota main campus")
+  supportEmail String @default("academy@lifestardrivingschool.example")
+  supportPhone String @default("(651) 555-0147")
+}
