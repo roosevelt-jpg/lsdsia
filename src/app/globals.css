@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+:root {
+  --navy: #0b1f33;
+  --navy-deep: #061526;
+  --amber: #e6a817;
+  --amber-hot: #f0b92a;
+  --mist: #e8eef3;
+  --steel: #5a6b7b;
+  --road: #1a2f42;
+  --asphalt: #243647;
+  --snow: #f7fafc;
+  --background: var(--snow);
+  --foreground: var(--navy);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.hero-plane {
+  background:
+    linear-gradient(115deg, rgba(6, 21, 38, 0.82) 0%, rgba(11, 31, 51, 0.55) 48%, rgba(11, 31, 51, 0.35) 100%),
+    radial-gradient(ellipse at 70% 40%, rgba(230, 168, 23, 0.18), transparent 55%),
+    url("/hero-road.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-soft {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-rise {
+  animation: rise-in 0.7s ease-out both;
+}
+
+.animate-fade {
+  animation: fade-soft 0.9s ease-out both;
+}
+
+.animate-rise-delay {
+  animation: rise-in 0.8s ease-out 0.15s both;
+}
+
+.progress-bar > span {
+  transform-origin: left;
+  animation: progress-fill 0.8s ease-out both;
+}
+
+.prose-lesson h2 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.5rem;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--navy);
+}
+
+.prose-lesson h3 {
+  font-size: 1.1rem;
+  margin: 1.25rem 0 0.5rem;
+  color: var(--navy);
+}
+
+.prose-lesson p,
+.prose-lesson li {
+  color: var(--steel);
+  line-height: 1.65;
+  margin: 0.5rem 0;
+}
+
+.prose-lesson ul {
+  padding-left: 1.25rem;
+}
+
+.prose-lesson strong {
+  color: var(--navy);
+}
+
+.callout {
+  margin: 1.25rem 0;
+  border-left: 3px solid var(--amber);
+  background: rgba(230, 168, 23, 0.08);
+  padding: 0.9rem 1rem;
+}

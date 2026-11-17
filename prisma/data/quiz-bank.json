@@ -1,0 +1,1908 @@
+[
+  {
+    "number": 1,
+    "prompt": "When were commercial driver training instructors first required to be licensed by the State of Minnesota?",
+    "type": "multiple_choice",
+    "choices": [
+      "After January 1, 1968",
+      "After January 1, 1975",
+      "After July 1, 1980",
+      "After January 1, 1990"
+    ],
+    "correctIndex": 0,
+    "acceptedKeywords": null,
+    "explanation": "Commercial driver training instructors were first required to be licensed after 1-1-68.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 2,
+    "prompt": "What is the purpose of the rules and regulations governing commercial driving schools and instructors?",
+    "type": "multiple_choice",
+    "choices": [
+      "To set tuition rates for all driving schools",
+      "To carry out the legislature's mandate to regulate and license commercial training schools and instructors",
+      "To replace the Minnesota Driver's Manual",
+      "To authorize independent contractor instructors statewide"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The purpose is to carry out the mandate of the legislature with respect to the regulation and licensing of commercial training schools and instructors.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 3,
+    "prompt": "An instructor applicant must have been a licensed driver for at least how long?",
+    "type": "multiple_choice",
+    "choices": [
+      "1 year",
+      "2 years",
+      "3 years",
+      "5 years"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "An instructor applicant must have been a licensed driver for at least 3 years.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 4,
+    "prompt": "What are the minimum vision requirements for an instructor?",
+    "type": "multiple_choice",
+    "choices": [
+      "20/20 uncorrected",
+      "20/40 corrected",
+      "20/70 corrected",
+      "20/100 with lenses"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Minimum vision requirement is 20/40 corrected.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 5,
+    "prompt": "A driving record for an instructor must be clear of what three things for the last 3 years?",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "revocation",
+      "suspension",
+      "cancellation"
+    ],
+    "explanation": "Clear of revocations, suspensions, and cancellations for the last 3 years.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 6,
+    "prompt": "What tests must an applicant pass to become a licensed instructor, and what happens after a second failure?",
+    "type": "multiple_choice",
+    "choices": [
+      "Written only; wait 30 days after a second failure",
+      "Road only; retest immediately after a second failure",
+      "Written and driver-training road test; after a second failure wait 6 months to retake",
+      "Oral interview only; after a second failure wait 1 year"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "Applicant must pass a written test and a driver-training road test. If they fail either, they may retake when prepared and time is available. After a second failure, they must wait 6 months to retake.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 7,
+    "prompt": "Upon demand for surrender of an instructor's license by the Commissioner, how much time is allowed to surrender it?",
+    "type": "multiple_choice",
+    "choices": [
+      "24 hours",
+      "Within 5 days",
+      "Within 10 days",
+      "Within 30 days"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "The license must be surrendered within 10 days.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 8,
+    "prompt": "How do you obtain a duplicate instructor's license, and what is the fee?",
+    "type": "multiple_choice",
+    "choices": [
+      "Call DPS by phone; no fee",
+      "File an affidavit with the Commissioner stating time and circumstances of loss or destruction; replacement fee is $5.00",
+      "Retake the written exam; fee is $50.00",
+      "Request a duplicate from your school; fee is $10.00"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "File an affidavit with the Commissioner stating time and circumstances involving loss or destruction of the original. Replacement fee is $5.00.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 9,
+    "prompt": "When does an instructor's license expire, and how much does it cost to renew?",
+    "type": "multiple_choice",
+    "choices": [
+      "Expires in 2 years; $25 renewal",
+      "Expires 1 year from issuance; $50.00 annual renewal fee",
+      "Never expires; no renewal fee",
+      "Expires every 4 years; $100 renewal"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "It expires 1 year from issuance. There is a $50.00 annual renewal fee.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 10,
+    "prompt": "When must you apply for renewal of an instructor's license?",
+    "type": "multiple_choice",
+    "choices": [
+      "On the day it expires",
+      "At least 10 days before expiration but no more than 30 days before",
+      "Any time within 90 days after expiration",
+      "Only after retaking the road test"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Apply at least 10 days before expiration but no more than 30 days before.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 11,
+    "prompt": "What is the approved lane marking for a one-way street?",
+    "type": "multiple_choice",
+    "choices": [
+      "Centerline and edge striping marked in yellow",
+      "Centerline and edge stripings marked in white",
+      "Double yellow centerlines only",
+      "Red curb markings only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Centerline and edge stripings marked in white.",
+    "topic": "traffic"
+  },
+  {
+    "number": 12,
+    "prompt": "When must training vehicles be inspected, and by whom?",
+    "type": "multiple_choice",
+    "choices": [
+      "Annually by any ASE mechanic",
+      "Only at initial school licensing by the city",
+      "When the Commissioner has good cause to believe a training vehicle does not meet safety requirements; the Commissioner shall inspect or require inspection",
+      "Every 90 days by the school owner only"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "When the Commissioner has good cause to believe a vehicle used for driver training does not meet safety requirements, the Commissioner shall inspect or require that it be inspected.",
+    "topic": "operations"
+  },
+  {
+    "number": 13,
+    "prompt": "What are the insurance requirements for all training vehicles?",
+    "type": "multiple_choice",
+    "choices": [
+      "50/100 bodily injury only",
+      "100,000/300,000 bodily injury; 50,000 property damage; 20,000 medical expenses; and a minimum of uninsured motorist insurance",
+      "25,000 property damage and no medical coverage",
+      "UM coverage only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "100,000/300,000 bodily injury; 50,000 property damage; 20,000 medical expenses; and a minimum of uninsured motorist insurance.",
+    "topic": "operations"
+  },
+  {
+    "number": 14,
+    "prompt": "Where are Student Driver signs placed, and what size/color rules apply?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only on the roof; any color; 1-inch letters",
+      "Conspicuously on the front and rear; lettering at least 2 inches high but no more than 5 inches; lettering and background contrasting",
+      "Only on the rear bumper; yellow letters only",
+      "Inside the windshield; 6-inch letters"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Displayed conspicuously on the front and rear of the vehicle. Lettering at least 2\" high but no more than 5\". Letter and background contrasting.",
+    "topic": "operations"
+  },
+  {
+    "number": 15,
+    "prompt": "Who is responsible in case of an accident during training, and who must report?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only the student reports to the police",
+      "The instructor is responsible, but it goes on the student's driving record; the instructor reports to the school and the Commissioner, and the school must also report to the Commissioner",
+      "Only the school reports to the city clerk",
+      "No report is required if damage is under $5,000"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The instructor is responsible, but it goes on the student's driving record. The instructor reports to the driving school and the Commissioner. The school must also report to the Commissioner.",
+    "topic": "operations"
+  },
+  {
+    "number": 16,
+    "prompt": "Who must report if an instructor has an accident or commits a crime?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only the police department",
+      "The instructor reports to the school and Commissioner, and the school must also report to the Commissioner",
+      "Only the student",
+      "No one, unless injuries occur"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The instructor reports to the school and Commissioner, and the school must also report to the Commissioner.",
+    "topic": "operations"
+  },
+  {
+    "number": 17,
+    "prompt": "What form must be completed before training is given?",
+    "type": "multiple_choice",
+    "choices": [
+      "A verbal agreement is enough",
+      "A written contract must be executed between the school and the student before lessons or related services",
+      "Only an online waiver",
+      "A road-test appointment card"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "A person shall not be given lessons or any service relating to motor vehicles unless a written contract has been executed between the school and student.",
+    "topic": "operations"
+  },
+  {
+    "number": 18,
+    "prompt": "Who is liable if a student is instructed without a valid permit or license, and what is the penalty?",
+    "type": "multiple_choice",
+    "choices": [
+      "The student only; fine of $25",
+      "The instructor is liable; probable suspension of the instructor's license",
+      "The parent only; no license action",
+      "The Commissioner; automatic revocation of the school license only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The instructor is liable; probable suspension of the instructor's license.",
+    "topic": "operations"
+  },
+  {
+    "number": 19,
+    "prompt": "What licenses are required for training a student?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only the school's business license",
+      "A valid driver's license and instructor's license; the student also needs a valid permit or license",
+      "Only a CDL Class A",
+      "Only the student's learner's permit"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "A valid driver's license and instructor's license. The student also needs a valid permit or license.",
+    "topic": "operations"
+  },
+  {
+    "number": 20,
+    "prompt": "How many hours can a student sign up for at one time under a contract?",
+    "type": "multiple_choice",
+    "choices": [
+      "5 hours BTW with no renewal option",
+      "Contract limited to 10 hours of behind-the-wheel instruction, renewable only by mutual written agreement approved by the Commissioner; BTW training in excess of 30 hours must be pre-approved by the Commissioner",
+      "Unlimited hours if prepaid",
+      "30 hours classroom only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "A contract is limited to 10 hours of behind-the-wheel instruction and is renewable only by mutual agreement of the school and student in writing and in a manner approved by the Commissioner. Behind-the-wheel training in excess of 30 hours must be pre-approved by the Commissioner.",
+    "topic": "operations"
+  },
+  {
+    "number": 21,
+    "prompt": "Is it legal for an instructor to give free lessons?",
+    "type": "multiple_choice",
+    "choices": [
+      "No, free lessons are always illegal",
+      "Yes, an instructor may give free lessons, but the school may not advertise free lessons",
+      "Yes, and the school may advertise free lessons freely",
+      "Only if the Commissioner pre-approves each free lesson in writing"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Yes, it is legal for an instructor to give free lessons, but the school may not advertise free lessons.",
+    "topic": "operations"
+  },
+  {
+    "number": 22,
+    "prompt": "In what areas can't an instructor train?",
+    "type": "multiple_choice",
+    "choices": [
+      "Any freeway entrance ramp",
+      "Instruction shall not be given on roadways or actual routes used for state driver's license road tests",
+      "Any residential street",
+      "Any parking lot"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Instruction shall not be given on roadways or actual routes used for state driver's license road tests.",
+    "topic": "operations"
+  },
+  {
+    "number": 23,
+    "prompt": "Who can impose a restriction on a driver's license, and why?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only a court, for unpaid parking tickets",
+      "The Commissioner may impose restrictions when necessary for safe operation of a motor vehicle (e.g., corrective lenses or mechanical devices)",
+      "Only the employer school",
+      "Any police officer at a traffic stop"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The Commissioner has authority to impose restrictions when necessary for you to operate a motor vehicle safely. Common restrictions are corrective lenses or mechanical devices for the physically handicapped.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 24,
+    "prompt": "What does the law require for vehicle stop lights and turn signals?",
+    "type": "multiple_choice",
+    "choices": [
+      "Stop lights must work only in daylight",
+      "Stop lights must be in good working order and visible for at least 500 feet",
+      "Turn signals must be visible for 50 feet only",
+      "Only one stop light is required"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Stop lights must be in good working order and visible for at least 500 feet.",
+    "topic": "traffic"
+  },
+  {
+    "number": 25,
+    "prompt": "There are classes of driver's licenses; which class can legally operate a bus (per the Q&A)?",
+    "type": "multiple_choice",
+    "choices": [
+      "Class D only",
+      "Class A or B with a school bus endorsement",
+      "Motorcycle endorsement only",
+      "Class D with a parking permit"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Class A or B with school bus endorsement (as stated in the Instructor Q&A).",
+    "topic": "license_admin"
+  },
+  {
+    "number": 26,
+    "prompt": "What can be used for a temporary Class D permit or license?",
+    "type": "multiple_choice",
+    "choices": [
+      "A photocopy of a birth certificate alone",
+      "A score sheet showing a passing score with validating stamp, or an attached receipt proving the application was filed and the fee paid",
+      "A handwritten note from an instructor",
+      "An expired out-of-state license"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "A score sheet showing a passing score with validating stamp, or attached receipt proving application has been filed and fee paid.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 27,
+    "prompt": "List three conditions under which it is legal to pass on the right.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "one-way",
+      "two or more lanes",
+      "same direction",
+      "shoulder",
+      "emergency",
+      "traffic authority"
+    ],
+    "explanation": "Passing on the right is permissible on one-way roadways and streets/highways marked for two or more lanes of traffic moving in the same direction. It is unlawful to pass on the shoulder except for an emergency or when directed by traffic authority.",
+    "topic": "traffic"
+  },
+  {
+    "number": 28,
+    "prompt": "List authorized emergency vehicles named in the instructor Q&A.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "ambulance",
+      "fire",
+      "police",
+      "municipal",
+      "public service"
+    ],
+    "explanation": "Ambulances, fire-fighting apparatus, police, and emergency vehicles of a municipal department or public service corporation.",
+    "topic": "traffic"
+  },
+  {
+    "number": 29,
+    "prompt": "How do traffic laws affect bicycle riders?",
+    "type": "multiple_choice",
+    "choices": [
+      "Bicycle riders are exempt from all traffic laws",
+      "Bicycles are subject to obeying the same traffic laws as motorized vehicles",
+      "Only stop signs apply to bicycles",
+      "Bicycles must use sidewalks only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Bicycles are subject to obeying the same traffic laws as motorized vehicles.",
+    "topic": "traffic"
+  },
+  {
+    "number": 30,
+    "prompt": "Who is responsible for adoption of laws controlling motor vehicles?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only city councils",
+      "The state legislature makes or modifies traffic laws; the Commissioner implements and enforces them",
+      "Only driving schools",
+      "Only the federal DOT for local streets"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The state legislature makes changes or modifies traffic laws. The Commissioner is responsible for implementing and enforcing laws.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 31,
+    "prompt": "State law says vehicles must stay to the right half of roadways of sufficient width. List exceptions.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "overtaking",
+      "passing",
+      "one-way",
+      "three marked lanes",
+      "construction",
+      "repair",
+      "traffic authority"
+    ],
+    "explanation": "Exceptions include: overtaking and passing on a two-way roadway; on a one-way roadway; on a roadway divided into three marked lanes; when the right half is closed for construction or repair; when directed by traffic authority.",
+    "topic": "traffic"
+  },
+  {
+    "number": 32,
+    "prompt": "When must you stop for a school bus with stop arm and flashing red signals, and what is the exception?",
+    "type": "multiple_choice",
+    "choices": [
+      "Always stop, even on a physically separated parallel roadway",
+      "You must stop when meeting or overtaking; exception: you need not stop if the bus is on a different roadway physically separated by a safety isle/zone (a double yellow line is not a physical separation)",
+      "Never stop if you are going under 30 mph",
+      "Stop only if children are visible outside the bus"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "You need not stop upon meeting or passing a school bus stopped on a different roadway physically separated by a safety isle or zone. A double yellow line is not a physical separation.",
+    "topic": "traffic"
+  },
+  {
+    "number": 33,
+    "prompt": "What examination must be passed before a driver license can be renewed?",
+    "type": "multiple_choice",
+    "choices": [
+      "A full road test every renewal",
+      "An examination of the driver's eyesight",
+      "A written CDL knowledge test",
+      "A physical therapy evaluation"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "An examination of the driver's eyesight.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 34,
+    "prompt": "If a police officer directing traffic and a signal light are present at the same intersection, which should you obey?",
+    "type": "multiple_choice",
+    "choices": [
+      "The signal light only",
+      "The police officer",
+      "Whichever is greener",
+      "Neither\u2014treat it as uncontrolled"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Obey the police officer.",
+    "topic": "traffic"
+  },
+  {
+    "number": 35,
+    "prompt": "Describe the proper procedure for passing on a two-way, two-lane highway.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "sufficient distance",
+      "speed limit",
+      "signal",
+      "rearview",
+      "return",
+      "right lane"
+    ],
+    "explanation": "Check the road ahead for sufficient distance to complete the pass safely without exceeding the speed limit; check behind; signal intent; signal left before and right after; be sure you can see the entire front of the passed vehicle in the rearview mirror before returning to the right lane.",
+    "topic": "traffic"
+  },
+  {
+    "number": 36,
+    "prompt": "How much time is allowed to renew your driver's license after it has expired?",
+    "type": "multiple_choice",
+    "choices": [
+      "7 days only",
+      "It may be renewed up to one year from examination date or date of birth; if expired more than one year, retest is required; it is illegal to drive after expiration",
+      "5 years with no retest ever",
+      "Until the next birthday only if you call DPS"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "It may be renewed up to one year from examination date or date of birth. If expired more than one year, the applicant must retest. It is illegal to drive after expiration.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 37,
+    "prompt": "Under what conditions can you legally make a left turn on a red light?",
+    "type": "multiple_choice",
+    "choices": [
+      "From any two-way street onto a two-way street after a rolling stop",
+      "When turning from a one-way street onto another one-way street after a full stop, if safe and without interfering with others legally in the intersection",
+      "Anytime after midnight",
+      "Only when a green arrow is also present"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "When turning from a one-way street onto another one-way street, after a full stop, if you can do so safely without interfering with the rights of other vehicles or pedestrians legally within the intersection.",
+    "topic": "traffic"
+  },
+  {
+    "number": 38,
+    "prompt": "What is the definition of a bus in this material?",
+    "type": "multiple_choice",
+    "choices": [
+      "Any van with three seats",
+      "Every motor vehicle designed to carry more than 15 people and used for transportation of people, and every motor vehicle (besides taxicabs) designed and used for transportation of passengers for compensation",
+      "Only yellow school vehicles",
+      "Any vehicle with a Class D plate"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Every motor vehicle designed to carry more than 15 people and used for transportation of people, and every motor vehicle besides taxicabs designed and used for transportation of passengers for compensation.",
+    "topic": "traffic"
+  },
+  {
+    "number": 39,
+    "prompt": "How can deaf drivers compensate for their hearing loss?",
+    "type": "multiple_choice",
+    "choices": [
+      "Drive only during daylight",
+      "In addition to an inside rearview mirror, have exterior rearview mirrors on both right and left and develop the habit of using all mirrors correctly",
+      "Use the horn continuously",
+      "Avoid highways entirely"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "In addition to an inside rearview mirror, must have exterior rearview mirrors on both the right and left sides. Develop the habit of using all mirrors correctly.",
+    "topic": "operations"
+  },
+  {
+    "number": 40,
+    "prompt": "What is the difference between a Class C and Class D license?",
+    "type": "multiple_choice",
+    "choices": [
+      "They are identical",
+      "Class C covers single-unit vehicles including buses with passenger endorsement; Class D is not valid for Class C/CC vehicles",
+      "Class D is required for all buses over 15 passengers",
+      "Class C is only for motorcycles"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Class C covers Class C/CC and single-unit vehicles including buses with passenger endorsement; Class D is invalid for those Class C uses. (Source wording on the scan is dense; cleaned to this distinction.)",
+    "topic": "license_admin"
+  },
+  {
+    "number": 41,
+    "prompt": "List four things a person with an out-of-state license must do to obtain a Minnesota license.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "surrender",
+      "eye",
+      "written",
+      "application",
+      "fee"
+    ],
+    "explanation": "Surrender out-of-state license, pass eye exam, pass written test, submit application for license and pay fees.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 42,
+    "prompt": "List two disadvantages of making a right turn after stopping at a red light.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "vehicles",
+      "pedestrians",
+      "intersection",
+      "crosswalk",
+      "rights"
+    ],
+    "explanation": "Risk of violating the rights of other vehicles lawfully within the intersection and violating the rights of pedestrians lawfully within the crosswalk.",
+    "topic": "traffic"
+  },
+  {
+    "number": 43,
+    "prompt": "What department and section is responsible for issuing driver's licenses?",
+    "type": "multiple_choice",
+    "choices": [
+      "Department of Education, Testing Section",
+      "Department of Public Safety, Drivers License Section",
+      "Department of Transportation, Highway Patrol only",
+      "Secretary of State, Notary Section"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Dept. of Public Safety, Drivers License Section.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 44,
+    "prompt": "Which statement correctly defines reckless vs. careless driving?",
+    "type": "multiple_choice",
+    "choices": [
+      "They mean the same thing",
+      "Reckless is willful disregard for safety of persons or property; careless is driving carelessly in disregard of lives/safety or in a manner likely to endanger persons or property",
+      "Careless requires intent to injure; reckless never does",
+      "Reckless applies only to parking lots"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Reckless: operating in a manner showing willful disregard for the safety of other persons or property. Careless: driving upon a street or highway carelessly in disregard of lives and safety of others or in a manner likely to endanger any person or property.",
+    "topic": "traffic"
+  },
+  {
+    "number": 45,
+    "prompt": "What vehicles have blue lights?",
+    "type": "multiple_choice",
+    "choices": [
+      "Any tow truck",
+      "Snowplows and other road maintenance vehicles operated by or under contract to the state or other political subdivision",
+      "Only ambulances",
+      "Only school buses"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Snowplows and other road maintenance vehicles operated by or under contract to the state or other political subdivision.",
+    "topic": "traffic"
+  },
+  {
+    "number": 46,
+    "prompt": "Name types of freeway interchanges listed in the instructor Q&A.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "directional",
+      "cloverleaf",
+      "diamond",
+      "folded diamond",
+      "trumpet"
+    ],
+    "explanation": "Directional, cloverleaf, diamond, folded diamond, and trumpet (the Q&A lists these; the stem asks for four).",
+    "topic": "traffic"
+  },
+  {
+    "number": 47,
+    "prompt": "Where does the Q&A direct you for non-resident driving requirements and age restrictions in Minnesota?",
+    "type": "multiple_choice",
+    "choices": [
+      "Federal CDL handbook only",
+      "The Drivers Manual section on who doesn't need a Minnesota license",
+      "City parking ordinances",
+      "Insurance company websites"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Q&A answer points to the Manual: \"Who Doesn't Need a Minnesota License.\"",
+    "topic": "license_admin"
+  },
+  {
+    "number": 48,
+    "prompt": "What are the three factors that determine stopping time?",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "perception",
+      "reaction",
+      "braking"
+    ],
+    "explanation": "Perception time + reaction time + braking time = total stopping time.",
+    "topic": "traffic"
+  },
+  {
+    "number": 49,
+    "prompt": "Where does the instructor Q&A send you for classes of licenses, permits, and their costs?",
+    "type": "multiple_choice",
+    "choices": [
+      "The school's private price list only",
+      "The Drivers Manual (license fees)",
+      "IRS Publication 17",
+      "Local DMV rumor boards"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Answer in Q&A: Manual \u2014 license fees. Confirm current DPS fee schedule when studying.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 50,
+    "prompt": "What is hydroplaning?",
+    "type": "multiple_choice",
+    "choices": [
+      "Driving with underinflated tires on dry pavement",
+      "At speeds over 30 mph on a wet surface, tires rise and ride on a film of water (water-ski effect), increasing with speed and water and risking loss of braking/steering control",
+      "Skidding only on ice below 0\u00b0F",
+      "Aquaplaning that only occurs under 10 mph"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "At speeds over 30 mph on a wet surface, tires tend to rise up and ride on top of a film of water. The effect increases with speed and water and can cause serious loss of braking and steering control.",
+    "topic": "traffic"
+  },
+  {
+    "number": 51,
+    "prompt": "What is the Implied Consent Law?",
+    "type": "multiple_choice",
+    "choices": [
+      "You may refuse all chemical tests with no consequence",
+      "Any person who drives on a public road of this state has given consent to blood/urine/breath testing to determine alcohol content",
+      "Only commercial drivers are subject to testing",
+      "Consent applies only after a conviction"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Any person who drives on a public road of this state has given consent to have blood/urine/breath tested to determine the alcohol content of his blood.",
+    "topic": "traffic"
+  },
+  {
+    "number": 52,
+    "prompt": "What are the colors of state and interstate road signs (route markers) per the Q&A?",
+    "type": "multiple_choice",
+    "choices": [
+      "State: yellow/white/blue; Interstate: red/white/blue",
+      "Both are green and white only",
+      "State: brown; Interstate: orange",
+      "State: black only; Interstate: yellow only"
+    ],
+    "correctIndex": 0,
+    "acceptedKeywords": null,
+    "explanation": "State routes: yellow, white/blue. Interstate: red, white/blue.",
+    "topic": "traffic"
+  },
+  {
+    "number": 53,
+    "prompt": "What are the colors of guide signs?",
+    "type": "multiple_choice",
+    "choices": [
+      "Directional green/white; services blue/white; recreational brown/white",
+      "All guide signs are orange/black",
+      "All guide signs are red/white",
+      "Services are brown; recreation is blue"
+    ],
+    "correctIndex": 0,
+    "acceptedKeywords": null,
+    "explanation": "Directional: green/white; services: blue/white; recreational: brown/white.",
+    "topic": "traffic"
+  },
+  {
+    "number": 54,
+    "prompt": "Define slow-moving vehicles.",
+    "type": "multiple_choice",
+    "choices": [
+      "Any vehicle under 55 mph",
+      "All animal-drawn vehicles and all vehicles designed for operation at 25 mph or less",
+      "Only farm tractors over 40 mph",
+      "Motorcycles in traffic"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "All animal-drawn vehicles and all vehicles designed for operation at 25 mph or less.",
+    "topic": "traffic"
+  },
+  {
+    "number": 55,
+    "prompt": "How long may you drive on an out-of-state license after you move to Minnesota? (Confirm current Drivers Manual; page crop cut off the printed answer on qa_p06.)",
+    "type": "multiple_choice",
+    "choices": [
+      "7 days",
+      "60 days",
+      "1 year",
+      "Indefinitely if you keep the out-of-state license"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Common Minnesota rule is 60 days after establishing residency; the printed answer at the top of qa_p06 was cropped and could not be fully verified from the image.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 56,
+    "prompt": "What is the minimum distance for signaling a turn?",
+    "type": "multiple_choice",
+    "choices": [
+      "25 feet",
+      "50 feet",
+      "100 feet",
+      "500 feet"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "100 feet.",
+    "topic": "traffic"
+  },
+  {
+    "number": 57,
+    "prompt": "Explain how to make a left turn from a two-way street to a one-way street.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "center",
+      "100 feet",
+      "signal",
+      "nearest curb",
+      "shoulder",
+      "lane change"
+    ],
+    "explanation": "Well ahead, look for following cars and move to the center line, signaling if needed. Begin turn signal and start slowing at least 100 feet from the corner. Look both ways before starting the turn. Enter the lane nearest the curb. Signal and look over the right shoulder before any lane change.",
+    "topic": "traffic"
+  },
+  {
+    "number": 58,
+    "prompt": "What equipment is required on an automobile as of 1-1-60 per the Q&A?",
+    "type": "multiple_choice",
+    "choices": [
+      "Airbags",
+      "2 tail lights in good working order and visible for at least 500 feet",
+      "ABS brakes only",
+      "Daytime running lights only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "2 tail lights in good working order and visible for at least 500 feet.",
+    "topic": "operations"
+  },
+  {
+    "number": 59,
+    "prompt": "How far must tail lights of a vehicle be visible?",
+    "type": "multiple_choice",
+    "choices": [
+      "100 feet",
+      "200 feet",
+      "At least 500 feet",
+      "1,000 feet"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "At least 500 feet.",
+    "topic": "operations"
+  },
+  {
+    "number": 60,
+    "prompt": "When does a provisional license expire?",
+    "type": "multiple_choice",
+    "choices": [
+      "On the 18th birthday",
+      "On the 19th birthday of the driver",
+      "On the 21st birthday",
+      "Never expires"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Expires on the 19th birthday of the driver.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 61,
+    "prompt": "What are advantages of a freeway or interstate system?",
+    "type": "multiple_choice",
+    "choices": [
+      "More cross traffic and more stops",
+      "Drive long distances without interruption, with minimum fatigue and maximum safety; no stops or cross traffic",
+      "Lower speed limits only",
+      "Uncontrolled intersections every mile"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Permits long-distance driving without interruption, with minimum fatigue and maximum safety; no stops or cross traffic.",
+    "topic": "traffic"
+  },
+  {
+    "number": 62,
+    "prompt": "How far must you park from a fire hydrant, controlled intersection, uncontrolled intersection, and railroad crossing?",
+    "type": "multiple_choice",
+    "choices": [
+      "5 ft, 10 ft, 15 ft, 20 ft",
+      "10 ft (hydrant), 30 ft (controlled), 20 ft (uncontrolled), 50 ft (railroad)",
+      "20 ft for all",
+      "50 ft for hydrant only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "10 ft from fire hydrant; 30 ft controlled intersection; 20 ft uncontrolled intersection; 50 ft railroad crossing.",
+    "topic": "traffic"
+  },
+  {
+    "number": 63,
+    "prompt": "What is a test of good brakes\u2014within what distance should you stop from 20 mph?",
+    "type": "multiple_choice",
+    "choices": [
+      "Within 50 feet on gravel",
+      "Within 25 feet on a dry, hard, level surface from 20 mph (passenger vehicle, not including buses)",
+      "Within 100 feet at any speed",
+      "Within 10 feet on ice"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Brakes on any passenger vehicle (not including buses) must be capable of stopping within 25 ft on a dry hard level surface from 20 mph.",
+    "topic": "operations"
+  },
+  {
+    "number": 64,
+    "prompt": "What extra precautions should drivers take with motorcycles?",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "rights",
+      "bridges",
+      "railroad",
+      "slippery",
+      "following",
+      "lane"
+    ],
+    "explanation": "Give the cyclist full rights granted by law. Be especially careful on bridges, grooved curves, railroad tracks, left turns, slippery surfaces, following, and lane usage.",
+    "topic": "traffic"
+  },
+  {
+    "number": 65,
+    "prompt": "If a driver accidentally goes off the road onto the shoulder, how should they return to the roadway?",
+    "type": "multiple_choice",
+    "choices": [
+      "Swerve sharply back immediately",
+      "Stay on the shoulder, ease off the gas, slow down, then turn back onto the pavement",
+      "Accelerate hard and jerk the wheel",
+      "Stop in the travel lane"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Don't swerve back immediately. Stay on the shoulder, ease off the gas, and after you slow down turn back onto the pavement.",
+    "topic": "operations"
+  },
+  {
+    "number": 66,
+    "prompt": "When you are driving, how far ahead should you focus your attention?",
+    "type": "multiple_choice",
+    "choices": [
+      "1\u20132 seconds only",
+      "8\u201312 seconds, or at least one city block at 30 mph",
+      "Only the hood ornament",
+      "\u00bd mile at all urban speeds"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "8\u201312 seconds or at least one city block at 30 miles per hour.",
+    "topic": "smith"
+  },
+  {
+    "number": 67,
+    "prompt": "A basic rule for driving is?",
+    "type": "multiple_choice",
+    "choices": [
+      "Always assume others will yield",
+      "Drive so that irrespective of others' actions and road/weather conditions you will never have an accident; think before you act",
+      "Drive as fast as conditions allow posted limits",
+      "Focus only on the car ahead"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Drive your vehicle in such a manner that irrespective of the actions of others and road and weather conditions you will never have an accident. Think before you act.",
+    "topic": "operations"
+  },
+  {
+    "number": 68,
+    "prompt": "What is meant by the 10 and 2 position?",
+    "type": "multiple_choice",
+    "choices": [
+      "Gear positions on a manual transmission",
+      "Picture the steering wheel as a clock: left hand at 10 o'clock and right hand at 2 o'clock",
+      "Parking within 10\u20132 feet of a curb",
+      "Lane numbers on a freeway"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Picture your steering wheel as the face of a clock; left hand at 10 o'clock and right hand at 2 o'clock.",
+    "topic": "operations"
+  },
+  {
+    "number": 69,
+    "prompt": "In protecting yourself and passengers, a good driver should drive how?",
+    "type": "multiple_choice",
+    "choices": [
+      "Aggressively",
+      "Defensively",
+      "Only in the left lane",
+      "With high beams always on"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Defensively.",
+    "topic": "operations"
+  },
+  {
+    "number": 70,
+    "prompt": "What is the correct position for the front wheels while awaiting a left turn, and why?",
+    "type": "multiple_choice",
+    "choices": [
+      "Turned left already so you can go sooner",
+      "Pointing straight ahead; if struck from the rear you will not be forced into oncoming traffic",
+      "Turned right toward the curb",
+      "Wheels locked with the parking brake only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Pointing straight ahead. If struck from the rear you will not be forced into oncoming traffic.",
+    "topic": "operations"
+  },
+  {
+    "number": 71,
+    "prompt": "List four or more ways of eliminating hazards while driving.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "following distance",
+      "see and be seen",
+      "yield",
+      "obey",
+      "gauges"
+    ],
+    "explanation": "Maintain proper following distance; position so you can see and be seen; if in doubt who has right-of-way, yield; know and obey laws; check gauges only when traffic permits.",
+    "topic": "operations"
+  },
+  {
+    "number": 72,
+    "prompt": "List four things you can do to save on gas.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "tuned",
+      "moderate",
+      "40-50",
+      "engine off",
+      "tires",
+      "inflated"
+    ],
+    "explanation": "Keep engine tuned; keep speed moderate (40\u201350 mph drops mpg sharply if much higher); shut engine off when waiting any length of time; keep tires inflated properly.",
+    "topic": "operations"
+  },
+  {
+    "number": 73,
+    "prompt": "List three things you should not do to save gas.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "race",
+      "fast",
+      "getaway",
+      "hurry",
+      "red"
+    ],
+    "explanation": "Don't race the engine; avoid fast getaway starts; don't hurry to traffic lights that will still be red when you get there.",
+    "topic": "operations"
+  },
+  {
+    "number": 74,
+    "prompt": "What do these sign shapes mean: round, octagon, pentagon, pennant, diamond, triangle?",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "railroad",
+      "stop",
+      "school",
+      "no passing",
+      "warning",
+      "yield"
+    ],
+    "explanation": "Round: railroad warning; octagon: stop; pentagon: school warning; pennant: no passing zone; diamond: warning; triangle: yield.",
+    "topic": "traffic"
+  },
+  {
+    "number": 75,
+    "prompt": "What is meant by a blind spot?",
+    "type": "multiple_choice",
+    "choices": [
+      "Any area behind a billboard",
+      "The area on either side of the vehicle the driver can't see in the rearview mirror or with peripheral vision; must turn the head to see it",
+      "Only the area under the hood",
+      "The area illuminated by headlights"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The area on either side of the vehicle that the driver can't see in the rearview mirror or with peripheral vision; must turn the head to see this area.",
+    "topic": "operations"
+  },
+  {
+    "number": 76,
+    "prompt": "List three critical situations that require good depth perception.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "overtaking",
+      "meeting",
+      "following",
+      "stopping"
+    ],
+    "explanation": "Overtaking or meeting other vehicles; following other vehicles; judging stopping distances.",
+    "topic": "operations"
+  },
+  {
+    "number": 77,
+    "prompt": "Define \"impeding traffic.\"",
+    "type": "multiple_choice",
+    "choices": [
+      "Driving at or above the posted limit always",
+      "No person shall drive so slowly as to impede or block normal traffic movement, except when reduced speed is necessary for safe operation or the vehicle temporarily cannot maintain greater speed due to weight and grade",
+      "Parking longer than 10 minutes",
+      "Using cruise control"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "No person shall drive a motor vehicle at such a slow speed as to impede or block normal movement of traffic, except when reduced speed is necessary for safe operation in compliance with the law, or when the vehicle is temporarily unable to maintain a greater speed due to weight and grade of the highway.",
+    "topic": "traffic"
+  },
+  {
+    "number": 78,
+    "prompt": "What is \"side vision\"?",
+    "type": "multiple_choice",
+    "choices": [
+      "Vision only through side windows while turning your head",
+      "Peripheral vision\u2014the entire area you can see to both sides while looking straight ahead; normal field about 180 degrees (90 each side)",
+      "Seeing only 45 degrees total",
+      "Night vision with high beams"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Side or peripheral vision is the entire area you can see to both sides when looking straight ahead. Normal field of vision is 180 degrees or 90 degrees to each side.",
+    "topic": "operations"
+  },
+  {
+    "number": 79,
+    "prompt": "What are traffic control devices?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only police officers",
+      "Signs, signals, and markings placed along the roadside and at intersections to regulate, warn, and guide vehicles",
+      "Only electronic billboards",
+      "Insurance forms"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Signs, signals and markings placed along the roadside and at intersections to regulate, warn and guide vehicles.",
+    "topic": "traffic"
+  },
+  {
+    "number": 80,
+    "prompt": "Explain reverse traffic flow.",
+    "type": "multiple_choice",
+    "choices": [
+      "Always driving in reverse gear",
+      "In large cities with concentrated business areas, morning inbound lanes are increased and evening outbound lanes are increased by reversing lane direction",
+      "One-way streets that never change",
+      "Closing all lanes at rush hour"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Some large cities increase the number of lanes into the city in the morning and reverse flow in the evening to increase outbound lanes.",
+    "topic": "traffic"
+  },
+  {
+    "number": 81,
+    "prompt": "What is a through-highway?",
+    "type": "multiple_choice",
+    "choices": [
+      "Any gravel road",
+      "Normally a major artery at whose entrances side traffic must stop",
+      "A highway with no speed limit",
+      "A private driveway"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "A through-highway is normally a major artery, all entrances to which side traffic must stop.",
+    "topic": "traffic"
+  },
+  {
+    "number": 82,
+    "prompt": "Besides brake condition, what factors affect stopping distance?",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "tire",
+      "road",
+      "weather",
+      "reaction",
+      "perception"
+    ],
+    "explanation": "Condition of tire, road, and weather; driver's reaction time and perception time.",
+    "topic": "traffic"
+  },
+  {
+    "number": 83,
+    "prompt": "When must you renew your license without having to retake the test?",
+    "type": "multiple_choice",
+    "choices": [
+      "Within one year after it expires",
+      "Only on the day it expires",
+      "Within five years after it expires",
+      "Never\u2014retest is always required"
+    ],
+    "correctIndex": 0,
+    "acceptedKeywords": null,
+    "explanation": "Within one year after it expires.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 84,
+    "prompt": "If you or a student hit an unattended parked vehicle, what should you do?",
+    "type": "multiple_choice",
+    "choices": [
+      "Leave without stopping if no one is around",
+      "Leave a note with name, license number, and phone number explaining what happened; also report immediately to the driving school and the officer of driver training at the state",
+      "Only call your insurance agent the next week",
+      "Move the other car to hide damage"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Leave a note explaining what happened along with your name, license number and phone number. Also report the accident immediately to the driving school and the officer of driver training at the state.",
+    "topic": "operations"
+  },
+  {
+    "number": 85,
+    "prompt": "What is the \"danger zone\"?",
+    "type": "multiple_choice",
+    "choices": [
+      "Any school zone after dark",
+      "The area around and in front of the car in which you cannot stop",
+      "Only the left blind spot",
+      "The area behind a stopped school bus only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The area around and in front of the car in which you cannot stop.",
+    "topic": "additional"
+  },
+  {
+    "number": 86,
+    "prompt": "Where should you learn all legal speed limits for the exam?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only from parking signs",
+      "Drivers Manual speed-limits section; posted signs indicate maximum speeds and you must also obey the basic speed law",
+      "Only from other students",
+      "Federal tax code"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Q&A points to Drivers Manual speed limits; handwritten notes emphasize posted maximums and conditions.",
+    "topic": "traffic"
+  },
+  {
+    "number": 87,
+    "prompt": "What is Minnesota's basic speed law?",
+    "type": "multiple_choice",
+    "choices": [
+      "You may always drive the posted limit regardless of conditions",
+      "Never drive faster than reasonable under existing conditions; you can be arrested for speeding even below the posted limit if conditions are unfavorable",
+      "Speed limits do not apply in rain",
+      "Only applies on interstates"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "You must never drive at a speed faster than reasonable under existing conditions. It is possible to be arrested for speeding even if driving slower than the posted limit when unfavorable conditions are present.",
+    "topic": "traffic"
+  },
+  {
+    "number": 88,
+    "prompt": "Why must drivers be more alert when motorcycles are involved?",
+    "type": "multiple_choice",
+    "choices": [
+      "Motorcycles are always illegal in traffic",
+      "Motorcycles are not easily identified; distance and speed are hard to judge even when seen",
+      "Motorcycles have louder horns than cars",
+      "Motorcycles never use turn signals"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Motorcycles are not easily identified in traffic; even when seen, distance and speed are difficult for some drivers to judge.",
+    "topic": "traffic"
+  },
+  {
+    "number": 89,
+    "prompt": "What is required of a driver approaching a yield sign?",
+    "type": "multiple_choice",
+    "choices": [
+      "Come to a complete stop every time",
+      "Slow down so you can yield the right-of-way to pedestrians and to vehicles on the intersecting street or highway",
+      "Accelerate to clear the intersection",
+      "Ignore if no cross traffic is visible from 10 feet"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Slow down so that you can yield the right-of-way to pedestrians crossing the roadway and to vehicles on the intersecting street or highway.",
+    "topic": "traffic"
+  },
+  {
+    "number": 90,
+    "prompt": "What is needed for any class of license to operate a school bus or motorcycle?",
+    "type": "multiple_choice",
+    "choices": [
+      "Nothing beyond Class D",
+      "An endorsement for that vehicle",
+      "A federal passport",
+      "Only a medical waiver"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "An endorsement for that vehicle.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 91,
+    "prompt": "You are in the right lane with a car beside you on the left and a bicyclist ahead in your lane. What should you do?",
+    "type": "multiple_choice",
+    "choices": [
+      "Pass immediately between the car and the bike",
+      "Slow to let the car on the left go past, then signal and change lanes when safe; or remain behind at a safe interval, warn the cyclist, and use an adjacent lane if possible",
+      "Honk continuously and squeeze past",
+      "Stop in the lane and wait indefinitely"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Slow to allow the car on the left to go past; then signal left and change when safe. Remain behind at a safe interval, warn the cyclist you wish to pass, and if possible use an adjacent lane.",
+    "topic": "traffic"
+  },
+  {
+    "number": 92,
+    "prompt": "When must instructors submit a complete physical exam to the state?",
+    "type": "multiple_choice",
+    "choices": [
+      "Every month",
+      "When requested by the Commissioner",
+      "Only at age 65",
+      "Never"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "When requested by the Commissioner.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 93,
+    "prompt": "Why is it necessary to check blind spots when moving right or left in traffic?",
+    "type": "multiple_choice",
+    "choices": [
+      "Blind spots appear in the mirrors already",
+      "Blind spots are areas to the right and left rear that don't appear in rearview mirrors and can only be seen by looking over the shoulder in the direction you wish to move",
+      "Blind spots only exist on motorcycles",
+      "Checking blind spots is optional at highway speeds"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Blind spots are areas to the right and left rear which don't appear in the rearview mirrors; they can only be seen by looking over the shoulder in the direction you wish to move.",
+    "topic": "operations"
+  },
+  {
+    "number": 94,
+    "prompt": "When a student has received a permit and completed behind-the-wheel instruction, who furnishes the certificate of completion?",
+    "type": "multiple_choice",
+    "choices": [
+      "The state examiner only",
+      "The authorized school operator or instructor",
+      "Any licensed driver",
+      "The student's parent"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "The authorized school operator or instructor.",
+    "topic": "operations"
+  },
+  {
+    "number": 95,
+    "prompt": "When a rear-wheel-drive car goes into a power skid, what action should be taken?",
+    "type": "multiple_choice",
+    "choices": [
+      "Floor the accelerator and turn opposite the skid",
+      "Ease off the gas and turn the front wheels in the direction of the skid",
+      "Slam the brakes immediately and close your eyes",
+      "Shift to reverse"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Ease off the gas and turn the front wheels in the direction of the skid.",
+    "topic": "operations"
+  },
+  {
+    "number": 96,
+    "prompt": "Name two of the three reasons a person may qualify for an ID certificate.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "physically",
+      "qualify",
+      "license",
+      "surrender",
+      "discontinue",
+      "intend"
+    ],
+    "explanation": "ID cards are issued to applicants who do not physically qualify for a driver license; who do not have a current driver license and do not intend to apply for one; or who wish to discontinue driving and surrender the license.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 97,
+    "prompt": "What do double solid lines mean?",
+    "type": "multiple_choice",
+    "choices": [
+      "Passing allowed for both directions",
+      "No passing by vehicles moving in either direction",
+      "Passing allowed for the right lane only",
+      "Parking lane only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "No passing by vehicles moving either direction.",
+    "topic": "traffic"
+  },
+  {
+    "number": 98,
+    "prompt": "Other than the law, why do we use turn signals?",
+    "type": "multiple_choice",
+    "choices": [
+      "To flash high beams at pedestrians",
+      "To make other drivers aware of our intentions well ahead of time",
+      "Only to pass vehicle inspections",
+      "They are optional courtesy"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "To make other drivers aware of our intentions well ahead of time.",
+    "topic": "traffic"
+  },
+  {
+    "number": 99,
+    "prompt": "What effect does the consumption of alcohol have on a driver?",
+    "type": "multiple_choice",
+    "choices": [
+      "Alcohol is a stimulant that speeds reflexes",
+      "Alcohol is a depressant; it slows reflexes, interferes with judgment, reduces alertness, and impairs observation",
+      "Alcohol improves night vision",
+      "Alcohol has no effect under one drink"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Alcohol is a depressant, not a stimulant. It slows reflexes, interferes with judgment, reduces alertness and impairs observation.",
+    "topic": "traffic"
+  },
+  {
+    "number": 100,
+    "prompt": "Who has the right-of-way at an uncontrolled intersection?",
+    "type": "multiple_choice",
+    "choices": [
+      "The larger vehicle always",
+      "If two vehicles enter at the same time, the driver on the left shall yield to the vehicle on the right",
+      "The vehicle on the left always goes first",
+      "Neither\u2014both must reverse"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "If two vehicles enter an intersection at the same time, the driver of the vehicle on the left shall yield to the vehicle on the right.",
+    "topic": "traffic"
+  },
+  {
+    "number": 101,
+    "prompt": "What force pushes a car outward when it rounds a curve?",
+    "type": "multiple_choice",
+    "choices": [
+      "Gravity",
+      "Centrifugal force",
+      "Magnetic force",
+      "Friction only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Centrifugal force.",
+    "topic": "traffic"
+  },
+  {
+    "number": 102,
+    "prompt": "When you are about to pass a bicyclist, what should you do?",
+    "type": "multiple_choice",
+    "choices": [
+      "Pass within inches to save time",
+      "Remain behind at a safe interval, warn the cyclist that you wish to pass, and if possible use an adjacent lane",
+      "Honk and cut closely in front",
+      "Force the cyclist onto the sidewalk"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Remain behind at a safe interval and warn the cyclist that you wish to pass; if possible, use an adjacent lane.",
+    "topic": "traffic"
+  },
+  {
+    "number": 103,
+    "prompt": "You are driving on a two-way street and see children playing on the terrace. What action should you take?",
+    "type": "multiple_choice",
+    "choices": [
+      "Maintain speed and hope they stay put",
+      "Slow down and be prepared to stop",
+      "Speed up to clear the area quickly",
+      "Stop in the travel lane and leave the vehicle"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Slow down and be prepared to stop.",
+    "topic": "traffic"
+  },
+  {
+    "number": 104,
+    "prompt": "Where does the Q&A point for reasons an instructor license may be revoked, suspended, or not renewed?",
+    "type": "multiple_choice",
+    "choices": [
+      "Only the school employee handbook",
+      "Rules and regulations on suspension and revocation",
+      "Federal tax code",
+      "Local chamber of commerce"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Q&A answer: Rules & Regs \u2014 Suspension and Revocation. Detailed enumerated reasons are not printed on the Q&A page.",
+    "topic": "license_admin"
+  },
+  {
+    "number": 105,
+    "prompt": "Name the five points of observation of the Smith System.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "aim high",
+      "big picture",
+      "eyes moving",
+      "leave yourself an out",
+      "make sure they see you"
+    ],
+    "explanation": "Aim high in steering; Get the big picture; Keep your eyes moving; Leave yourself an out; Make sure they see you.",
+    "topic": "smith"
+  },
+  {
+    "number": 106,
+    "prompt": "Explain the 2-second rule (following distance).",
+    "type": "multiple_choice",
+    "choices": [
+      "Stay two car lengths behind at all speeds",
+      "Keep at least a 2-second following interval behind the vehicle ahead (more in poor conditions)",
+      "Pass within 2 seconds of signaling",
+      "Stop for 2 seconds at every green light"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Use at least a 2-second following distance behind the vehicle ahead; increase the interval in poor conditions. (Appendix topic; explanation cleaned from standard training practice tied to the materials list.)",
+    "topic": "additional"
+  },
+  {
+    "number": 107,
+    "prompt": "What is meant by \"squeezing the brakes\"?",
+    "type": "multiple_choice",
+    "choices": [
+      "Pumping ABS rapidly on dry pavement",
+      "Applying brake pressure gradually and progressively rather than slamming the pedal",
+      "Using only the parking brake",
+      "Braking with the left foot only at highway speeds"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Squeezing the brakes means gradual, progressive brake application rather than abrupt slamming. (Appendix topic; cleaned instructional wording.)",
+    "topic": "additional"
+  },
+  {
+    "number": 108,
+    "prompt": "Define the speed limits referenced in the additional questions (10; 15\u201335; 20\u201340; 55; 65 mph) as used in study notes.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "10",
+      "alley",
+      "school",
+      "15",
+      "35",
+      "55",
+      "65",
+      "basic",
+      "maximum"
+    ],
+    "explanation": "Study notes list these numeric limits (10; 15\u201335; 20\u201340; 55 & 65). Exact zone labels should be confirmed in the current Minnesota Drivers Manual; materials also distinguish Basic vs Maximum speed limits.",
+    "topic": "additional"
+  },
+  {
+    "number": 109,
+    "prompt": "List five stickers/permits that may appear along windows.",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "park",
+      "parking",
+      "inspection",
+      "temporary",
+      "handicap"
+    ],
+    "explanation": "State park pass; parking permit; state inspection sticker; temporary license sticker; handicap sign.",
+    "topic": "additional"
+  },
+  {
+    "number": 110,
+    "prompt": "What are the three conditions when you need your headlights?",
+    "type": "short_answer",
+    "choices": null,
+    "correctIndex": null,
+    "acceptedKeywords": [
+      "sunset",
+      "sunrise",
+      "rain",
+      "fog",
+      "weather",
+      "funeral"
+    ],
+    "explanation": "Sunset/sunrise; rain, inclement weather and fog; funerals.",
+    "topic": "additional"
+  },
+  {
+    "number": 111,
+    "prompt": "BAC under 21 \u2014 what is the core rule emphasized for study?",
+    "type": "multiple_choice",
+    "choices": [
+      "Same 0.08 limit as adults with no extra penalty",
+      "Under-21 alcohol restrictions are stricter (zero-tolerance style); know under-21 BAC penalties from the Drivers Manual",
+      "Under 21 may drink if a parent is present in the car",
+      "BAC rules do not apply under 21"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Additional topics list \"BAC under 21 \u2014 what penalties.\" Exact numeric thresholds/penalties should be confirmed in the current Minnesota Drivers Manual; the appendix flags this as required knowledge.",
+    "topic": "additional"
+  },
+  {
+    "number": 112,
+    "prompt": "May instructors work as independent contractors for the school under these materials?",
+    "type": "multiple_choice",
+    "choices": [
+      "Yes, always preferred",
+      "No \u2014 independent contractors are not allowed (materials: \"Independent contractors \u2014 NO\")",
+      "Only on weekends",
+      "Only if unpaid"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Materials state independent contractors \u2014 NO.",
+    "topic": "additional"
+  },
+  {
+    "number": 113,
+    "prompt": "What are the daily hour caps for classroom and behind-the-wheel (laboratory) training?",
+    "type": "multiple_choice",
+    "choices": [
+      "Classroom 8 hrs/day; BTW 4 hrs/day",
+      "Classroom maximum 3 hours per day; BTW (laboratory) maximum 2 hours per day",
+      "No daily caps",
+      "Classroom 1 hour; BTW 6 hours"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Behind-the-wheel (laboratory) maximum is 2 hours per day. Maximum classroom training is 3 hours per day.",
+    "topic": "additional"
+  },
+  {
+    "number": 114,
+    "prompt": "What does \"overdriving your headlights\" mean?",
+    "type": "multiple_choice",
+    "choices": [
+      "Using high beams in town",
+      "Driving faster than you can stop within the distance your headlights illuminate",
+      "Forgetting to turn lights on at dusk",
+      "Driving with only parking lights on the freeway"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Overdriving headlights means traveling too fast to stop within the illuminated distance ahead.",
+    "topic": "additional"
+  },
+  {
+    "number": 115,
+    "prompt": "What does \"1 hour lesson means 60 minutes \u2014 no breaks\" emphasize?",
+    "type": "multiple_choice",
+    "choices": [
+      "Lessons may be shortened for traffic",
+      "A billed hour of instruction is a full 60 minutes of instruction without counting break time as instructional time",
+      "Breaks must be 15 minutes each hour",
+      "Classroom hours may include lunch"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "An instructional hour is 60 minutes with no breaks counted as lesson time.",
+    "topic": "additional"
+  },
+  {
+    "number": 116,
+    "prompt": "Under what conditions must an accident report be filed, and in what timeframe?",
+    "type": "multiple_choice",
+    "choices": [
+      "Any scratch; within 24 hours to the school only",
+      "Total damage of $1,000 or more, or any injury or death; file within 10 days; also report to the driving school immediately and to the Driver Education Supervisor within 10 days",
+      "Only if a police officer requests it within 30 days",
+      "Only fatal crashes after 60 days"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Total damage of $1,000.00 or more; any injury or death. Must be filed within 10 days. Also report to the driving school immediately and to the Driver Education Supervisor within 10 days.",
+    "topic": "additional"
+  },
+  {
+    "number": 117,
+    "prompt": "Which license classes can obtain a school bus endorsement?",
+    "type": "multiple_choice",
+    "choices": [
+      "D only",
+      "A, B, and C \u2014 not D",
+      "Motorcycle only",
+      "ID card holders"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "A, B, and C \u2014 not D.",
+    "topic": "additional"
+  },
+  {
+    "number": 118,
+    "prompt": "Who must accompany an applicant if the vehicle is owned by a commercial driving school for a state driver's license road test?",
+    "type": "multiple_choice",
+    "choices": [
+      "Any friend with a license",
+      "A licensed instructor",
+      "A parent only",
+      "No one"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "A licensed instructor.",
+    "topic": "additional"
+  },
+  {
+    "number": 119,
+    "prompt": "How many questions are on the instructor test, what is the pass mark, and what is the time limit?",
+    "type": "multiple_choice",
+    "choices": [
+      "50 questions, 70%, 1 hour",
+      "About 100 questions, pass with 80% or more, about 4-hour time limit; arrive by 8:00 AM or when the station opens",
+      "200 questions, 90%, untimed",
+      "25 questions, 60%, 30 minutes"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "100 questions; required to pass with 80% or more; 4-hour time limit; be there at 8:00 AM or when the station opens. Test should be in pencil.",
+    "topic": "additional"
+  },
+  {
+    "number": 120,
+    "prompt": "When does a Class D permit expire?",
+    "type": "multiple_choice",
+    "choices": [
+      "30 days",
+      "6 months",
+      "1 year",
+      "On the 19th birthday only"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Handwritten note on additional questions: Class D permit expires in 6 months.",
+    "topic": "additional"
+  },
+  {
+    "number": 121,
+    "prompt": "How many days do you have to change your license after a legal name change (or address change)?",
+    "type": "multiple_choice",
+    "choices": [
+      "7 days",
+      "10 days",
+      "30 days",
+      "90 days"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "30 days for legal name change / address change on the license.",
+    "topic": "additional"
+  },
+  {
+    "number": 122,
+    "prompt": "How far from the curb must you park to be legal?",
+    "type": "multiple_choice",
+    "choices": [
+      "24 inches",
+      "18 inches",
+      "12 inches",
+      "6 inches"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "12 inches.",
+    "topic": "additional"
+  },
+  {
+    "number": 123,
+    "prompt": "How far away must you be when passing a bicycle?",
+    "type": "multiple_choice",
+    "choices": [
+      "1 foot",
+      "2 feet",
+      "3 feet",
+      "6 feet"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "3 feet.",
+    "topic": "additional"
+  },
+  {
+    "number": 124,
+    "prompt": "If your driver's license is revoked/suspended, how long must you wait to be an instructor?",
+    "type": "multiple_choice",
+    "choices": [
+      "30 days",
+      "1 year",
+      "3 years",
+      "10 years"
+    ],
+    "correctIndex": 2,
+    "acceptedKeywords": null,
+    "explanation": "Materials: wait 3 years (minimum time of suspension/revocation for an instructor \u2014 3 years).",
+    "topic": "additional"
+  },
+  {
+    "number": 125,
+    "prompt": "What two licenses must an instructor have?",
+    "type": "multiple_choice",
+    "choices": [
+      "CDL Class A and passport",
+      "A valid driver's license and an instructor's license",
+      "Only a business license",
+      "Only a motorcycle endorsement"
+    ],
+    "correctIndex": 1,
+    "acceptedKeywords": null,
+    "explanation": "Instructor must have a valid driver's license and an instructor's license (also reflected in Q19).",
+    "topic": "additional"
+  }
+]
