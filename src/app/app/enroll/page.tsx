@@ -51,9 +51,9 @@ export default async function EnrollPage() {
     <div className="mx-auto max-w-3xl">
       <h1 className="font-display text-3xl text-[var(--navy)]">Enrollment level</h1>
       <p className="mt-2 text-[var(--steel)]">
-        Your level sets online lesson and Minnesota practical prices. Current:{" "}
-        <strong>{enrollment?.level.name ?? "none"}</strong>. Level changes are admin-assisted for downgrades; you may
-        select a level here for v1.
+        Your level sets à la carte online lesson and package prices. Classroom sessions ($15,000) and behind-the-wheel
+        training ($7,000) use the same tuition for every level with a 50% down payment. Current:{" "}
+        <strong>{enrollment?.level.name ?? "none"}</strong>.
       </p>
       <div className="mt-8 space-y-4">
         {levels.map((level) => (
@@ -63,9 +63,8 @@ export default async function EnrollPage() {
                 <h2 className="font-display text-xl text-[var(--navy)]">{level.name}</h2>
                 <p className="mt-1 text-sm text-[var(--steel)]">{level.description}</p>
                 <p className="mt-2 text-sm text-[var(--navy)]">
-                  Lessons {formatUsd(level.lessonPrices[0]?.amountCents ?? 0)} · Package{" "}
-                  {formatUsd(level.packages[0]?.amountCents ?? 0)} · Practical{" "}
-                  {formatUsd(level.practicalPrices[0]?.amountCents ?? 0)}
+                  Lessons {formatUsd(level.lessonPrices[0]?.amountCents ?? 0)} · Online package{" "}
+                  {formatUsd(level.packages[0]?.amountCents ?? 0)}
                 </p>
               </div>
               <form action={enrollAction}>

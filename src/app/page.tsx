@@ -23,7 +23,7 @@ export default function HomePage() {
               <Link href="/signup">Start learning</Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
-              <Link href="/pricing">View levels & pricing</Link>
+              <Link href="/pricing">View tuition & payment plans</Link>
             </Button>
           </div>
         </div>

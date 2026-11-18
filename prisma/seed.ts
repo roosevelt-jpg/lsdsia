@@ -233,7 +233,6 @@ const LEVELS = [
     sortOrder: 1,
     lessonCents: 4900,
     packageCents: 49900,
-    practicalCents: 120000,
   },
   {
     code: "professional",
@@ -242,7 +241,6 @@ const LEVELS = [
     sortOrder: 2,
     lessonCents: 3900,
     packageCents: 79900,
-    practicalCents: 150000,
   },
   {
     code: "operator",
@@ -251,7 +249,32 @@ const LEVELS = [
     sortOrder: 3,
     lessonCents: 2900,
     packageCents: 119900,
-    practicalCents: 220000,
+  },
+];
+
+/** Life Star program tuition (same for every enrollment level). Checkout collects the down payment. */
+const TRAINING_PROGRAMS = [
+  {
+    code: "btw-training",
+    name: "Behind-the-wheel training",
+    description:
+      "On-campus behind-the-wheel / laboratory training at Life Star’s Minnesota main campus (7411.0630 competencies).",
+    durationDays: 5,
+    locationNote: "Life Star Driving School — Minnesota main campus",
+    amountCents: 700_000, // $7,000
+    downPaymentPercent: 50,
+    installmentMonths: 3,
+  },
+  {
+    code: "classroom-sessions",
+    name: "Classroom sessions",
+    description:
+      "Instructor classroom sessions at Life Star Driving School — Minnesota main campus.",
+    durationDays: 10,
+    locationNote: "Life Star Driving School — Minnesota main campus",
+    amountCents: 1_500_000, // $15,000
+    downPaymentPercent: 50,
+    installmentMonths: 5,
   },
 ];
 
@@ -308,30 +331,38 @@ async function main() {
     );
   }
 
-  const practical = await prisma.practicalSku.create({
-    data: {
-      code: "mn-standard-intensive",
-      name: "Minnesota campus practical intensive",
-      description:
-        "On-campus laboratory / behind-the-wheel intensive at Life Star’s Minnesota main campus covering 7411.0630 competencies.",
-      durationDays: 5,
-      locationNote: "Life Star Driving School — Minnesota main campus",
-    },
-  });
-
-  for (let i = 0; i < LEVELS.length; i++) {
-    await prisma.practicalPrice.create({
+  const programRows = [];
+  for (const program of TRAINING_PROGRAMS) {
+    const sku = await prisma.practicalSku.create({
       data: {
-        practicalSkuId: practical.id,
-        levelId: levelRows[i].id,
-        amountCents: LEVELS[i].practicalCents,
+        code: program.code,
+        name: program.name,
+        description: program.description,
+        durationDays: program.durationDays,
+        locationNote: program.locationNote,
+        downPaymentPercent: program.downPaymentPercent,
+        installmentMonths: program.installmentMonths,
       },
     });
+    programRows.push(sku);
+    for (const level of levelRows) {
+      await prisma.practicalPrice.create({
+        data: {
+          practicalSkuId: sku.id,
+          levelId: level.id,
+          amountCents: program.amountCents,
+        },
+      });
+    }
+  }
+  const btwSku = programRows.find((p) => p.code === "btw-training")!;
+
+  for (let i = 0; i < LEVELS.length; i++) {
     await prisma.levelPackage.create({
       data: {
         levelId: levelRows[i].id,
         name: `${LEVELS[i].name} online package`,
-        description: `All online lessons for the ${LEVELS[i].name} level (practical sold separately unless noted).`,
+        description: `All online lessons for the ${LEVELS[i].name} level. Classroom sessions and behind-the-wheel training are sold separately with payment plans.`,
         amountCents: LEVELS[i].packageCents,
         includesAllLessons: true,
         includesPracticalSkuId: null,
@@ -378,24 +409,24 @@ async function main() {
   await prisma.practicumSession.createMany({
     data: [
       {
-        practicalSkuId: practical.id,
-        title: "Spring Minnesota intensive",
+        practicalSkuId: btwSku.id,
+        title: "Spring Minnesota BTW intensive",
         startDate: "2026-04-13",
         endDate: "2026-04-17",
         capacity: 8,
-        notes: "Arrive Sunday evening; classroom + BTW Mon–Fri.",
+        notes: "Arrive Sunday evening; behind-the-wheel Mon–Fri.",
       },
       {
-        practicalSkuId: practical.id,
-        title: "Summer Minnesota intensive",
+        practicalSkuId: btwSku.id,
+        title: "Summer Minnesota BTW intensive",
         startDate: "2026-07-20",
         endDate: "2026-07-24",
         capacity: 8,
         notes: "Bring application packet draft and DL records.",
       },
       {
-        practicalSkuId: practical.id,
-        title: "Fall Minnesota intensive",
+        practicalSkuId: btwSku.id,
+        title: "Fall Minnesota BTW intensive",
         startDate: "2026-10-12",
         endDate: "2026-10-16",
         capacity: 6,

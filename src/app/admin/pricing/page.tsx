@@ -35,13 +35,20 @@ export default async function AdminPricingPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <h1 className="font-display text-3xl text-[var(--navy)]">Pricing matrices</h1>
-      <p className="mt-2 text-sm text-[var(--steel)]">Lesson × level and practical × level amounts (USD).</p>
+      <p className="mt-2 text-sm text-[var(--steel)]">
+        Program tuition × level (USD). Checkout charges the configured down payment percent; balance follows the
+        installment months on each SKU.
+      </p>
 
       <section className="mt-8">
-        <h2 className="font-display text-xl text-[var(--navy)]">Practicals</h2>
+        <h2 className="font-display text-xl text-[var(--navy)]">Classroom & BTW programs</h2>
         {practicals.map((sku) => (
           <Card key={sku.id} className="mt-3">
             <p className="font-medium text-[var(--navy)]">{sku.name}</p>
+            <p className="mt-1 text-xs text-[var(--steel)]">
+              {sku.downPaymentPercent}% down · {sku.installmentMonths || "pay in full"}{" "}
+              {sku.installmentMonths ? "month balance" : ""}
+            </p>
             <div className="mt-3 grid gap-3 md:grid-cols-3">
               {levels.map((level) => {
                 const price = sku.prices.find((p) => p.levelId === level.id);
