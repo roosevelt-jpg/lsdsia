@@ -105,17 +105,21 @@ model LessonPrice {
 }
 
 model PracticalSku {
-  id           String           @id @default(cuid())
-  code         String           @unique
-  name         String
-  description  String
-  durationDays Int              @default(5)
-  locationNote String           @default("Life Star Driving School — Minnesota main campus")
-  prices       PracticalPrice[]
-  entitlements Entitlement[]
-  orderItems   OrderItem[]
-  sessions     PracticumSession[]
-  packages     LevelPackage[]
+  id                  String           @id @default(cuid())
+  code                String           @unique
+  name                String
+  description         String
+  durationDays        Int              @default(5)
+  locationNote        String           @default("Life Star Driving School — Minnesota main campus")
+  /// Percent of full tuition due at checkout (remainder billed on the installment plan).
+  downPaymentPercent  Int              @default(50)
+  /// Months to spread the balance after the down payment (0 = pay in full at checkout).
+  installmentMonths   Int              @default(0)
+  prices              PracticalPrice[]
+  entitlements        Entitlement[]
+  orderItems          OrderItem[]
+  sessions            PracticumSession[]
+  packages            LevelPackage[]
 }
 
 model PracticalPrice {

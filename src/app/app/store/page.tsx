@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { formatUsd } from "@/lib/money";
+import { downPaymentCents, formatUsd, paymentPlanSummary } from "@/lib/money";
 import { paymentsMessage, stripeConfigured } from "@/lib/stripe";
 import { BuyButton } from "@/components/buy-button";
 import { Card } from "@/components/ui/card";
@@ -83,24 +83,33 @@ export default async function StorePage({
       </section>
 
       <section className="mt-10">
-        <h2 className="font-display text-xl text-[var(--navy)]">Minnesota campus practicals</h2>
+        <h2 className="font-display text-xl text-[var(--navy)]">Classroom & behind-the-wheel</h2>
+        <p className="mt-1 text-sm text-[var(--steel)]">
+          Checkout collects the 50% down payment. Remaining balance follows the Life Star installment schedule.
+        </p>
         <div className="mt-3 space-y-3">
           {practicals.map((sku) => {
             const price = sku.prices[0]?.amountCents ?? 0;
+            const down = downPaymentCents(price, sku.downPaymentPercent);
+            const plan = paymentPlanSummary(price, sku.downPaymentPercent, sku.installmentMonths);
             return (
               <Card key={sku.id} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-medium text-[var(--navy)]">{sku.name}</p>
                   <p className="text-sm text-[var(--steel)]">{sku.description}</p>
                   <p className="mt-1 text-sm text-[var(--steel)]">{sku.locationNote}</p>
-                  <p className="mt-1 font-semibold">
-                    Campus practical — {enrollment.level.name}: {formatUsd(price)}
+                  <p className="mt-2 font-semibold text-[var(--navy)]">
+                    Full tuition: {formatUsd(price)}
+                  </p>
+                  <p className="mt-1 text-sm text-[var(--steel)]">{plan}</p>
+                  <p className="mt-1 text-sm font-medium text-[var(--navy)]">
+                    Due today (down payment): {formatUsd(down)}
                   </p>
                 </div>
                 <BuyButton
                   type="practical"
                   id={sku.id}
-                  label={`Buy practical — ${formatUsd(price)}`}
+                  label={`Pay ${sku.downPaymentPercent}% down — ${formatUsd(down)}`}
                   disabled={!configured}
                 />
               </Card>
