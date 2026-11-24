@@ -1,17 +1,38 @@
+import fs from "node:fs";
+import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-function databaseUrl() {
-  // Vercel build/runtime need a URL present for Prisma client init.
-  // Prefer a real Postgres DATABASE_URL in production; fall back to a local file for generate/build.
-  return process.env.DATABASE_URL || "file:./dev.db";
+function resolveDatabaseUrl() {
+  const configured = process.env.DATABASE_URL;
+  if (configured?.startsWith("postgres://") || configured?.startsWith("postgresql://")) {
+    return configured;
+  }
+
+  // On Vercel the deploy filesystem is read-only; copy the built SQLite into /tmp for R/W.
+  if (process.env.VERCEL) {
+    const source = path.join(process.cwd(), "prisma", "deploy.db");
+    const dest = "/tmp/lsds-deploy.db";
+    try {
+      if (fs.existsSync(source)) {
+        if (!fs.existsSync(dest) || fs.statSync(source).mtimeMs > fs.statSync(dest).mtimeMs) {
+          fs.copyFileSync(source, dest);
+        }
+        return `file:${dest}`;
+      }
+    } catch (err) {
+      console.error("Failed to stage SQLite deploy DB in /tmp", err);
+    }
+  }
+
+  return configured || "file:./dev.db";
 }
 
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    datasources: { db: { url: databaseUrl() } },
+    datasources: { db: { url: resolveDatabaseUrl() } },
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 

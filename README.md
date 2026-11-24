@@ -79,7 +79,21 @@ Entitlements are granted only after `checkout.session.completed` (webhook) or an
    `DATABASE_URL=… ADMIN_PASSWORD=… DEMO_PASSWORD=… npx prisma db push && npx tsx prisma/seed.ts`
 7. Stripe webhook: `https://lifestar.myflynai.com/api/webhooks/stripe` for `checkout.session.completed`.
 
-Landing and `/pricing` can render without a seeded DB (tuition fallbacks). Login, store, quiz, and admin need Postgres + seed.
+Landing and `/pricing` can render without a seeded DB (tuition fallbacks).
+
+### Login on Vercel (required env)
+
+Without these, `/login` submit fails (server exception). In **Vercel → Settings → Environment Variables** (Production), set:
+
+1. `AUTH_SECRET` — long random string  
+2. `ADMIN_PASSWORD` — admin login password  
+3. `DEMO_PASSWORD` — demo candidate password  
+4. Optional: `ADMIN_EMAIL` / `DEMO_EMAIL` (defaults `admin@lifestar.academy` / `demo@lifestar.academy`)  
+5. Optional: `DATABASE_URL` Postgres URL (recommended). If unset, the build seeds a SQLite file for serverless.
+
+Then **Deployments → Redeploy** the latest `main` commit (enable “Use existing Build Cache” off if the DB did not seed).
+
+Login emails default to `admin@lifestar.academy` / `demo@lifestar.academy`; passwords are exactly the values you set above — nothing is hardcoded in the repo.
 
 ## Security notes
 

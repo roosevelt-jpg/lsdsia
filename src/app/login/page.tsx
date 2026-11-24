@@ -7,16 +7,28 @@ import { Label } from "@/components/ui/label";
 
 async function loginAction(formData: FormData) {
   "use server";
-  const email = String(formData.get("email") || "");
-  const password = String(formData.get("password") || "");
-  const result = await loginWithCredentials(email, password);
-  if ("error" in result && result.error) {
-    redirect(`/login?error=${encodeURIComponent(result.error)}`);
+  try {
+    const email = String(formData.get("email") || "");
+    const password = String(formData.get("password") || "");
+    const result = await loginWithCredentials(email, password);
+    if ("error" in result && result.error) {
+      redirect(`/login?error=${encodeURIComponent(result.error)}`);
+    }
+    if (!("user" in result) || !result.user) {
+      redirect(`/login?error=${encodeURIComponent("Invalid email or password")}`);
+    }
+    redirect(result.user.role === "admin" ? "/admin" : "/app");
+  } catch (err) {
+    // redirect() throws; rethrow Next navigation errors
+    const digest = err && typeof err === "object" && "digest" in err ? String((err as { digest?: string }).digest) : "";
+    if (digest.startsWith("NEXT_REDIRECT") || digest.startsWith("NEXT_NOT_FOUND")) throw err;
+    console.error("loginAction", err);
+    redirect(
+      `/login?error=${encodeURIComponent(
+        "Login failed on the server. Set AUTH_SECRET, ADMIN_PASSWORD, and DEMO_PASSWORD in Vercel, then Redeploy.",
+      )}`,
+    );
   }
-  if (!("user" in result) || !result.user) {
-    redirect(`/login?error=${encodeURIComponent("Invalid email or password")}`);
-  }
-  redirect(result.user.role === "admin" ? "/admin" : "/app");
 }
 
 export default async function LoginPage({

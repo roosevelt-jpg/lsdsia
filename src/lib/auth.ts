@@ -10,7 +10,11 @@ const COOKIE = "lsds_session";
 
 function secret() {
   const s = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
-  if (!s) throw new Error("AUTH_SECRET is not set");
+  if (!s) {
+    throw new Error(
+      "AUTH_SECRET is not set. Add AUTH_SECRET in Vercel → Settings → Environment Variables, then redeploy.",
+    );
+  }
   return new TextEncoder().encode(s);
 }
 
@@ -89,15 +93,30 @@ export async function requireUser(roles?: Role[]) {
 }
 
 export async function loginWithCredentials(email: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-  if (!user) return { error: "Invalid email or password" as const };
-  const ok = await verifyPassword(password, user.passwordHash);
-  if (!ok) return { error: "Invalid email or password" as const };
-  await createSession({
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role as Role,
-  });
-  return { user: { ...user, role: user.role as Role } };
+  try {
+    const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+    if (!user) return { error: "Invalid email or password" as const };
+    const ok = await verifyPassword(password, user.passwordHash);
+    if (!ok) return { error: "Invalid email or password" as const };
+    await createSession({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role as Role,
+    });
+    return { user: { ...user, role: user.role as Role } };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Login failed";
+    console.error("loginWithCredentials", err);
+    if (message.includes("AUTH_SECRET")) {
+      return {
+        error:
+          "Server auth is not configured. Set AUTH_SECRET in Vercel Environment Variables and redeploy." as const,
+      };
+    }
+    return {
+      error:
+        "Database unavailable. On Vercel set AUTH_SECRET, ADMIN_PASSWORD, and DEMO_PASSWORD, then Redeploy so the build can seed login users (or use a Postgres DATABASE_URL and seed)." as const,
+    };
+  }
 }

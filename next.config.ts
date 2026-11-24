@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Include seeded SQLite + Prisma engine files in serverless traces for Vercel.
+  outputFileTracingIncludes: {
+    "/*": ["./prisma/**/*"],
+  },
   async headers() {
     return [
       {
