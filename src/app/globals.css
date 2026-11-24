@@ -129,3 +129,9 @@ body {
   background: rgba(230, 168, 23, 0.08);
   padding: 0.9rem 1rem;
 }
+
+.admin-shell {
+  background:
+    radial-gradient(ellipse at top right, rgba(230, 168, 23, 0.06), transparent 40%),
+    linear-gradient(180deg, #eef3f7 0%, var(--mist) 45%, #e4ebf1 100%);
+}

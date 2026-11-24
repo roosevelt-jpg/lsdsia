@@ -31,15 +31,17 @@ model User {
 }
 
 model Profile {
-  id       String  @id @default(cuid())
-  userId   String  @unique
-  phone    String?
-  address1 String?
-  address2 String?
-  city     String?
-  state    String?
-  zip      String?
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  phone     String?
+  address1  String?
+  address2  String?
+  city      String?
+  state     String?
+  zip       String?
+  /// Data URL or remote URL for profile image
+  avatarUrl String?
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model EnrollmentLevel {
