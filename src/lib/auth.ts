@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
+import { ensureLoginUsers } from "@/lib/bootstrap-users";
 import { prisma } from "@/lib/db";
 
 export type Role = "candidate" | "coach" | "admin";
@@ -94,10 +95,23 @@ export async function requireUser(roles?: Role[]) {
 
 export async function loginWithCredentials(email: string, password: string) {
   try {
+    const boot = await ensureLoginUsers();
+    if (!boot.ok) return { error: boot.error };
+
     const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-    if (!user) return { error: "Invalid email or password" as const };
+    if (!user) {
+      return {
+        error:
+          "Invalid email or password. Use admin@lifestar.academy or demo@lifestar.academy with the ADMIN_PASSWORD / DEMO_PASSWORD values from Vercel Environment Variables." as const,
+      };
+    }
     const ok = await verifyPassword(password, user.passwordHash);
-    if (!ok) return { error: "Invalid email or password" as const };
+    if (!ok) {
+      return {
+        error:
+          "Invalid email or password. The password must match ADMIN_PASSWORD or DEMO_PASSWORD as set in Vercel (not an old README password)." as const,
+      };
+    }
     await createSession({
       id: user.id,
       email: user.email,
@@ -116,7 +130,7 @@ export async function loginWithCredentials(email: string, password: string) {
     }
     return {
       error:
-        "Database unavailable. On Vercel set AUTH_SECRET, ADMIN_PASSWORD, and DEMO_PASSWORD, then Redeploy so the build can seed login users (or use a Postgres DATABASE_URL and seed)." as const,
+        "Database unavailable. On Vercel set AUTH_SECRET, ADMIN_PASSWORD, and DEMO_PASSWORD, then Redeploy." as const,
     };
   }
 }

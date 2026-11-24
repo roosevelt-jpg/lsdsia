@@ -67,6 +67,11 @@ export default async function LoginPage({
             Create an account
           </Link>
         </p>
+        <p className="mt-4 text-xs text-[var(--steel)]">
+          Admin email defaults to <span className="font-medium">admin@lifestar.academy</span>. The password is whatever
+          you set as <span className="font-medium">ADMIN_PASSWORD</span> in Vercel Environment Variables (then Redeploy
+          if you just added it).
+        </p>
       </div>
     </main>
   );
