@@ -55,27 +55,31 @@ Entitlements are granted only after `checkout.session.completed` (webhook) or an
 
 ## Deploy on Vercel
 
-1. In [Vercel](https://vercel.com): **Add New… → Project → Import** `roosevelt-jpg/lsdsia` (Framework Preset: Next.js).
-2. Add a **Postgres** store (Vercel Postgres / Neon / Supabase) and copy the connection string.
-3. In Project → **Settings → Environment Variables**, set at least:
+**Production branch must be `main` and must contain the Next.js app** (not only the empty GitHub “Initial commit”). If the domain shows Vercel’s plain `404 NOT_FOUND`, Production was almost certainly still deploying that empty commit — Redeploy after `main` has `package.json` + `src/`.
+
+1. In [Vercel](https://vercel.com): **Add New… → Project → Import** `roosevelt-jpg/lsdsia` (Framework Preset: **Next.js**, Root Directory: **`.`**).
+2. Project → **Settings → Git**: Production Branch = `main`.
+3. Add a **Postgres** store (Vercel Postgres / Neon / Supabase) and copy the connection string. SQLite file URLs do not work on Vercel serverless.
+4. In Project → **Settings → Environment Variables**, set at least:
 
 | Variable | Notes |
 |----------|--------|
-| `DATABASE_URL` | Postgres URL from step 2 |
+| `DATABASE_URL` | Postgres URL from step 3 |
 | `AUTH_SECRET` | Long random string |
 | `NEXTAUTH_SECRET` | Same or another random string |
-| `NEXTAUTH_URL` / `APP_URL` | Your `https://….vercel.app` (or custom domain) |
+| `NEXTAUTH_URL` | `https://lifestar.myflynai.com` (or your `*.vercel.app`) |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Initial admin (run seed once) |
 | `DEMO_EMAIL` / `DEMO_PASSWORD` | Optional demo candidate |
 | `STRIPE_SECRET_KEY` | Live or test |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Matching publishable key |
 | `STRIPE_WEBHOOK_SECRET` | From Stripe webhook endpoint → `/api/webhooks/stripe` |
 
-4. **Postgres provider:** before the first production deploy, change `provider = "sqlite"` to `provider = "postgresql"` in `prisma/schema.prisma` (or keep a Postgres-ready branch). Local remains `file:./dev.db`.
-5. Build command is already `prisma generate && next build` (`npm run build`). After deploy, run seed once against production (Vercel CLI or a one-off job):  
-   `DATABASE_URL=… ADMIN_PASSWORD=… DEMO_PASSWORD=… npx tsx prisma/seed.ts`  
-   (or `prisma db push` then seed).
-6. In Stripe Dashboard, add webhook endpoint `https://<your-domain>/api/webhooks/stripe` for `checkout.session.completed`.
+5. **Postgres provider:** set `provider = "postgresql"` in `prisma/schema.prisma` for production (local can stay sqlite in a separate branch/env). Then **Deployments → Redeploy** the latest `main` commit.
+6. After a green deploy, seed once against production:  
+   `DATABASE_URL=… ADMIN_PASSWORD=… DEMO_PASSWORD=… npx prisma db push && npx tsx prisma/seed.ts`
+7. Stripe webhook: `https://lifestar.myflynai.com/api/webhooks/stripe` for `checkout.session.completed`.
+
+Landing and `/pricing` can render without a seeded DB (tuition fallbacks). Login, store, quiz, and admin need Postgres + seed.
 
 ## Security notes
 
