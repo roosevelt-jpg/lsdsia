@@ -51,7 +51,7 @@ export async function seedCms(prisma: PrismaClient) {
         { network: "tiktok", href: "https://tiktok.com" },
       ]),
       newsletterBlurb: "Get training updates, new courses and special offers.",
-      contentVersion: 5,
+      contentVersion: 6,
       dashboardTagline: "Learn Globally. Train Professionally. Lead Confidently.",
       dashboardHeroBgUrl: "/cms/dashboard/hero-bg-hires.jpg",
       dashboardHeroPersonUrl: "/cms/dashboard/hero-person.jpg",

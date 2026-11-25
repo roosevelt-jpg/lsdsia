@@ -103,8 +103,10 @@ export default async function AdminHome() {
   ]);
 
   const mediaMap = Object.fromEntries(media.map((m) => [m.key, `/api/cms-media/${m.key}`]));
-  const heroBg = resolveCmsImage(site.adminHeroBgUrl, mediaMap) || site.adminHeroBgUrl;
-  const heroPerson = resolveCmsImage(site.adminHeroPersonUrl, mediaMap) || site.adminHeroPersonUrl;
+  const heroBg =
+    resolveCmsImage(site.adminHeroBgUrl, mediaMap) ||
+    site.adminHeroBgUrl ||
+    "/cms/admin/hero-banner.jpg";
   const promoImg = resolveCmsImage(site.adminPromoImageUrl, mediaMap) || site.adminPromoImageUrl;
 
   const revenueCents = revenueAgg._sum.totalCents ?? 0;
@@ -242,22 +244,39 @@ export default async function AdminHome() {
 
   return (
     <div className="mx-auto max-w-[1400px] space-y-6">
-      {/* HERO */}
+      {/* HERO — sharp text-free photo; CMS title/CTAs overlay in HTML */}
       <section className="relative overflow-hidden rounded-2xl text-white shadow-[0_16px_40px_rgba(11,31,51,0.16)]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={heroBg}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
+        />
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0"
           style={{
-            backgroundImage: `linear-gradient(105deg, rgba(8,24,48,0.94) 0%, rgba(13,42,84,0.88) 45%, rgba(13,42,84,0.55) 100%), url(${heroBg})`,
+            background:
+              "linear-gradient(105deg, rgba(8,28,72,0.94) 0%, rgba(12,48,110,0.78) 42%, rgba(12,48,110,0.28) 72%, rgba(12,48,110,0.12) 100%)",
           }}
         />
+        {/* Decorative brand swoosh (matches mock; not baked into photo) */}
         <div
-          className="pointer-events-none absolute -right-8 bottom-0 h-40 w-[55%] rounded-[100%] bg-[var(--amber)]/25 blur-2xl"
+          className="pointer-events-none absolute -left-6 -top-10 h-40 w-56 rotate-[-18deg] rounded-[40%] bg-gradient-to-br from-[#1a4fa0] via-[#0b2f66] to-transparent opacity-90"
           aria-hidden
         />
-        <div className="relative grid gap-6 px-6 py-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-center lg:px-8">
-          <div>
-            <h2 className="text-2xl font-bold sm:text-3xl">{site.adminHeroTitle}</h2>
-            <p className="mt-2 max-w-xl text-sm text-white/85 sm:text-base">{site.adminHeroSubtitle}</p>
+        <div
+          className="pointer-events-none absolute -left-2 top-2 h-3 w-44 rotate-[-18deg] rounded-full bg-gradient-to-r from-[var(--amber)] to-transparent opacity-90"
+          aria-hidden
+        />
+        <div className="relative px-6 py-8 lg:px-8 lg:py-10">
+          <div className="max-w-xl">
+            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              {site.adminHeroTitle || "Welcome to Life Star Instructors Academy"}
+            </h2>
+            <p className="mt-2 text-sm text-white/85 sm:text-base">
+              {site.adminHeroSubtitle ||
+                "Manage training, students, instructors and academy operations all in one place."}
+            </p>
             <div className="mt-5 flex flex-wrap gap-2.5">
               <Link
                 href={(site as { adminHeroCtaPrimaryHref?: string }).adminHeroCtaPrimaryHref || "/admin/candidates"}
@@ -282,14 +301,6 @@ export default async function AdminHome() {
               </Link>
             </div>
           </div>
-          <div className="relative hidden justify-end lg:flex">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroPerson}
-              alt="Life Star instructor"
-              className="max-h-52 w-auto rounded-xl object-cover shadow-2xl ring-2 ring-white/20"
-            />
-          </div>
         </div>
       </section>
 
@@ -301,7 +312,7 @@ export default async function AdminHome() {
             <Link
               key={m.label}
               href={m.href}
-              className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-[var(--navy)]/8 transition hover:ring-[#2b6cb0]/35"
+              className="rounded-xl bg-white p-4 shadow-[0_8px_24px_rgba(43,108,176,0.10)] ring-1 ring-[#2b6cb0]/8 transition hover:ring-[#2b6cb0]/35"
             >
               <div className="flex items-start justify-between gap-2">
                 <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${m.iconTone}`}>
