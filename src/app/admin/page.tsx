@@ -110,8 +110,11 @@ export default async function AdminHome() {
   const revenueCents = revenueAgg._sum.totalCents ?? 0;
   const inProgressEnroll = Math.max(0, enrollments - completedEnrollments);
   const notStartedEstimate = Math.max(0, candidates - enrollments);
-  const progressCompletedPct = pct(progressDone, Math.max(progressTotal, progressDone + 1));
-  const progressInPct = Math.max(0, Math.min(100 - progressCompletedPct, 14));
+  // Progress donut: use live lesson-progress shares when present, else mock defaults (78/14/8)
+  const hasLessonProgress = progressTotal > 0;
+  const progressCompletedPct = hasLessonProgress ? pct(progressDone, progressTotal) : 78;
+  const progressRemaining = Math.max(0, 100 - progressCompletedPct);
+  const progressInPct = hasLessonProgress ? Math.round(progressRemaining * 0.65) : 14;
   const progressNotPct = Math.max(0, 100 - progressCompletedPct - progressInPct);
 
   // Synthetic trend built from real candidate count (scales mock shape to live data)
@@ -327,9 +330,9 @@ export default async function AdminHome() {
               <p className="text-xs text-[var(--steel)]">Lesson completion mix</p>
               <div className="mt-3">
                 <StudentProgressDonut
-                  completed={progressCompletedPct || 78}
-                  inProgress={progressInPct || 14}
-                  notStarted={progressNotPct || 8}
+                  completed={progressCompletedPct}
+                  inProgress={progressInPct}
+                  notStarted={progressNotPct}
                 />
               </div>
             </div>

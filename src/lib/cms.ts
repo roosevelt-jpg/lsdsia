@@ -27,6 +27,22 @@ export async function loadCmsSite() {
   if (!site) {
     site = await prisma.cmsSite.create({ data: { id: "default" } });
   }
+
+  // Backfill blank banner URLs after schema upgrades (SQLite may keep empty strings)
+  const bannerDefaults: Partial<typeof site> = {};
+  if (!site.dashboardHeroBgUrl) bannerDefaults.dashboardHeroBgUrl = "/cms/dashboard/hero-bg-hires.jpg";
+  if (!site.dashboardHeroPersonUrl) bannerDefaults.dashboardHeroPersonUrl = "/cms/dashboard/hero-person.jpg";
+  if (!site.dashboardUpgradeImageUrl) bannerDefaults.dashboardUpgradeImageUrl = "/cms/dashboard/upgrade-car.jpg";
+  if (!site.dashboardContinueThumbUrl) bannerDefaults.dashboardContinueThumbUrl = "/cms/dashboard/continue-lesson.jpg";
+  if (!site.adminHeroBgUrl) bannerDefaults.adminHeroBgUrl = "/cms/admin/hero-banner.jpg";
+  if (!site.adminHeroPersonUrl) bannerDefaults.adminHeroPersonUrl = "/cms/admin/hero-person-hires.jpg";
+  if (!site.adminPromoImageUrl) bannerDefaults.adminPromoImageUrl = "/cms/admin/promo-grow.jpg";
+  if (!site.adminHeroTitle) bannerDefaults.adminHeroTitle = "Welcome to Life Star Instructors Academy";
+  if (!site.adminPromoTitle) bannerDefaults.adminPromoTitle = "Grow Your Driving School";
+
+  if (Object.keys(bannerDefaults).length > 0) {
+    site = await prisma.cmsSite.update({ where: { id: "default" }, data: bannerDefaults });
+  }
   return site;
 }
 
