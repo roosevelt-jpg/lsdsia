@@ -5,18 +5,22 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import {
   LayoutDashboard,
-  Layers,
-  BadgeDollarSign,
   Users,
-  ShoppingCart,
   BookOpen,
-  ClipboardList,
   CalendarDays,
+  CreditCard,
+  BarChart3,
+  MessageSquare,
+  Shield,
   Settings,
   LogOut,
   GraduationCap,
   ChevronDown,
   Bell,
+  Menu,
+  X,
+  Search,
+  Crown,
   IdCard,
   Building2,
   Globe,
@@ -29,40 +33,96 @@ export type AdminShellUser = {
   avatarUrl: string | null;
 };
 
-const links = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/levels", label: "Levels", icon: Layers },
-  { href: "/admin/pricing", label: "Pricing", icon: BadgeDollarSign },
-  { href: "/admin/candidates", label: "Candidates", icon: Users },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
-  { href: "/admin/content", label: "Content", icon: BookOpen },
-  { href: "/admin/quizzes", label: "Quizzes", icon: ClipboardList },
-  { href: "/admin/practicum", label: "Practicum", icon: CalendarDays },
-  { href: "/admin/licenses", label: "Licenses", icon: IdCard },
-  { href: "/admin/school-launch", label: "School launch", icon: Building2 },
-  { href: "/admin/website", label: "Website CMS", icon: Globe },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+export type AdminShellSite = {
+  brandName: string;
+  dashboardTagline: string;
+};
+
+type NavChild = { href: string; label: string };
+type NavItem =
+  | { type: "link"; href: string; label: string; icon: typeof LayoutDashboard; badge?: number }
+  | { type: "group"; label: string; icon: typeof LayoutDashboard; children: NavChild[] };
+
+const nav: NavItem[] = [
+  { type: "link", href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  {
+    type: "group",
+    label: "Students",
+    icon: Users,
+    children: [
+      { href: "/admin/candidates", label: "All Students" },
+      { href: "/admin/licenses", label: "Applications" },
+      { href: "/admin/levels", label: "Enrollments" },
+      { href: "/admin/quizzes", label: "Progress & Results" },
+    ],
+  },
+  {
+    type: "group",
+    label: "Courses & Lessons",
+    icon: BookOpen,
+    children: [
+      { href: "/admin/content", label: "Courses" },
+      { href: "/admin/content", label: "Lessons" },
+      { href: "/admin/quizzes", label: "Assessments" },
+      { href: "/admin/candidates", label: "Certificates" },
+    ],
+  },
+  {
+    type: "group",
+    label: "Scheduling",
+    icon: CalendarDays,
+    children: [
+      { href: "/admin/practicum", label: "Class Schedule" },
+      { href: "/admin/practicum", label: "Practical Training" },
+      { href: "/admin/practicum", label: "Instructor Calendar" },
+    ],
+  },
+  {
+    type: "group",
+    label: "Payments & Billing",
+    icon: CreditCard,
+    children: [
+      { href: "/admin/orders", label: "Orders" },
+      { href: "/admin/pricing", label: "Pricing" },
+    ],
+  },
+  { type: "link", href: "/admin#reports", label: "Reports & Analytics", icon: BarChart3 },
+  { type: "link", href: "/admin/website", label: "Communication", icon: MessageSquare, badge: 3 },
+  { type: "link", href: "/admin/settings", label: "Users & Roles", icon: Shield },
+  { type: "link", href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? "")
-    .join("");
+const extraLinks = [
+  { href: "/admin/school-launch", label: "School launch", icon: Building2 },
+  { href: "/admin/website", label: "Website CMS", icon: Globe },
+  { href: "/admin/licenses", label: "Licenses", icon: IdCard },
+];
+
+function pathActive(pathname: string, href: string) {
+  if (href.includes("#")) return pathname === href.split("#")[0];
+  if (href === "/admin") return pathname === "/admin";
+  return pathname.startsWith(href);
 }
 
 export function AdminShell({
   user,
+  site,
   logoutAction,
   children,
 }: {
   user: AdminShellUser;
+  site: AdminShellSite;
   logoutAction: () => Promise<void>;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(() => {
+    const match = nav.find(
+      (n) => n.type === "group" && n.children.some((c) => pathActive(pathname, c.href)),
+    );
+    return match && match.type === "group" ? match.label : "Students";
+  });
   const [menuOpen, setMenuOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -75,70 +135,189 @@ export function AdminShell({
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const pageTitle =
-    links.find((l) => (l.href === "/admin" ? pathname === "/admin" : pathname.startsWith(l.href)))?.label ??
-    "Admin";
+  const Sidebar = (
+    <aside className="flex h-full w-[272px] flex-col bg-[var(--navy-deep)] text-white">
+      <div className="border-b border-white/10 px-5 py-5">
+        <Link href="/admin" className="flex items-start gap-2.5" onClick={() => setMobileOpen(false)}>
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--amber)] text-[var(--navy-deep)]">
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
+              <path d="M12 2.5l2.4 7.2h7.6l-6.2 4.5 2.4 7.3L12 17l-6.2 4.5 2.4-7.3L2 9.7h7.6L12 2.5z" />
+            </svg>
+          </span>
+          <span>
+            <span className="block text-[10px] font-bold uppercase leading-tight tracking-[0.12em]">
+              {site.brandName}
+            </span>
+            <span className="mt-1.5 block text-[11px] leading-snug text-white/55">{site.dashboardTagline}</span>
+          </span>
+        </Link>
+      </div>
 
-  return (
-    <div className="admin-shell min-h-screen md:flex">
-      <aside className="relative z-20 border-b border-white/10 bg-[var(--navy-deep)] text-white md:flex md:min-h-screen md:w-64 md:flex-col md:border-b-0 md:border-r md:border-white/10">
-        <div className="border-b border-white/10 px-5 py-5">
-          <Link href="/admin" className="block">
-            <p className="font-display text-lg tracking-tight">Life Star</p>
-            <p className="mt-0.5 text-[11px] uppercase tracking-[0.16em] text-[var(--amber)]">Admin Console</p>
-          </Link>
-        </div>
-        <nav className="flex gap-1 overflow-x-auto px-2 py-3 md:flex-1 md:flex-col md:overflow-visible md:px-3">
-          {links.map((l) => {
-            const Icon = l.icon;
-            const active = l.href === "/admin" ? pathname === "/admin" : pathname.startsWith(l.href);
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        {nav.map((item) => {
+          if (item.type === "link") {
+            const Icon = item.icon;
+            const active = pathActive(pathname, item.href);
             return (
               <Link
-                key={l.href}
-                href={l.href}
-                className={`flex items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2.5 text-sm transition ${
-                  active
-                    ? "bg-white/12 text-white shadow-[inset_0_0_0_1px_rgba(230,168,23,0.35)]"
-                    : "text-white/70 hover:bg-white/8 hover:text-white"
+                key={item.label}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className={`relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                  active ? "bg-[#2b6cb0] text-white" : "text-white/75 hover:bg-white/8 hover:text-white"
                 }`}
               >
-                <Icon className={`h-4 w-4 shrink-0 ${active ? "text-[var(--amber)]" : "text-white/45"}`} />
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="flex-1">{item.label}</span>
+                {item.badge != null && item.badge > 0 && (
+                  <span className="rounded-full bg-[var(--amber)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--navy-deep)]">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            );
+          }
+
+          const Icon = item.icon;
+          const expanded = openGroup === item.label;
+          const childActive = item.children.some((c) => pathActive(pathname, c.href));
+          return (
+            <div key={item.label}>
+              <button
+                type="button"
+                onClick={() => setOpenGroup(expanded ? null : item.label)}
+                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
+                  childActive ? "bg-white/10 text-white" : "text-white/75 hover:bg-white/8 hover:text-white"
+                }`}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="flex-1">{item.label}</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition ${expanded ? "rotate-180" : ""}`} />
+              </button>
+              {expanded && (
+                <div className="ml-4 mt-1 space-y-0.5 border-l border-white/10 pl-3">
+                  {item.children.map((c) => (
+                    <Link
+                      key={`${item.label}-${c.label}`}
+                      href={c.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`block rounded-md px-2 py-1.5 text-[13px] ${
+                        pathActive(pathname, c.href)
+                          ? "bg-[#2b6cb0]/40 font-semibold text-white"
+                          : "text-white/60 hover:bg-white/8 hover:text-white"
+                      }`}
+                    >
+                      {c.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <div className="pt-3">
+          <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">Academy tools</p>
+          {extraLinks.map((l) => {
+            const Icon = l.icon;
+            const active = pathActive(pathname, l.href);
+            return (
+              <Link
+                key={l.href + l.label}
+                href={l.href}
+                onClick={() => setMobileOpen(false)}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm ${
+                  active ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/8 hover:text-white"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
                 {l.label}
               </Link>
             );
           })}
+        </div>
+      </nav>
+
+      <div className="space-y-2 border-t border-white/10 p-3">
+        <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">Switch Role</p>
+        <div className="grid grid-cols-2 gap-2">
           <Link
             href="/app"
-            className="mt-1 flex items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2.5 text-sm text-[var(--amber)] hover:bg-white/8 md:mt-auto"
+            className="rounded-lg border border-white/15 px-2 py-2 text-center text-[11px] font-semibold text-white/75 hover:bg-white/8"
           >
-            <GraduationCap className="h-4 w-4 shrink-0" />
-            Candidate view
+            Instructor View
           </Link>
-        </nav>
-      </aside>
+          <span className="rounded-lg bg-[var(--amber)] px-2 py-2 text-center text-[11px] font-bold text-[var(--navy-deep)]">
+            Administrator View
+          </span>
+        </div>
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm text-white/50 hover:bg-white/8 hover:text-white"
+          >
+            <LogOut className="h-4 w-4" /> Log out
+          </button>
+        </form>
+      </div>
+    </aside>
+  );
+
+  return (
+    <div className="admin-shell min-h-screen bg-[#eef2f7] font-[family-name:var(--font-marketing)] md:flex">
+      <div className="hidden md:block">{Sidebar}</div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button type="button" className="absolute inset-0 bg-black/50" aria-label="Close menu" onClick={() => setMobileOpen(false)} />
+          <div className="absolute inset-y-0 left-0 z-10">{Sidebar}</div>
+        </div>
+      )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-[var(--navy)]/10 bg-[rgba(247,250,252,0.86)] backdrop-blur-md">
-          <div className="flex items-center justify-between gap-4 px-5 py-3.5 md:px-8">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--steel)]">Life Star Academy</p>
-              <h1 className="font-display text-xl text-[var(--navy)] md:text-2xl">{pageTitle}</h1>
+        <header className="sticky top-0 z-30 border-b border-[var(--navy)]/8 bg-white">
+          <div className="flex items-center gap-3 px-4 py-3 md:px-6">
+            <button
+              type="button"
+              className="rounded-lg p-2 text-[var(--navy)] hover:bg-[var(--mist)] md:hidden"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+
+            <div className="hidden items-center gap-2 sm:flex">
+              <Crown className="h-4 w-4 text-[var(--amber)]" />
+              <h1 className="text-sm font-bold text-[var(--navy)] md:text-base">Administrator Dashboard</h1>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <button
-                type="button"
-                className="relative hidden h-10 w-10 items-center justify-center rounded-full border border-[var(--navy)]/10 bg-white text-[var(--steel)] shadow-sm sm:flex"
+
+            <form action="/admin/candidates" className="relative mx-auto hidden w-full max-w-xl flex-1 md:block">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--steel)]" />
+              <input
+                name="q"
+                placeholder="Search students, courses, applications..."
+                className="h-10 w-full rounded-full border border-[var(--navy)]/10 bg-[#f4f7fb] py-2 pl-10 pr-3 text-sm text-[var(--navy)] outline-none placeholder:text-[var(--steel)] focus:ring-2 focus:ring-[#2b6cb0]/30"
+              />
+            </form>
+
+            <div className="ml-auto flex items-center gap-2 sm:gap-3">
+              <Link
+                href="/admin/licenses"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[var(--navy)]/10 bg-white text-[var(--navy)] shadow-sm"
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
-              </button>
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white">
+                  5
+                </span>
+              </Link>
+
               <div className="relative" ref={menuRef}>
                 <button
                   type="button"
                   onClick={() => setMenuOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded-full border border-[var(--navy)]/10 bg-white py-1.5 pl-1.5 pr-3 shadow-sm transition hover:border-[var(--navy)]/20"
+                  className="flex items-center gap-2 rounded-full border border-[var(--navy)]/10 bg-white py-1.5 pl-1.5 pr-3 shadow-sm"
                   aria-expanded={menuOpen}
-                  aria-haspopup="menu"
                 >
                   {user.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -148,52 +327,46 @@ export function AdminShell({
                       className="h-8 w-8 rounded-full object-cover ring-2 ring-[var(--amber)]/40"
                     />
                   ) : (
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--navy)] text-xs font-semibold text-white">
-                      {initials(user.name) || "A"}
-                    </span>
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src="/cms/admin/admin-avatar.jpg"
+                      alt=""
+                      className="h-8 w-8 rounded-full object-cover ring-2 ring-[var(--amber)]/40"
+                    />
                   )}
                   <span className="hidden text-left sm:block">
-                    <span className="block text-sm font-medium text-[var(--navy)]">{user.name}</span>
-                    <span className="block text-[11px] text-[var(--steel)]">{user.email}</span>
+                    <span className="block text-sm font-semibold text-[var(--navy)]">{user.name}</span>
+                    <span className="block text-[11px] text-[var(--steel)]">Administrator</span>
                   </span>
                   <ChevronDown className="h-4 w-4 text-[var(--steel)]" />
                 </button>
                 {menuOpen && (
-                  <div
-                    role="menu"
-                    className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-[var(--navy)]/10 bg-white py-1 shadow-lg"
-                  >
+                  <div role="menu" className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-[var(--navy)]/10 bg-white py-1 shadow-lg">
                     <div className="border-b border-[var(--navy)]/8 px-3 py-2">
                       <p className="text-sm font-medium text-[var(--navy)]">{user.name}</p>
                       <p className="truncate text-xs text-[var(--steel)]">{user.email}</p>
                     </div>
                     <Link
                       href="/admin/settings"
-                      role="menuitem"
                       className="flex items-center gap-2 px-3 py-2.5 text-sm text-[var(--navy)] hover:bg-[var(--mist)]"
                       onClick={() => setMenuOpen(false)}
                     >
-                      <Settings className="h-4 w-4 text-[var(--steel)]" />
-                      Profile & settings
+                      <Settings className="h-4 w-4 text-[var(--steel)]" /> Profile & settings
                     </Link>
                     <Link
                       href="/app"
-                      role="menuitem"
                       className="flex items-center gap-2 px-3 py-2.5 text-sm text-[var(--navy)] hover:bg-[var(--mist)]"
                       onClick={() => setMenuOpen(false)}
                     >
-                      <GraduationCap className="h-4 w-4 text-[var(--steel)]" />
-                      Candidate view
+                      <GraduationCap className="h-4 w-4 text-[var(--steel)]" /> Instructor / candidate view
                     </Link>
                     <button
                       type="button"
-                      role="menuitem"
                       disabled={pending}
                       className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-red-700 hover:bg-red-50 disabled:opacity-60"
                       onClick={() => startTransition(() => logoutAction())}
                     >
-                      <LogOut className="h-4 w-4" />
-                      Log out
+                      <LogOut className="h-4 w-4" /> Log out
                     </button>
                   </div>
                 )}
@@ -201,7 +374,8 @@ export function AdminShell({
             </div>
           </div>
         </header>
-        <main className="flex-1 px-5 py-8 md:px-8">{children}</main>
+
+        <main className="flex-1 px-4 py-6 md:px-6 lg:px-8">{children}</main>
       </div>
     </div>
   );

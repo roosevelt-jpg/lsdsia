@@ -489,6 +489,16 @@ model CmsSite {
   dashboardUpgradeBody       String @default("Advanced Courses\nBusiness Launch Toolkit\n1-on-1 Mentorship")
   dashboardUpgradeCtaLabel   String @default("Upgrade Now")
   dashboardUpgradeCtaHref    String @default("/app/store")
+  /// Super-admin dashboard CMS banners (replaceable anytime)
+  adminHeroTitle             String @default("Welcome to Life Star Instructors Academy")
+  adminHeroSubtitle          String @default("Manage training, students, instructors and academy operations all in one place.")
+  adminHeroBgUrl             String @default("/cms/admin/hero-banner.jpg")
+  adminHeroPersonUrl         String @default("/cms/admin/hero-person-hires.jpg")
+  adminPromoTitle            String @default("Grow Your Driving School")
+  adminPromoBody             String @default("Expand campus capacity, launch new cohorts, and scale instructor training.")
+  adminPromoImageUrl         String @default("/cms/admin/promo-grow.jpg")
+  adminPromoCtaLabel         String @default("Learn More")
+  adminPromoCtaHref          String @default("/admin/school-launch")
 }
 
 model CmsNavItem {

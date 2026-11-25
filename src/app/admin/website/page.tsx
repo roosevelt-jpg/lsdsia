@@ -76,6 +76,38 @@ async function saveDashboardBanners(formData: FormData) {
   redirect("/admin/website?saved=dashboard");
 }
 
+async function saveAdminDashboardBanners(formData: FormData) {
+  "use server";
+  await requireUser(["admin"]);
+  await prisma.cmsSite.upsert({
+    where: { id: "default" },
+    create: {
+      id: "default",
+      adminHeroTitle: String(formData.get("adminHeroTitle") || ""),
+      adminHeroSubtitle: String(formData.get("adminHeroSubtitle") || ""),
+      adminHeroBgUrl: String(formData.get("adminHeroBgUrl") || ""),
+      adminHeroPersonUrl: String(formData.get("adminHeroPersonUrl") || ""),
+      adminPromoTitle: String(formData.get("adminPromoTitle") || ""),
+      adminPromoBody: String(formData.get("adminPromoBody") || ""),
+      adminPromoImageUrl: String(formData.get("adminPromoImageUrl") || ""),
+      adminPromoCtaLabel: String(formData.get("adminPromoCtaLabel") || ""),
+      adminPromoCtaHref: String(formData.get("adminPromoCtaHref") || ""),
+    },
+    update: {
+      adminHeroTitle: String(formData.get("adminHeroTitle") || ""),
+      adminHeroSubtitle: String(formData.get("adminHeroSubtitle") || ""),
+      adminHeroBgUrl: String(formData.get("adminHeroBgUrl") || ""),
+      adminHeroPersonUrl: String(formData.get("adminHeroPersonUrl") || ""),
+      adminPromoTitle: String(formData.get("adminPromoTitle") || ""),
+      adminPromoBody: String(formData.get("adminPromoBody") || ""),
+      adminPromoImageUrl: String(formData.get("adminPromoImageUrl") || ""),
+      adminPromoCtaLabel: String(formData.get("adminPromoCtaLabel") || ""),
+      adminPromoCtaHref: String(formData.get("adminPromoCtaHref") || ""),
+    },
+  });
+  redirect("/admin/website?saved=admin-dashboard");
+}
+
 async function savePage(formData: FormData) {
   "use server";
   await requireUser(["admin"]);
@@ -213,13 +245,25 @@ async function uploadMedia(formData: FormData) {
       });
     }
   }
-  const dashboardFieldByKey: Record<string, "dashboardHeroBgUrl" | "dashboardHeroPersonUrl" | "dashboardUpgradeImageUrl" | "dashboardContinueThumbUrl"> = {
+  const mediaFieldByKey: Record<
+    string,
+    | "dashboardHeroBgUrl"
+    | "dashboardHeroPersonUrl"
+    | "dashboardUpgradeImageUrl"
+    | "dashboardContinueThumbUrl"
+    | "adminHeroBgUrl"
+    | "adminHeroPersonUrl"
+    | "adminPromoImageUrl"
+  > = {
     dashboard_hero_bg: "dashboardHeroBgUrl",
     dashboard_hero_person: "dashboardHeroPersonUrl",
     dashboard_upgrade: "dashboardUpgradeImageUrl",
     dashboard_continue_thumb: "dashboardContinueThumbUrl",
+    admin_hero_bg: "adminHeroBgUrl",
+    admin_hero_person: "adminHeroPersonUrl",
+    admin_promo: "adminPromoImageUrl",
   };
-  const field = dashboardFieldByKey[key];
+  const field = mediaFieldByKey[key];
   if (field) {
     await prisma.cmsSite.upsert({
       where: { id: "default" },
@@ -396,13 +440,87 @@ export default async function AdminWebsiteCmsPage({
       </Card>
 
       <Card className="space-y-4">
+        <h2 className="font-display text-xl text-[var(--navy)]">Super-admin dashboard banners</h2>
+        <p className="text-sm text-[var(--steel)]">
+          Replace the administrator welcome hero and “Grow Your Driving School” promo card anytime. Defaults use assets
+          under <code className="text-xs">/cms/admin/</code> extracted from the ChatGPT admin mock.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { label: "Hero BG", src: site?.adminHeroBgUrl },
+            { label: "Hero person", src: site?.adminHeroPersonUrl },
+            { label: "Promo", src: site?.adminPromoImageUrl },
+          ].map((p) => (
+            <div key={p.label} className="overflow-hidden rounded-lg border border-[var(--navy)]/10 bg-[var(--mist)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={p.src?.startsWith("cms:") ? `/api/cms-media/${p.src.slice(4)}` : p.src || ""}
+                alt=""
+                className="h-20 w-full object-cover"
+              />
+              <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--steel)]">{p.label}</p>
+            </div>
+          ))}
+        </div>
+        <form action={saveAdminDashboardBanners} className="grid gap-3 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <Label>Hero title</Label>
+            <Input name="adminHeroTitle" defaultValue={site?.adminHeroTitle ?? ""} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Hero subtitle</Label>
+            <textarea
+              name="adminHeroSubtitle"
+              defaultValue={site?.adminHeroSubtitle ?? ""}
+              className="mt-1 min-h-16 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <Label>Hero background URL</Label>
+            <Input name="adminHeroBgUrl" defaultValue={site?.adminHeroBgUrl ?? ""} />
+          </div>
+          <div>
+            <Label>Hero person URL</Label>
+            <Input name="adminHeroPersonUrl" defaultValue={site?.adminHeroPersonUrl ?? ""} />
+          </div>
+          <div>
+            <Label>Promo title</Label>
+            <Input name="adminPromoTitle" defaultValue={site?.adminPromoTitle ?? ""} />
+          </div>
+          <div>
+            <Label>Promo CTA label</Label>
+            <Input name="adminPromoCtaLabel" defaultValue={site?.adminPromoCtaLabel ?? ""} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Promo body</Label>
+            <textarea
+              name="adminPromoBody"
+              defaultValue={site?.adminPromoBody ?? ""}
+              className="mt-1 min-h-16 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <Label>Promo image URL</Label>
+            <Input name="adminPromoImageUrl" defaultValue={site?.adminPromoImageUrl ?? ""} />
+          </div>
+          <div>
+            <Label>Promo CTA href</Label>
+            <Input name="adminPromoCtaHref" defaultValue={site?.adminPromoCtaHref ?? ""} />
+          </div>
+          <Button type="submit" variant="outline">
+            Save admin dashboard banners
+          </Button>
+        </form>
+      </Card>
+
+      <Card className="space-y-4">
         <h2 className="font-display text-xl text-[var(--navy)]">Upload marketing image</h2>
         <p className="text-sm text-[var(--steel)]">
           Uploads are stored in the database and served at <code className="text-xs">/api/cms-media/[key]</code>. Use
-          key <code className="text-xs">hero_image</code> for the marketing homepage hero, or dashboard keys{" "}
-          <code className="text-xs">dashboard_hero_bg</code>, <code className="text-xs">dashboard_hero_person</code>,{" "}
-          <code className="text-xs">dashboard_upgrade</code>, <code className="text-xs">dashboard_continue_thumb</code>{" "}
-          to replace candidate dashboard banners instantly.
+          key <code className="text-xs">hero_image</code> for the marketing homepage hero; candidate keys{" "}
+          <code className="text-xs">dashboard_*</code>; or admin keys <code className="text-xs">admin_hero_bg</code>,{" "}
+          <code className="text-xs">admin_hero_person</code>, <code className="text-xs">admin_promo</code> to replace
+          dashboard banners instantly.
         </p>
         <form action={uploadMedia} className="flex flex-wrap items-end gap-3">
           <div>

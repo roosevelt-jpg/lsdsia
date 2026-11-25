@@ -40,6 +40,16 @@ export async function seedCms(prisma: PrismaClient) {
       dashboardUpgradeBody: "Advanced Courses\nBusiness Launch Toolkit\n1-on-1 Mentorship",
       dashboardUpgradeCtaLabel: "Upgrade Now",
       dashboardUpgradeCtaHref: "/app/store",
+      adminHeroTitle: "Welcome to Life Star Instructors Academy",
+      adminHeroSubtitle:
+        "Manage training, students, instructors and academy operations all in one place.",
+      adminHeroBgUrl: "/cms/admin/hero-banner.jpg",
+      adminHeroPersonUrl: "/cms/admin/hero-person-hires.jpg",
+      adminPromoTitle: "Grow Your Driving School",
+      adminPromoBody: "Expand campus capacity, launch new cohorts, and scale instructor training.",
+      adminPromoImageUrl: "/cms/admin/promo-grow.jpg",
+      adminPromoCtaLabel: "Learn More",
+      adminPromoCtaHref: "/admin/school-launch",
     },
   });
 
