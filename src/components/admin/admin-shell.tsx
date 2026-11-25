@@ -23,6 +23,7 @@ import {
   IdCard,
   Building2,
   Globe,
+  Crown,
 } from "lucide-react";
 
 export type AdminShellUser = {
@@ -284,7 +285,12 @@ export function AdminShell({
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
 
-            <form action="/admin/candidates" className="relative mx-auto hidden w-full max-w-2xl flex-1 md:block">
+            <div className="hidden items-center gap-2 sm:flex">
+              <Crown className="h-4 w-4 text-[var(--amber)]" />
+              <h1 className="text-sm font-bold text-[var(--navy)] md:text-base">Administrator Dashboard</h1>
+            </div>
+
+            <form action="/admin/candidates" className="relative mx-auto hidden w-full max-w-xl flex-1 md:block">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--steel)]" />
               <input
                 name="q"

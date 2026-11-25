@@ -5,7 +5,7 @@ export type CmsBundle = Awaited<ReturnType<typeof loadCmsBundle>>;
 
 let cmsEnsurePromise: Promise<void> | null = null;
 
-const CMS_CONTENT_VERSION = 6;
+const CMS_CONTENT_VERSION = 7;
 
 /** Ensure marketing CMS tables have the ChatGPT-mock defaults (idempotent). */
 export async function ensureCmsDefaults() {
@@ -65,6 +65,10 @@ export async function loadCmsSite() {
   if (!s.adminHeroCtaPrimaryLabel) bannerDefaults.adminHeroCtaPrimaryLabel = "New Enrollment";
   if (!s.adminHeroCtaSecondaryLabel) bannerDefaults.adminHeroCtaSecondaryLabel = "View Reports";
   if (!s.adminHeroCtaTertiaryLabel) bannerDefaults.adminHeroCtaTertiaryLabel = "Manage Courses";
+  if (!s.adminDashboardJson || s.adminDashboardJson === "{}") {
+    const { DEFAULT_ADMIN_DASHBOARD } = await import("@/lib/admin-dashboard-cms");
+    bannerDefaults.adminDashboardJson = JSON.stringify(DEFAULT_ADMIN_DASHBOARD, null, 2);
+  }
 
   if (Object.keys(bannerDefaults).length > 0) {
     site = await prisma.cmsSite.update({ where: { id: "default" }, data: bannerDefaults });

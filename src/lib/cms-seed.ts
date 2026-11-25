@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
+import { DEFAULT_ADMIN_DASHBOARD } from "@/lib/admin-dashboard-cms";
 
 /** Default marketing CMS content matching the hi-res ChatGPT homepage / auth / dashboard mocks. */
 export async function seedCms(prisma: PrismaClient) {
@@ -51,7 +52,7 @@ export async function seedCms(prisma: PrismaClient) {
         { network: "tiktok", href: "https://tiktok.com" },
       ]),
       newsletterBlurb: "Get training updates, new courses and special offers.",
-      contentVersion: 6,
+      contentVersion: 7,
       dashboardTagline: "Learn Globally. Train Professionally. Lead Confidently.",
       dashboardHeroBgUrl: "/cms/dashboard/hero-bg-hires.jpg",
       dashboardHeroPersonUrl: "/cms/dashboard/hero-person.jpg",
@@ -83,6 +84,7 @@ export async function seedCms(prisma: PrismaClient) {
       adminHeroCtaSecondaryHref: "/admin",
       adminHeroCtaTertiaryLabel: "Manage Courses",
       adminHeroCtaTertiaryHref: "/admin/content",
+      adminDashboardJson: JSON.stringify(DEFAULT_ADMIN_DASHBOARD, null, 2),
     },
   });
 

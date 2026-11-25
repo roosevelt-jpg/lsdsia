@@ -548,6 +548,8 @@ model CmsSite {
   adminHeroCtaSecondaryHref  String @default("/admin")
   adminHeroCtaTertiaryLabel  String @default("Manage Courses")
   adminHeroCtaTertiaryHref   String @default("/admin/content")
+  /// Editable admin dashboard copy (section titles, metric labels, notifications, quick actions)
+  adminDashboardJson         String @default("{}")
 }
 
 model CmsNavItem {

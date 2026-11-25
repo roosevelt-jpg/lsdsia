@@ -13,34 +13,28 @@ import {
   Wallet,
   FileSpreadsheet,
   Megaphone,
-  ArrowUpRight,
-  ClipboardList,
+  Bell,
+  Clock,
+  CheckCircle2,
+  CalendarDays,
+  FileText,
 } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { formatUsd } from "@/lib/money";
 import { loadCmsSite, resolveCmsImage } from "@/lib/cms";
+import { parseAdminDashboardCopy } from "@/lib/admin-dashboard-cms";
 import {
   EnrollmentTrendChart,
   StudentProgressDonut,
   CourseEnrollmentBars,
 } from "@/components/admin/admin-dashboard-charts";
+import { RecentApplicationsTable } from "@/components/admin/recent-applications-table";
 
 export const dynamic = "force-dynamic";
 
 function pct(part: number, whole: number) {
   if (!whole) return 0;
   return Math.round((part / whole) * 100);
-}
-
-function statusTone(status: string) {
-  const s = status.toLowerCase();
-  if (s.includes("approved") || s === "paid" || s === "verified") {
-    return "bg-emerald-50 text-emerald-700";
-  }
-  if (s.includes("document") || s.includes("rejected") || s.includes("required") || s === "failed") {
-    return "bg-red-50 text-red-700";
-  }
-  return "bg-amber-50 text-amber-700";
 }
 
 export default async function AdminHome() {
@@ -55,8 +49,6 @@ export default async function AdminHome() {
     licensesRecent,
     revenueAgg,
     paidOrders,
-    enrollments,
-    completedEnrollments,
     progressDone,
     progressTotal,
     bookingsUpcoming,
@@ -77,8 +69,6 @@ export default async function AdminHome() {
     }),
     prisma.order.aggregate({ where: { status: "paid" }, _sum: { totalCents: true } }),
     prisma.order.count({ where: { status: "paid" } }),
-    prisma.enrollment.count(),
-    prisma.enrollment.count({ where: { completedAt: { not: null } } }),
     prisma.lessonProgress.count({ where: { completedAt: { not: null } } }),
     prisma.lessonProgress.count(),
     prisma.practicumSession.findMany({
@@ -108,10 +98,11 @@ export default async function AdminHome() {
     site.adminHeroBgUrl ||
     "/cms/admin/hero-banner.jpg";
   const promoImg = resolveCmsImage(site.adminPromoImageUrl, mediaMap) || site.adminPromoImageUrl;
+  const dash = parseAdminDashboardCopy(
+    (site as { adminDashboardJson?: string }).adminDashboardJson,
+  );
 
   const revenueCents = revenueAgg._sum.totalCents ?? 0;
-  const inProgressEnroll = Math.max(0, enrollments - completedEnrollments);
-  const notStartedEstimate = Math.max(0, candidates - enrollments);
   // Progress donut: use live lesson-progress shares when present, else mock defaults (78/14/8)
   const hasLessonProgress = progressTotal > 0;
   const progressCompletedPct = hasLessonProgress ? pct(progressDone, progressTotal) : 78;
@@ -133,7 +124,7 @@ export default async function AdminHome() {
   const courseBars =
     levels.length > 0
       ? levels.map((l) => ({
-          name: l.name.length > 22 ? `${l.name.slice(0, 20)}…` : l.name,
+          name: l.name.length > 28 ? `${l.name.slice(0, 26)}…` : l.name,
           count: l._count.enrollments,
         }))
       : [
@@ -178,54 +169,60 @@ export default async function AdminHome() {
           };
         });
 
-  const notifications = [
-    { title: "New application received", detail: "License verification awaiting review", time: "2 min ago" },
-    { title: "Payment confirmed", detail: `${paidOrders} paid order${paidOrders === 1 ? "" : "s"} on record`, time: "18 min ago" },
-    { title: "Class reminder", detail: "Upcoming practicum sessions need capacity check", time: "1 hr ago" },
-    { title: "Certificate issued", detail: "Digital certificates available for graduates", time: "Yesterday" },
-  ];
+  const notifications = dash.notifications.items.map((n, i) => {
+    if (i === 1 && paidOrders > 0) {
+      return {
+        ...n,
+        detail: n.detail.includes("$")
+          ? n.detail
+          : `${paidOrders} paid order${paidOrders === 1 ? "" : "s"} on record`,
+      };
+    }
+    return n;
+  });
 
   const metrics = [
     {
-      label: "Total Students",
+      label: dash.metrics.studentsLabel,
       value: candidates.toLocaleString(),
-      hint: "+12% this month",
+      hint: dash.metrics.studentsHint,
       hintTone: "text-emerald-600",
       icon: Users,
       iconTone: "bg-sky-50 text-sky-700",
       href: "/admin/candidates",
     },
     {
-      label: "Active Courses",
+      label: dash.metrics.coursesLabel,
       value: String(Math.max(modules, lessons > 0 ? Math.ceil(lessons / 4) : 0)),
-      hint: `+${Math.max(modules, 1)} modules`,
+      hint: dash.metrics.coursesHint,
       hintTone: "text-emerald-600",
       icon: BookOpen,
       iconTone: "bg-indigo-50 text-indigo-700",
       href: "/admin/content",
     },
     {
-      label: "Instructors",
+      label: dash.metrics.instructorsLabel,
       value: String(Math.max(coaches, 1)),
-      hint: "+2 this month",
+      hint: dash.metrics.instructorsHint,
       hintTone: "text-emerald-600",
       icon: UserCheck,
-      iconTone: "bg-violet-50 text-violet-700",
+      iconTone: "bg-amber-50 text-amber-700",
       href: "/admin/settings",
     },
     {
-      label: "Pending Applications",
+      label: dash.metrics.pendingLabel,
       value: String(licensesPending),
-      hint: licensesPending > 0 ? "Needs Review" : "All clear",
+      hint: licensesPending > 0 ? dash.metrics.pendingHint : "All clear",
       hintTone: licensesPending > 0 ? "text-amber-600" : "text-emerald-600",
       icon: FileWarning,
       iconTone: "bg-amber-50 text-amber-700",
       href: "/admin/licenses",
+      pending: licensesPending > 0,
     },
     {
-      label: "Total Revenue",
+      label: dash.metrics.revenueLabel,
       value: formatUsd(revenueCents),
-      hint: "+18% vs. last month",
+      hint: dash.metrics.revenueHint,
       hintTone: "text-emerald-600",
       icon: BadgeDollarSign,
       iconTone: "bg-emerald-50 text-emerald-700",
@@ -233,115 +230,179 @@ export default async function AdminHome() {
     },
   ];
 
-  const quickActions = [
-    { href: "/admin/candidates", label: "Add New Student", icon: UserPlus },
-    { href: "/admin/content", label: "Create Course", icon: Layers },
-    { href: "/admin/practicum", label: "Schedule Class", icon: CalendarPlus },
-    { href: "/admin/orders", label: "Record Payment", icon: Wallet },
-    { href: "/admin#reports", label: "Generate Report", icon: FileSpreadsheet },
-    { href: "/admin/website", label: "Send Announcement", icon: Megaphone },
-  ];
+  const quickActionIcons = [UserPlus, Layers, CalendarPlus, Wallet, FileSpreadsheet, Megaphone];
+  const quickActions = dash.quickActions.items.map((item, i) => ({
+    ...item,
+    icon: quickActionIcons[i % quickActionIcons.length]!,
+  }));
+
+  const applicationRows = applications.map((a) => ({
+    id: a.id,
+    name: a.name,
+    program: a.program,
+    dateLabel: a.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+    status: a.status,
+    href: a.href,
+    action: a.action,
+  }));
+
+  const demoApplications =
+    applicationRows.length > 0
+      ? applicationRows
+      : [
+          {
+            id: "demo-1",
+            name: "John Miller",
+            program: "Instructor Training Program",
+            dateLabel: "Jan 24, 2025",
+            status: "Pending Review",
+            href: "/admin/licenses",
+            action: "Review",
+          },
+          {
+            id: "demo-2",
+            name: "Sarah Williams",
+            program: "State Licensing Prep",
+            dateLabel: "Jan 23, 2025",
+            status: "Approved",
+            href: "/admin/licenses",
+            action: "View",
+          },
+          {
+            id: "demo-3",
+            name: "Emily Carter",
+            program: "Business Setup Course",
+            dateLabel: "Jan 22, 2025",
+            status: "Documents Required",
+            href: "/admin/licenses",
+            action: "Request",
+          },
+          {
+            id: "demo-4",
+            name: "Michael Brown",
+            program: "Instructor Training Program",
+            dateLabel: "Jan 21, 2025",
+            status: "Pending Review",
+            href: "/admin/licenses",
+            action: "Review",
+          },
+          {
+            id: "demo-5",
+            name: "Anna Thompson",
+            program: "Teaching Methods Workshop",
+            dateLabel: "Jan 20, 2025",
+            status: "Approved",
+            href: "/admin/licenses",
+            action: "View",
+          },
+        ];
 
   return (
-    <div className="mx-auto max-w-[1400px] space-y-6">
-      {/* HERO — sharp text-free photo; CMS title/CTAs overlay in HTML */}
-      <section className="relative overflow-hidden rounded-2xl text-white shadow-[0_16px_40px_rgba(11,31,51,0.16)]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={heroBg}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(105deg, rgba(8,28,72,0.94) 0%, rgba(12,48,110,0.78) 42%, rgba(12,48,110,0.28) 72%, rgba(12,48,110,0.12) 100%)",
-          }}
-        />
-        {/* Decorative brand swoosh (matches mock; not baked into photo) */}
-        <div
-          className="pointer-events-none absolute -left-6 -top-10 h-40 w-56 rotate-[-18deg] rounded-[40%] bg-gradient-to-br from-[#1a4fa0] via-[#0b2f66] to-transparent opacity-90"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -left-2 top-2 h-3 w-44 rotate-[-18deg] rounded-full bg-gradient-to-r from-[var(--amber)] to-transparent opacity-90"
-          aria-hidden
-        />
-        <div className="relative px-6 py-8 lg:px-8 lg:py-10">
-          <div className="max-w-xl">
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              {site.adminHeroTitle || "Welcome to Life Star Instructors Academy"}
-            </h2>
-            <p className="mt-2 text-sm text-white/85 sm:text-base">
-              {site.adminHeroSubtitle ||
-                "Manage training, students, instructors and academy operations all in one place."}
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2.5">
-              <Link
-                href={(site as { adminHeroCtaPrimaryHref?: string }).adminHeroCtaPrimaryHref || "/admin/candidates"}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-[var(--amber)] to-[#f0b92a] px-4 py-2.5 text-sm font-bold text-[var(--navy-deep)] hover:brightness-105"
-              >
-                <Plus className="h-4 w-4" />{" "}
-                {(site as { adminHeroCtaPrimaryLabel?: string }).adminHeroCtaPrimaryLabel || "New Enrollment"}
-              </Link>
-              <Link
-                href={(site as { adminHeroCtaSecondaryHref?: string }).adminHeroCtaSecondaryHref || "#reports"}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/70 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
-              >
-                <BarChart3 className="h-4 w-4" />{" "}
-                {(site as { adminHeroCtaSecondaryLabel?: string }).adminHeroCtaSecondaryLabel || "View Reports"}
-              </Link>
-              <Link
-                href={(site as { adminHeroCtaTertiaryHref?: string }).adminHeroCtaTertiaryHref || "/admin/content"}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/70 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
-              >
-                <BookOpen className="h-4 w-4" />{" "}
-                {(site as { adminHeroCtaTertiaryLabel?: string }).adminHeroCtaTertiaryLabel || "Manage Courses"}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* METRICS */}
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {metrics.map((m) => {
-          const Icon = m.icon;
-          return (
-            <Link
-              key={m.label}
-              href={m.href}
-              className="rounded-xl bg-white p-4 shadow-[0_8px_24px_rgba(43,108,176,0.10)] ring-1 ring-[#2b6cb0]/8 transition hover:ring-[#2b6cb0]/35"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${m.iconTone}`}>
-                  <Icon className="h-4 w-4" />
-                </span>
-                <ArrowUpRight className="h-3.5 w-3.5 text-[var(--steel)]" />
-              </div>
-              <p className="mt-3 text-2xl font-bold text-[var(--navy)]">{m.value}</p>
-              <p className="text-xs text-[var(--steel)]">{m.label}</p>
-              <p className={`mt-1 text-[11px] font-semibold ${m.hintTone}`}>{m.hint}</p>
-            </Link>
-          );
-        })}
-      </section>
-
+    <div className="mx-auto max-w-[1400px]">
       <div className="grid gap-6 xl:grid-cols-[1.55fr_0.85fr]">
-        {/* MAIN COLUMN */}
+        {/* MAIN COLUMN — hero, metrics, charts, applications, quick actions */}
         <div className="space-y-6">
+          {/* HERO — sharp text-free photo; CMS title/CTAs overlay in HTML */}
+          <section className="relative overflow-hidden rounded-2xl text-white shadow-[0_16px_40px_rgba(11,31,51,0.16)]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroBg}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(105deg, rgba(8,28,72,0.94) 0%, rgba(12,48,110,0.78) 42%, rgba(12,48,110,0.28) 72%, rgba(12,48,110,0.12) 100%)",
+              }}
+            />
+            <div
+              className="pointer-events-none absolute -left-6 -top-10 h-40 w-56 rotate-[-18deg] rounded-[40%] bg-gradient-to-br from-[#1a4fa0] via-[#0b2f66] to-transparent opacity-90"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute -left-2 top-2 h-3 w-44 rotate-[-18deg] rounded-full bg-gradient-to-r from-[var(--amber)] to-transparent opacity-90"
+              aria-hidden
+            />
+            <div className="relative px-6 py-8 lg:px-8 lg:py-10">
+              <div className="max-w-xl">
+                <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                  {site.adminHeroTitle || "Welcome to Life Star Instructors Academy"}
+                </h2>
+                <p className="mt-2 text-sm text-white/85 sm:text-base">
+                  {site.adminHeroSubtitle ||
+                    "Manage training, students, instructors and academy operations all in one place."}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2.5">
+                  <Link
+                    href={(site as { adminHeroCtaPrimaryHref?: string }).adminHeroCtaPrimaryHref || "/admin/candidates"}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-[var(--amber)] to-[#f0b92a] px-4 py-2.5 text-sm font-bold text-[var(--navy-deep)] hover:brightness-105"
+                  >
+                    <Plus className="h-4 w-4" />{" "}
+                    {(site as { adminHeroCtaPrimaryLabel?: string }).adminHeroCtaPrimaryLabel || "New Enrollment"}
+                  </Link>
+                  <Link
+                    href={(site as { adminHeroCtaSecondaryHref?: string }).adminHeroCtaSecondaryHref || "#reports"}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/70 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    <BarChart3 className="h-4 w-4" />{" "}
+                    {(site as { adminHeroCtaSecondaryLabel?: string }).adminHeroCtaSecondaryLabel || "View Reports"}
+                  </Link>
+                  <Link
+                    href={(site as { adminHeroCtaTertiaryHref?: string }).adminHeroCtaTertiaryHref || "/admin/content"}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/70 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+                  >
+                    <BookOpen className="h-4 w-4" />{" "}
+                    {(site as { adminHeroCtaTertiaryLabel?: string }).adminHeroCtaTertiaryLabel || "Manage Courses"}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* METRICS */}
+          <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {metrics.map((m) => {
+              const Icon = m.icon;
+              return (
+                <Link
+                  key={m.label}
+                  href={m.href}
+                  className="rounded-xl bg-white p-4 shadow-[0_8px_24px_rgba(43,108,176,0.10)] ring-1 ring-[#2b6cb0]/8 transition hover:ring-[#2b6cb0]/35"
+                >
+                  <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${m.iconTone}`}>
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <p className="mt-3 text-2xl font-bold text-[var(--navy)]">{m.value}</p>
+                  <p className="text-xs text-[var(--steel)]">{m.label}</p>
+                  <p className={`mt-1 flex items-center gap-1 text-[11px] font-semibold ${m.hintTone}`}>
+                    {"pending" in m && m.pending ? <Clock className="h-3 w-3" /> : null}
+                    {m.hint}
+                  </p>
+                </Link>
+              );
+            })}
+          </section>
+
           <section id="reports" className="grid gap-4 lg:grid-cols-3">
-            <div className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8 lg:col-span-1">
-              <h3 className="text-sm font-bold text-[var(--navy)]">Enrollment Trend</h3>
-              <p className="text-xs text-[var(--steel)]">Students over the last 6 months</p>
+            <div className="rounded-xl bg-white p-5 shadow-[0_8px_24px_rgba(43,108,176,0.08)] ring-1 ring-[#2b6cb0]/8 lg:col-span-1">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-bold text-[var(--navy)]">{dash.charts.trendTitle}</h3>
+                  <p className="text-xs text-[var(--steel)]">{dash.charts.trendSubtitle}</p>
+                </div>
+                <span className="rounded-full bg-[#f4f7fb] px-2.5 py-1 text-[10px] font-semibold text-[var(--navy)]">
+                  {dash.charts.trendRangeLabel}
+                </span>
+              </div>
               <div className="mt-3">
                 <EnrollmentTrendChart data={trend} />
               </div>
             </div>
-            <div className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8 lg:col-span-1">
-              <h3 className="text-sm font-bold text-[var(--navy)]">Student Progress</h3>
-              <p className="text-xs text-[var(--steel)]">Lesson completion mix</p>
+            <div className="rounded-xl bg-white p-5 shadow-[0_8px_24px_rgba(43,108,176,0.08)] ring-1 ring-[#2b6cb0]/8 lg:col-span-1">
+              <h3 className="text-sm font-bold text-[var(--navy)]">{dash.charts.progressTitle}</h3>
+              <p className="text-xs text-[var(--steel)]">{dash.charts.progressSubtitle}</p>
               <div className="mt-3">
                 <StudentProgressDonut
                   completed={progressCompletedPct}
@@ -350,84 +411,27 @@ export default async function AdminHome() {
                 />
               </div>
             </div>
-            <div className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8 lg:col-span-1">
-              <h3 className="text-sm font-bold text-[var(--navy)]">Course Enrollment</h3>
-              <p className="text-xs text-[var(--steel)]">By program level</p>
+            <div className="rounded-xl bg-white p-5 shadow-[0_8px_24px_rgba(43,108,176,0.08)] ring-1 ring-[#2b6cb0]/8 lg:col-span-1">
+              <h3 className="text-sm font-bold text-[var(--navy)]">{dash.charts.coursesTitle}</h3>
+              <p className="text-xs text-[var(--steel)]">{dash.charts.coursesSubtitle}</p>
               <div className="mt-3">
                 <CourseEnrollmentBars data={courseBars} />
               </div>
             </div>
           </section>
 
-          <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-lg font-bold text-[var(--navy)]">Recent Applications</h3>
-                <p className="text-xs text-[var(--steel)]">License reviews and new candidate intakes</p>
-              </div>
-              <Link href="/admin/licenses" className="text-sm font-semibold text-[#2b6cb0] hover:underline">
-                View all →
-              </Link>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[640px] text-left text-sm">
-                <thead>
-                  <tr className="border-b border-[var(--navy)]/8 text-[11px] uppercase tracking-wide text-[var(--steel)]">
-                    <th className="pb-2 font-semibold">Applicant</th>
-                    <th className="pb-2 font-semibold">Program</th>
-                    <th className="pb-2 font-semibold">Date Applied</th>
-                    <th className="pb-2 font-semibold">Status</th>
-                    <th className="pb-2 font-semibold">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {applications.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="py-6 text-[var(--steel)]">
-                        No applications yet.
-                      </td>
-                    </tr>
-                  )}
-                  {applications.map((a) => (
-                    <tr key={a.id} className="border-b border-[var(--navy)]/6">
-                      <td className="py-3">
-                        <div className="flex items-center gap-2.5">
-                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--navy)] text-[10px] font-bold text-white">
-                            {a.name
-                              .split(/\s+/)
-                              .slice(0, 2)
-                              .map((p) => p[0]?.toUpperCase() ?? "")
-                              .join("")}
-                          </span>
-                          <span className="font-semibold text-[var(--navy)]">{a.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 text-[var(--steel)]">{a.program}</td>
-                      <td className="py-3 text-[var(--steel)]">
-                        {a.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                      </td>
-                      <td className="py-3">
-                        <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusTone(a.status)}`}>
-                          {a.status}
-                        </span>
-                      </td>
-                      <td className="py-3">
-                        <Link
-                          href={a.href}
-                          className="rounded-md bg-[#2b6cb0] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#245a96]"
-                        >
-                          {a.action}
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <RecentApplicationsTable
+            rows={demoApplications}
+            title={dash.applications.title}
+            subtitle={dash.applications.subtitle}
+            viewAllLabel={dash.applications.viewAllLabel}
+            viewAllHref={dash.applications.viewAllHref}
+            programFilterLabel={dash.applications.programFilterLabel}
+            statusFilterLabel={dash.applications.statusFilterLabel}
+          />
 
-          <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8">
-            <h3 className="mb-4 text-lg font-bold text-[var(--navy)]">Quick Actions</h3>
+          <section className="rounded-xl bg-white p-5 shadow-[0_8px_24px_rgba(43,108,176,0.08)] ring-1 ring-[#2b6cb0]/8">
+            <h3 className="mb-4 text-lg font-bold text-[var(--navy)]">{dash.quickActions.title}</h3>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {quickActions.map((a) => {
                 const Icon = a.icon;
@@ -435,9 +439,9 @@ export default async function AdminHome() {
                   <Link
                     key={a.label}
                     href={a.href}
-                    className="flex items-center gap-3 rounded-xl border border-[var(--navy)]/10 px-4 py-3 text-sm font-semibold text-[var(--navy)] transition hover:border-[#2b6cb0]/40 hover:bg-[#2b6cb0]/5"
+                    className="flex min-h-[72px] items-center gap-3 rounded-xl border border-[var(--navy)]/10 bg-[#f8fafc] px-4 py-3 text-sm font-semibold text-[var(--navy)] transition hover:border-[#2b6cb0]/40 hover:bg-white"
                   >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2b6cb0]/10 text-[#2b6cb0]">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2b6cb0]/10 text-[#2b6cb0]">
                       <Icon className="h-4 w-4" />
                     </span>
                     {a.label}
@@ -450,40 +454,67 @@ export default async function AdminHome() {
 
         {/* RIGHT RAIL */}
         <div className="space-y-6">
-          <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8">
+          <section className="rounded-xl bg-white p-5 shadow-[0_8px_24px_rgba(43,108,176,0.08)] ring-1 ring-[#2b6cb0]/8">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-[var(--navy)]">Notifications</h3>
-              <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">5</span>
+              <h3 className="flex items-center gap-2 text-lg font-bold text-[var(--navy)]">
+                <Bell className="h-4 w-4 text-[var(--amber)]" />
+                {dash.notifications.title}
+              </h3>
+              <Link
+                href={dash.notifications.viewAllHref}
+                className="text-sm font-semibold text-[#2b6cb0] hover:underline"
+              >
+                {dash.notifications.viewAllLabel}
+              </Link>
             </div>
-            <ul className="space-y-3">
-              {notifications.map((n) => (
-                <li key={n.title} className="rounded-lg border border-[var(--navy)]/8 p-3">
-                  <p className="text-sm font-semibold text-[var(--navy)]">{n.title}</p>
-                  <p className="mt-0.5 text-xs text-[var(--steel)]">{n.detail}</p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--amber)]">{n.time}</p>
-                </li>
-              ))}
+            <ul className="divide-y divide-[var(--navy)]/8">
+              {notifications.map((n) => {
+                const Icon =
+                  n.tone === "green" ? CheckCircle2 : n.tone === "blue" ? CalendarDays : FileText;
+                const toneClass =
+                  n.tone === "green"
+                    ? "bg-emerald-50 text-emerald-600"
+                    : n.tone === "blue"
+                      ? "bg-sky-50 text-sky-600"
+                      : "bg-amber-50 text-amber-600";
+                return (
+                  <li key={n.title} className="flex gap-3 py-3 first:pt-0 last:pb-0">
+                    <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${toneClass}`}>
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-[var(--navy)]">{n.title}</p>
+                      <p className="mt-0.5 truncate text-xs text-[var(--steel)]">{n.detail}</p>
+                      <p className="mt-1 text-[10px] font-semibold text-[var(--steel)]">{n.time}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </section>
 
-          <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8">
+          <section className="rounded-xl bg-white p-5 shadow-[0_8px_24px_rgba(43,108,176,0.08)] ring-1 ring-[#2b6cb0]/8">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-[var(--navy)]">Upcoming Sessions</h3>
-              <Link href="/admin/practicum" className="text-sm font-semibold text-[#2b6cb0] hover:underline">
-                Calendar →
+              <h3 className="text-lg font-bold text-[var(--navy)]">{dash.sessions.title}</h3>
+              <Link
+                href={dash.sessions.viewAllHref}
+                className="text-sm font-semibold text-[#2b6cb0] hover:underline"
+              >
+                {dash.sessions.viewAllLabel} →
               </Link>
             </div>
             <ul className="space-y-3">
               {bookingsUpcoming.length === 0 && (
                 <>
                   {[
-                    { day: "Jan 28", title: "Instructor Training (Online)", time: "10:00 AM – 12:00 PM", count: 32 },
-                    { day: "Jan 29", title: "Practical Training – Group A", time: "9:00 AM – 1:00 PM", count: 12 },
-                    { day: "Jan 30", title: "Licensing Exam Prep", time: "2:00 PM – 4:00 PM", count: 28 },
+                    { day: "JAN", date: "28", title: "Instructor Training (Online)", time: "10:00 AM – 12:00 PM", count: 32 },
+                    { day: "JAN", date: "29", title: "Practical Training – Group A", time: "9:00 AM – 1:00 PM", count: 12 },
+                    { day: "JAN", date: "30", title: "Licensing Exam Prep", time: "2:00 PM – 4:00 PM", count: 28 },
                   ].map((s) => (
-                    <li key={s.day} className="flex gap-3 rounded-lg border border-[var(--navy)]/8 p-3">
-                      <div className="rounded-md bg-[#2b6cb0]/10 px-2 py-1 text-center text-[10px] font-bold uppercase text-[#2b6cb0]">
-                        {s.day}
+                    <li key={s.date + s.title} className="flex gap-3 rounded-lg border border-[var(--navy)]/8 p-3">
+                      <div className="flex h-12 w-12 flex-col items-center justify-center rounded-md bg-[#2b6cb0]/10 text-[#2b6cb0]">
+                        <span className="text-[9px] font-bold uppercase leading-none">{s.day}</span>
+                        <span className="text-base font-bold leading-none">{s.date}</span>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-[var(--navy)]">{s.title}</p>
@@ -495,19 +526,27 @@ export default async function AdminHome() {
                   ))}
                 </>
               )}
-              {bookingsUpcoming.map((s) => (
-                <li key={s.id} className="flex gap-3 rounded-lg border border-[var(--navy)]/8 p-3">
-                  <div className="rounded-md bg-[#2b6cb0]/10 px-2 py-1 text-center text-[10px] font-bold uppercase text-[#2b6cb0]">
-                    {s.startDate || "TBD"}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[var(--navy)]">{s.title}</p>
-                    <p className="text-xs text-[var(--steel)]">
-                      {s.endDate ? `Through ${s.endDate}` : "Scheduled"} · {s._count.bookings} booked
-                    </p>
-                  </div>
-                </li>
-              ))}
+              {bookingsUpcoming.map((s) => {
+                const start = s.startDate ? new Date(s.startDate) : null;
+                const day = start
+                  ? start.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
+                  : "TBD";
+                const dateNum = start ? String(start.getDate()) : "–";
+                return (
+                  <li key={s.id} className="flex gap-3 rounded-lg border border-[var(--navy)]/8 p-3">
+                    <div className="flex h-12 w-12 flex-col items-center justify-center rounded-md bg-[#2b6cb0]/10 text-[#2b6cb0]">
+                      <span className="text-[9px] font-bold uppercase leading-none">{day}</span>
+                      <span className="text-base font-bold leading-none">{dateNum}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--navy)]">{s.title}</p>
+                      <p className="text-xs text-[var(--steel)]">
+                        {s.endDate ? `Through ${s.endDate}` : "Scheduled"} · {s._count.bookings} students
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </section>
 
@@ -524,21 +563,9 @@ export default async function AdminHome() {
                 href={site.adminPromoCtaHref}
                 className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--amber)] px-4 py-2 text-sm font-bold text-[var(--navy-deep)] hover:bg-[var(--amber-hot)]"
               >
-                {site.adminPromoCtaLabel} <ArrowUpRight className="h-4 w-4" />
+                {site.adminPromoCtaLabel} →
               </Link>
             </div>
-          </section>
-
-          <section className="rounded-xl border border-dashed border-[var(--navy)]/15 bg-white/70 p-4 text-sm text-[var(--steel)]">
-            <p className="flex items-center gap-2 font-semibold text-[var(--navy)]">
-              <ClipboardList className="h-4 w-4 text-[var(--amber)]" /> Ops snapshot
-            </p>
-            <p className="mt-1">
-              {inProgressEnroll} enrollments in progress · {notStartedEstimate} candidates without a level ·{" "}
-              <Link href="/admin/school-launch" className="font-semibold text-[#2b6cb0] underline">
-                School launch desk
-              </Link>
-            </p>
           </section>
         </div>
       </div>

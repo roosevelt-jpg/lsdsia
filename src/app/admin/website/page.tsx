@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ensureCmsDefaults } from "@/lib/cms";
+import { DEFAULT_ADMIN_DASHBOARD } from "@/lib/admin-dashboard-cms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -107,6 +108,12 @@ async function saveDashboardBanners(formData: FormData) {
 async function saveAdminDashboardBanners(formData: FormData) {
   "use server";
   await requireUser(["admin"]);
+  const rawJson = String(formData.get("adminDashboardJson") || "{}").trim() || "{}";
+  try {
+    JSON.parse(rawJson);
+  } catch {
+    redirect("/admin/website?error=admin-dashboard-json");
+  }
   await prisma.cmsSite.upsert({
     where: { id: "default" },
     create: {
@@ -126,6 +133,7 @@ async function saveAdminDashboardBanners(formData: FormData) {
       adminHeroCtaSecondaryHref: String(formData.get("adminHeroCtaSecondaryHref") || "/admin"),
       adminHeroCtaTertiaryLabel: String(formData.get("adminHeroCtaTertiaryLabel") || "Manage Courses"),
       adminHeroCtaTertiaryHref: String(formData.get("adminHeroCtaTertiaryHref") || "/admin/content"),
+      adminDashboardJson: rawJson,
     },
     update: {
       adminHeroTitle: String(formData.get("adminHeroTitle") || ""),
@@ -143,6 +151,7 @@ async function saveAdminDashboardBanners(formData: FormData) {
       adminHeroCtaSecondaryHref: String(formData.get("adminHeroCtaSecondaryHref") || "/admin"),
       adminHeroCtaTertiaryLabel: String(formData.get("adminHeroCtaTertiaryLabel") || "Manage Courses"),
       adminHeroCtaTertiaryHref: String(formData.get("adminHeroCtaTertiaryHref") || "/admin/content"),
+      adminDashboardJson: rawJson,
     },
   });
   redirect("/admin/website?saved=admin-dashboard");
@@ -353,7 +362,13 @@ export default async function AdminWebsiteCmsPage({
       {sp.saved && (
         <p className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-900">Saved ({sp.saved}).</p>
       )}
-      {sp.error && <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{sp.error}</p>}
+      {sp.error && (
+        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">
+          {sp.error === "admin-dashboard-json"
+            ? "Admin dashboard JSON is invalid. Fix the JSON and save again."
+            : sp.error}
+        </p>
+      )}
 
       <Card className="space-y-4">
         <h2 className="font-display text-xl text-[var(--navy)]">Site chrome & contact</h2>
@@ -540,10 +555,11 @@ export default async function AdminWebsiteCmsPage({
       </Card>
 
       <Card className="space-y-4">
-        <h2 className="font-display text-xl text-[var(--navy)]">Super-admin dashboard banners</h2>
+        <h2 className="font-display text-xl text-[var(--navy)]">Administrator dashboard (mock)</h2>
         <p className="text-sm text-[var(--steel)]">
-          Replace the administrator welcome hero and “Grow Your Driving School” promo card anytime. Defaults use assets
-          under <code className="text-xs">/cms/admin/</code> extracted from the ChatGPT admin mock.
+          Edit the welcome hero, promo CTA, metric hints, chart titles, Recent Applications filters, Quick Actions,
+          Notifications, and Upcoming Sessions copy. Image defaults live under{" "}
+          <code className="text-xs">/cms/admin/</code>.
         </p>
         <div className="grid gap-3 sm:grid-cols-3">
           {[
@@ -631,8 +647,25 @@ export default async function AdminWebsiteCmsPage({
             <Label>Hero CTA 3 href</Label>
             <Input name="adminHeroCtaTertiaryHref" defaultValue={(site as { adminHeroCtaTertiaryHref?: string } | null)?.adminHeroCtaTertiaryHref ?? "/admin/content"} />
           </div>
+          <div className="sm:col-span-2">
+            <Label>Dashboard cards / CTAs / notifications JSON</Label>
+            <p className="mb-1 text-xs text-[var(--steel)]">
+              Edit metric labels, chart titles, Recent Applications filters, Quick Actions, Notifications, and Upcoming
+              Sessions copy. Invalid JSON falls back to defaults.
+            </p>
+            <textarea
+              name="adminDashboardJson"
+              defaultValue={
+                (site as { adminDashboardJson?: string } | null)?.adminDashboardJson &&
+                (site as { adminDashboardJson?: string }).adminDashboardJson !== "{}"
+                  ? (site as { adminDashboardJson?: string }).adminDashboardJson
+                  : JSON.stringify(DEFAULT_ADMIN_DASHBOARD, null, 2)
+              }
+              className="mt-1 min-h-64 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs"
+            />
+          </div>
           <Button type="submit" variant="outline">
-            Save admin dashboard banners
+            Save administrator dashboard
           </Button>
         </form>
       </Card>

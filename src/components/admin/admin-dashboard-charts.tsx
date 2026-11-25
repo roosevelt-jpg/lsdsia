@@ -116,7 +116,7 @@ export function CourseEnrollmentBars({
           <YAxis
             type="category"
             dataKey="name"
-            width={118}
+            width={140}
             tick={{ fontSize: 10, fill: "#0b1f33" }}
             axisLine={false}
             tickLine={false}
