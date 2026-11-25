@@ -478,6 +478,17 @@ model CmsSite {
   refundHref      String @default("/resources#refund")
   socialJson      String @default("[]")
   searchEnabled   Boolean @default(true)
+  /// Candidate dashboard CMS banners (admin-replaceable; support /cms/... or cms:mediaKey)
+  dashboardTagline           String @default("Learn Globally. Train Professionally. Lead Confidently.")
+  dashboardHeroBgUrl         String @default("/cms/dashboard/hero-bg-hires.jpg")
+  dashboardHeroPersonUrl     String @default("/cms/dashboard/hero-person.jpg")
+  dashboardUpgradeImageUrl   String @default("/cms/dashboard/upgrade-car.jpg")
+  dashboardContinueThumbUrl  String @default("/cms/dashboard/continue-lesson.jpg")
+  dashboardHeroSubtitle      String @default("Continue your journey to becoming a certified driving instructor with Life Star Instructors Academy.")
+  dashboardUpgradeTitle      String @default("Upgrade to Instructor Pro")
+  dashboardUpgradeBody       String @default("Advanced Courses\nBusiness Launch Toolkit\n1-on-1 Mentorship")
+  dashboardUpgradeCtaLabel   String @default("Upgrade Now")
+  dashboardUpgradeCtaHref    String @default("/app/store")
 }
 
 model CmsNavItem {

@@ -1,8 +1,16 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import { requireUser } from "@/lib/auth";
-import { AppNav } from "@/components/app-nav";
+import { requireUser, destroySession } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { candidateNeedsLicenseUpload } from "@/lib/onboarding";
+import { loadCmsSite, resolveCmsImage } from "@/lib/cms";
+import { CandidateShell } from "@/components/candidate/candidate-shell";
+
+async function logout() {
+  "use server";
+  await destroySession();
+  redirect("/");
+}
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
@@ -17,10 +25,43 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     }
   }
 
+  const [profile, site, media, upcomingCount] = await Promise.all([
+    prisma.profile.findUnique({ where: { userId: user.id } }),
+    loadCmsSite(),
+    prisma.cmsMedia.findMany(),
+    prisma.practicumBooking.count({
+      where: { userId: user.id, status: { in: ["requested", "confirmed"] } },
+    }),
+  ]);
+  const mediaMap = Object.fromEntries(media.map((m) => [m.key, `/api/cms-media/${m.key}`]));
+
+  const avatarUrl = profile?.idPhotoUploadId
+    ? `/api/private-uploads/${profile.idPhotoUploadId}`
+    : profile?.avatarUrl || null;
+
   return (
-    <div className="min-h-screen bg-[var(--mist)] md:flex">
-      <AppNav />
-      <div className="flex-1 px-5 py-8 md:px-8">{children}</div>
-    </div>
+    <CandidateShell
+      user={{
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatarUrl,
+      }}
+      site={{
+        brandName: site.brandName,
+        dashboardTagline: site.dashboardTagline,
+        dashboardUpgradeImageUrl:
+          resolveCmsImage(site.dashboardUpgradeImageUrl, mediaMap) || site.dashboardUpgradeImageUrl,
+        dashboardUpgradeTitle: site.dashboardUpgradeTitle,
+        dashboardUpgradeBody: site.dashboardUpgradeBody,
+        dashboardUpgradeCtaLabel: site.dashboardUpgradeCtaLabel,
+        dashboardUpgradeCtaHref: site.dashboardUpgradeCtaHref,
+      }}
+      messageCount={3}
+      sessionDot={upcomingCount > 0}
+      logoutAction={logout}
+    >
+      {children}
+    </CandidateShell>
   );
 }

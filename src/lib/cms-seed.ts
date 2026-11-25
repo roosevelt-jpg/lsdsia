@@ -29,6 +29,17 @@ export async function seedCms(prisma: PrismaClient) {
         { network: "linkedin", href: "https://linkedin.com" },
         { network: "youtube", href: "https://youtube.com" },
       ]),
+      dashboardTagline: "Learn Globally. Train Professionally. Lead Confidently.",
+      dashboardHeroBgUrl: "/cms/dashboard/hero-bg-hires.jpg",
+      dashboardHeroPersonUrl: "/cms/dashboard/hero-person.jpg",
+      dashboardUpgradeImageUrl: "/cms/dashboard/upgrade-car.jpg",
+      dashboardContinueThumbUrl: "/cms/dashboard/continue-lesson.jpg",
+      dashboardHeroSubtitle:
+        "Continue your journey to becoming a certified driving instructor with Life Star Instructors Academy.",
+      dashboardUpgradeTitle: "Upgrade to Instructor Pro",
+      dashboardUpgradeBody: "Advanced Courses\nBusiness Launch Toolkit\n1-on-1 Mentorship",
+      dashboardUpgradeCtaLabel: "Upgrade Now",
+      dashboardUpgradeCtaHref: "/app/store",
     },
   });
 

@@ -42,6 +42,40 @@ async function saveSite(formData: FormData) {
   redirect("/admin/website?saved=site");
 }
 
+async function saveDashboardBanners(formData: FormData) {
+  "use server";
+  await requireUser(["admin"]);
+  await prisma.cmsSite.upsert({
+    where: { id: "default" },
+    create: {
+      id: "default",
+      dashboardTagline: String(formData.get("dashboardTagline") || ""),
+      dashboardHeroSubtitle: String(formData.get("dashboardHeroSubtitle") || ""),
+      dashboardHeroBgUrl: String(formData.get("dashboardHeroBgUrl") || ""),
+      dashboardHeroPersonUrl: String(formData.get("dashboardHeroPersonUrl") || ""),
+      dashboardUpgradeImageUrl: String(formData.get("dashboardUpgradeImageUrl") || ""),
+      dashboardContinueThumbUrl: String(formData.get("dashboardContinueThumbUrl") || ""),
+      dashboardUpgradeTitle: String(formData.get("dashboardUpgradeTitle") || ""),
+      dashboardUpgradeBody: String(formData.get("dashboardUpgradeBody") || ""),
+      dashboardUpgradeCtaLabel: String(formData.get("dashboardUpgradeCtaLabel") || ""),
+      dashboardUpgradeCtaHref: String(formData.get("dashboardUpgradeCtaHref") || ""),
+    },
+    update: {
+      dashboardTagline: String(formData.get("dashboardTagline") || ""),
+      dashboardHeroSubtitle: String(formData.get("dashboardHeroSubtitle") || ""),
+      dashboardHeroBgUrl: String(formData.get("dashboardHeroBgUrl") || ""),
+      dashboardHeroPersonUrl: String(formData.get("dashboardHeroPersonUrl") || ""),
+      dashboardUpgradeImageUrl: String(formData.get("dashboardUpgradeImageUrl") || ""),
+      dashboardContinueThumbUrl: String(formData.get("dashboardContinueThumbUrl") || ""),
+      dashboardUpgradeTitle: String(formData.get("dashboardUpgradeTitle") || ""),
+      dashboardUpgradeBody: String(formData.get("dashboardUpgradeBody") || ""),
+      dashboardUpgradeCtaLabel: String(formData.get("dashboardUpgradeCtaLabel") || ""),
+      dashboardUpgradeCtaHref: String(formData.get("dashboardUpgradeCtaHref") || ""),
+    },
+  });
+  redirect("/admin/website?saved=dashboard");
+}
+
 async function savePage(formData: FormData) {
   "use server";
   await requireUser(["admin"]);
@@ -179,6 +213,20 @@ async function uploadMedia(formData: FormData) {
       });
     }
   }
+  const dashboardFieldByKey: Record<string, "dashboardHeroBgUrl" | "dashboardHeroPersonUrl" | "dashboardUpgradeImageUrl" | "dashboardContinueThumbUrl"> = {
+    dashboard_hero_bg: "dashboardHeroBgUrl",
+    dashboard_hero_person: "dashboardHeroPersonUrl",
+    dashboard_upgrade: "dashboardUpgradeImageUrl",
+    dashboard_continue_thumb: "dashboardContinueThumbUrl",
+  };
+  const field = dashboardFieldByKey[key];
+  if (field) {
+    await prisma.cmsSite.upsert({
+      where: { id: "default" },
+      create: { id: "default", [field]: `cms:${key}` },
+      update: { [field]: `cms:${key}` },
+    });
+  }
   redirect("/admin/website?saved=media");
 }
 
@@ -267,11 +315,94 @@ export default async function AdminWebsiteCmsPage({
       </Card>
 
       <Card className="space-y-4">
+        <h2 className="font-display text-xl text-[var(--navy)]">Candidate dashboard banners</h2>
+        <p className="text-sm text-[var(--steel)]">
+          Replace hero background, instructor cutout, upgrade card image, and continue-learning thumbnail anytime.
+          Defaults use assets extracted from the ChatGPT dashboard mock under <code className="text-xs">/cms/dashboard/</code>.
+          Paste a path like <code className="text-xs">/cms/dashboard/hero-bg-hires.jpg</code> or{" "}
+          <code className="text-xs">cms:dashboard_hero_bg</code> after uploading media with that key.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-4">
+          {[
+            { label: "Hero BG", src: site?.dashboardHeroBgUrl },
+            { label: "Hero person", src: site?.dashboardHeroPersonUrl },
+            { label: "Upgrade", src: site?.dashboardUpgradeImageUrl },
+            { label: "Continue", src: site?.dashboardContinueThumbUrl },
+          ].map((p) => (
+            <div key={p.label} className="overflow-hidden rounded-lg border border-[var(--navy)]/10 bg-[var(--mist)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={p.src?.startsWith("cms:") ? `/api/cms-media/${p.src.slice(4)}` : p.src || ""}
+                alt=""
+                className="h-20 w-full object-cover"
+              />
+              <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--steel)]">{p.label}</p>
+            </div>
+          ))}
+        </div>
+        <form action={saveDashboardBanners} className="grid gap-3 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <Label>Sidebar tagline</Label>
+            <Input name="dashboardTagline" defaultValue={site?.dashboardTagline ?? ""} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Hero subtitle</Label>
+            <textarea
+              name="dashboardHeroSubtitle"
+              defaultValue={site?.dashboardHeroSubtitle ?? ""}
+              className="mt-1 min-h-16 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <Label>Hero background URL</Label>
+            <Input name="dashboardHeroBgUrl" defaultValue={site?.dashboardHeroBgUrl ?? ""} />
+          </div>
+          <div>
+            <Label>Hero person/car URL</Label>
+            <Input name="dashboardHeroPersonUrl" defaultValue={site?.dashboardHeroPersonUrl ?? ""} />
+          </div>
+          <div>
+            <Label>Upgrade card image URL</Label>
+            <Input name="dashboardUpgradeImageUrl" defaultValue={site?.dashboardUpgradeImageUrl ?? ""} />
+          </div>
+          <div>
+            <Label>Continue-learning thumb URL</Label>
+            <Input name="dashboardContinueThumbUrl" defaultValue={site?.dashboardContinueThumbUrl ?? ""} />
+          </div>
+          <div>
+            <Label>Upgrade title</Label>
+            <Input name="dashboardUpgradeTitle" defaultValue={site?.dashboardUpgradeTitle ?? ""} />
+          </div>
+          <div>
+            <Label>Upgrade CTA label</Label>
+            <Input name="dashboardUpgradeCtaLabel" defaultValue={site?.dashboardUpgradeCtaLabel ?? ""} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Upgrade benefits (one per line)</Label>
+            <textarea
+              name="dashboardUpgradeBody"
+              defaultValue={site?.dashboardUpgradeBody ?? ""}
+              className="mt-1 min-h-20 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Upgrade CTA href</Label>
+            <Input name="dashboardUpgradeCtaHref" defaultValue={site?.dashboardUpgradeCtaHref ?? ""} />
+          </div>
+          <Button type="submit" variant="outline">
+            Save dashboard banners
+          </Button>
+        </form>
+      </Card>
+
+      <Card className="space-y-4">
         <h2 className="font-display text-xl text-[var(--navy)]">Upload marketing image</h2>
         <p className="text-sm text-[var(--steel)]">
           Uploads are stored in the database and served at <code className="text-xs">/api/cms-media/[key]</code>. Use
-          key <code className="text-xs">hero_image</code> to replace the homepage hero. Or set image URL fields to{" "}
-          <code className="text-xs">/cms/…</code> public placeholders or <code className="text-xs">cms:your_key</code>.
+          key <code className="text-xs">hero_image</code> for the marketing homepage hero, or dashboard keys{" "}
+          <code className="text-xs">dashboard_hero_bg</code>, <code className="text-xs">dashboard_hero_person</code>,{" "}
+          <code className="text-xs">dashboard_upgrade</code>, <code className="text-xs">dashboard_continue_thumb</code>{" "}
+          to replace candidate dashboard banners instantly.
         </p>
         <form action={uploadMedia} className="flex flex-wrap items-end gap-3">
           <div>
