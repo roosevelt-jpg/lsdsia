@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { CmsProgramCard, CmsSection, CmsStat, CmsTestimonial } from "@prisma/client";
 import { parseJsonObject, resolveCmsImage } from "@/lib/cms";
+import { HeroSlider, type HeroSlide } from "@/components/marketing/hero-slider";
 
 const tileIcons: Record<string, ComponentType<{ className?: string }>> = {
   globe: Globe2,
@@ -32,7 +33,19 @@ type HeroData = {
   secondaryCtaLabel?: string;
   secondaryCtaHref?: string;
   tiles?: { title: string; body: string; icon: string }[];
+  /** Hero right-side slideshow images (admin-editable via section dataJson). */
+  slides?: { imageUrl: string; alt?: string }[];
+  slideIntervalMs?: number;
 };
+
+const DEFAULT_HERO_SLIDES: HeroSlide[] = [
+  { imageUrl: "/cms/mock-hero-instructor.jpg", alt: "Life Star instructor beside training vehicle" },
+  { imageUrl: "/cms/mock-auth-instructors.jpg", alt: "Life Star academy instructors" },
+  { imageUrl: "/cms/mock-auth-car.jpg", alt: "Life Star branded training car" },
+  { imageUrl: "/cms/mock-campus-building.jpg", alt: "Life Star Instructors Academy campus" },
+  { imageUrl: "/cms/dashboard/hero-person.jpg", alt: "Instructor with Life Star training vehicle" },
+  { imageUrl: "/cms/admin/hero-person-hires.jpg", alt: "Campus instructor in safety vest" },
+];
 
 type TrustedData = {
   checklist?: string[];
@@ -74,7 +87,18 @@ export function HomeSections({
   const heroData = parseJsonObject<HeroData>(hero?.dataJson || "{}", {});
   const trustedData = parseJsonObject<TrustedData>(trusted?.dataJson || "{}", {});
   const ctaData = parseJsonObject<CtaData>(cta?.dataJson || "{}", {});
-  const heroImage = resolveCmsImage(hero?.imageUrl || "", mediaMap) || "/cms/mock-hero-instructor.jpg";
+  const heroFallback =
+    resolveCmsImage(hero?.imageUrl || "", mediaMap) || "/cms/mock-hero-instructor.jpg";
+  const heroSlides: HeroSlide[] = (
+    heroData.slides?.length
+      ? heroData.slides
+      : [{ imageUrl: heroFallback, alt: "Life Star Instructors Academy" }, ...DEFAULT_HERO_SLIDES.slice(1)]
+  )
+    .map((s) => ({
+      imageUrl: resolveCmsImage(s.imageUrl, mediaMap) || s.imageUrl,
+      alt: s.alt,
+    }))
+    .filter((s, i, arr) => s.imageUrl && arr.findIndex((x) => x.imageUrl === s.imageUrl) === i);
   const campusImage =
     resolveCmsImage(trusted?.imageUrl || "", mediaMap) || "/cms/mock-campus-building.jpg";
   const ctaImage =
@@ -82,7 +106,7 @@ export function HomeSections({
 
   return (
     <>
-      {/* HERO — curved navy + gold swoosh + instructor photo */}
+      {/* HERO — curved navy + gold swoosh + image slideshow */}
       {hero && (
         <section className="relative overflow-hidden text-white">
           <div
@@ -92,16 +116,13 @@ export function HomeSections({
                 "linear-gradient(115deg, #061526 0%, #0B3A6E 48%, #1256A0 78%, transparent 78%), linear-gradient(90deg, #061526 0%, #061526 42%, transparent 70%)",
             }}
           />
+          <HeroSlider slides={heroSlides} intervalMs={heroData.slideIntervalMs || 5500} />
           <div
-            className="absolute inset-y-0 right-0 w-[58%] bg-cover bg-center"
-            style={{ backgroundImage: `url(${heroImage})` }}
-          />
-          <div
-            className="pointer-events-none absolute inset-y-0 right-[40%] w-[22%] bg-gradient-to-r from-[#0B3A6E] via-[#0B3A6E]/70 to-transparent"
+            className="pointer-events-none absolute inset-y-0 right-[40%] z-[1] w-[22%] bg-gradient-to-r from-[#0B3A6E] via-[#0B3A6E]/70 to-transparent"
             aria-hidden
           />
           <svg
-            className="pointer-events-none absolute inset-y-0 right-[38%] h-full w-[18%] text-[var(--amber)]"
+            className="pointer-events-none absolute inset-y-0 right-[38%] z-[1] h-full w-[18%] text-[var(--amber)]"
             viewBox="0 0 120 800"
             preserveAspectRatio="none"
             aria-hidden

@@ -51,7 +51,7 @@ export async function seedCms(prisma: PrismaClient) {
         { network: "tiktok", href: "https://tiktok.com" },
       ]),
       newsletterBlurb: "Get training updates, new courses and special offers.",
-      contentVersion: 2,
+      contentVersion: 3,
       dashboardTagline: "Learn Globally. Train Professionally. Lead Confidently.",
       dashboardHeroBgUrl: "/cms/dashboard/hero-bg-hires.jpg",
       dashboardHeroPersonUrl: "/cms/dashboard/hero-person.jpg",
@@ -129,6 +129,33 @@ export async function seedCms(prisma: PrismaClient) {
       dataJson: JSON.stringify({
         secondaryCtaLabel: home.ctaSecondaryLabel,
         secondaryCtaHref: home.ctaSecondaryHref,
+        slideIntervalMs: 5500,
+        slides: [
+          {
+            imageUrl: "/cms/mock-hero-instructor.jpg",
+            alt: "Life Star instructor beside training vehicle",
+          },
+          {
+            imageUrl: "/cms/mock-auth-instructors.jpg",
+            alt: "Life Star academy instructors",
+          },
+          {
+            imageUrl: "/cms/mock-auth-car.jpg",
+            alt: "Life Star branded training car",
+          },
+          {
+            imageUrl: "/cms/mock-campus-building.jpg",
+            alt: "Life Star Instructors Academy campus",
+          },
+          {
+            imageUrl: "/cms/dashboard/hero-person.jpg",
+            alt: "Instructor with Life Star training vehicle",
+          },
+          {
+            imageUrl: "/cms/admin/hero-person-hires.jpg",
+            alt: "Campus instructor in safety vest",
+          },
+        ],
         tiles: [
           { title: "Online Learning Worldwide", body: "", icon: "globe" },
           { title: "Hands-on Training at Our Minnesota Campus", body: "", icon: "map" },

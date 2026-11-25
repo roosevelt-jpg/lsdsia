@@ -792,11 +792,18 @@ export default async function AdminWebsiteCmsPage({
                 </div>
               </div>
               <div>
-                <Label>dataJson (advanced)</Label>
+                <Label>
+                  dataJson (advanced)
+                  {section.key === "hero"
+                    ? " — include slides: [{ imageUrl, alt }] and optional slideIntervalMs for the hero slideshow"
+                    : ""}
+                </Label>
                 <textarea
                   name="dataJson"
                   defaultValue={section.dataJson}
-                  className="mt-1 min-h-24 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs"
+                  className={`mt-1 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs ${
+                    section.key === "hero" ? "min-h-40" : "min-h-24"
+                  }`}
                 />
               </div>
               <Button type="submit" size="sm" variant="outline">

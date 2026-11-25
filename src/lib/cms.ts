@@ -5,7 +5,7 @@ export type CmsBundle = Awaited<ReturnType<typeof loadCmsBundle>>;
 
 let cmsEnsurePromise: Promise<void> | null = null;
 
-const CMS_CONTENT_VERSION = 2;
+const CMS_CONTENT_VERSION = 3;
 
 /** Ensure marketing CMS tables have the ChatGPT-mock defaults (idempotent). */
 export async function ensureCmsDefaults() {
