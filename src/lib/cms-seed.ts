@@ -51,7 +51,7 @@ export async function seedCms(prisma: PrismaClient) {
         { network: "tiktok", href: "https://tiktok.com" },
       ]),
       newsletterBlurb: "Get training updates, new courses and special offers.",
-      contentVersion: 3,
+      contentVersion: 4,
       dashboardTagline: "Learn Globally. Train Professionally. Lead Confidently.",
       dashboardHeroBgUrl: "/cms/dashboard/hero-bg-hires.jpg",
       dashboardHeroPersonUrl: "/cms/dashboard/hero-person.jpg",
@@ -108,7 +108,7 @@ export async function seedCms(prisma: PrismaClient) {
       heroTitle: "Learn globally. Train professionally. Lead confidently.",
       heroSubtitle:
         "The premier international academy for driving instructor training, licensing preparation and driving school business launch support.",
-      heroImageUrl: "/cms/mock-hero-instructor.jpg",
+      heroImageUrl: "/cms/hero-slide-1.jpg",
       ctaPrimaryLabel: "Apply for Training",
       ctaPrimaryHref: "/signup",
       ctaSecondaryLabel: "Watch Academy Overview",
@@ -132,27 +132,27 @@ export async function seedCms(prisma: PrismaClient) {
         slideIntervalMs: 5500,
         slides: [
           {
-            imageUrl: "/cms/mock-hero-instructor.jpg",
+            imageUrl: "/cms/hero-slide-1.jpg",
             alt: "Life Star instructor beside training vehicle",
           },
           {
-            imageUrl: "/cms/mock-auth-instructors.jpg",
+            imageUrl: "/cms/hero-slide-2.jpg",
             alt: "Life Star academy instructors",
           },
           {
-            imageUrl: "/cms/mock-auth-car.jpg",
+            imageUrl: "/cms/hero-slide-3.jpg",
             alt: "Life Star branded training car",
           },
           {
-            imageUrl: "/cms/mock-campus-building.jpg",
+            imageUrl: "/cms/hero-slide-4.jpg",
             alt: "Life Star Instructors Academy campus",
           },
           {
-            imageUrl: "/cms/dashboard/hero-person.jpg",
+            imageUrl: "/cms/hero-slide-5.jpg",
             alt: "Instructor with Life Star training vehicle",
           },
           {
-            imageUrl: "/cms/admin/hero-person-hires.jpg",
+            imageUrl: "/cms/hero-slide-6.jpg",
             alt: "Campus instructor in safety vest",
           },
         ],
@@ -185,7 +185,7 @@ export async function seedCms(prisma: PrismaClient) {
       eyebrow: "WHY LIFE STAR",
       title: "A Global Academy Built for Your Success",
       body: "World-class training, real-world experience and ongoing support to help you become a licensed instructor and confidently build your career or business.",
-      imageUrl: "/cms/mock-campus-building.jpg",
+      imageUrl: "/cms/hero-slide-4.jpg",
       ctaLabel: "Explore Campus",
       ctaHref: "/about",
       dataJson: JSON.stringify({

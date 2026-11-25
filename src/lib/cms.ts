@@ -5,7 +5,7 @@ export type CmsBundle = Awaited<ReturnType<typeof loadCmsBundle>>;
 
 let cmsEnsurePromise: Promise<void> | null = null;
 
-const CMS_CONTENT_VERSION = 3;
+const CMS_CONTENT_VERSION = 4;
 
 /** Ensure marketing CMS tables have the ChatGPT-mock defaults (idempotent). */
 export async function ensureCmsDefaults() {
@@ -93,7 +93,13 @@ export async function loadCmsBundle() {
 
 /** Map legacy stock placeholders → ChatGPT mock crops (same subjects as designs). */
 const MOCK_IMAGE_REMAP: Record<string, string> = {
-  "/cms/hero-instructor.jpg": "/cms/mock-hero-instructor.jpg",
+  "/cms/hero-instructor.jpg": "/cms/hero-slide-1.jpg",
+  "/cms/mock-hero-instructor.jpg": "/cms/hero-slide-1.jpg",
+  "/cms/mock-auth-instructors.jpg": "/cms/hero-slide-2.jpg",
+  "/cms/mock-auth-car.jpg": "/cms/hero-slide-3.jpg",
+  "/cms/mock-campus-building.jpg": "/cms/hero-slide-4.jpg",
+  "/cms/dashboard/hero-person.jpg": "/cms/hero-slide-5.jpg",
+  "/cms/admin/hero-person-hires.jpg": "/cms/hero-slide-6.jpg",
   "/cms/program-cert.jpg": "/cms/mock-program-training.jpg",
   "/cms/mock-program-cert.jpg": "/cms/mock-program-training.jpg",
   "/cms/program-license.jpg": "/cms/mock-program-licensing.jpg",
@@ -104,8 +110,8 @@ const MOCK_IMAGE_REMAP: Record<string, string> = {
   "/cms/testimonial-3.jpg": "/cms/mock-testimonial-3.jpg",
   "/cms/cta-road.jpg": "/cms/mock-cta-car.jpg",
   "/cms/mock-cta-road.jpg": "/cms/mock-cta-car.jpg",
-  "/cms/trusted-bg.jpg": "/cms/mock-campus-building.jpg",
-  "/cms/mock-trusted-bg.jpg": "/cms/mock-campus-building.jpg",
+  "/cms/trusted-bg.jpg": "/cms/hero-slide-4.jpg",
+  "/cms/mock-trusted-bg.jpg": "/cms/hero-slide-4.jpg",
   "/cms/auth-car.jpg": "/cms/mock-auth-car.jpg",
   "/cms/auth-instructors.jpg": "/cms/mock-auth-instructors.jpg",
   "/cms/auth-road.jpg": "/cms/mock-auth-road.jpg",

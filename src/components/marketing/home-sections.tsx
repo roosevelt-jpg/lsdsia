@@ -38,13 +38,14 @@ type HeroData = {
   slideIntervalMs?: number;
 };
 
+/** Clean photo-only slides (no mockup UI/text overlays) for CMS copy on top. */
 const DEFAULT_HERO_SLIDES: HeroSlide[] = [
-  { imageUrl: "/cms/mock-hero-instructor.jpg", alt: "Life Star instructor beside training vehicle" },
-  { imageUrl: "/cms/mock-auth-instructors.jpg", alt: "Life Star academy instructors" },
-  { imageUrl: "/cms/mock-auth-car.jpg", alt: "Life Star branded training car" },
-  { imageUrl: "/cms/mock-campus-building.jpg", alt: "Life Star Instructors Academy campus" },
-  { imageUrl: "/cms/dashboard/hero-person.jpg", alt: "Instructor with Life Star training vehicle" },
-  { imageUrl: "/cms/admin/hero-person-hires.jpg", alt: "Campus instructor in safety vest" },
+  { imageUrl: "/cms/hero-slide-1.jpg", alt: "Life Star instructor beside training vehicle" },
+  { imageUrl: "/cms/hero-slide-2.jpg", alt: "Life Star academy instructors" },
+  { imageUrl: "/cms/hero-slide-3.jpg", alt: "Life Star branded training car" },
+  { imageUrl: "/cms/hero-slide-4.jpg", alt: "Life Star Instructors Academy campus" },
+  { imageUrl: "/cms/hero-slide-5.jpg", alt: "Instructor with Life Star training vehicle" },
+  { imageUrl: "/cms/hero-slide-6.jpg", alt: "Campus instructor in safety vest" },
 ];
 
 type TrustedData = {
@@ -87,13 +88,7 @@ export function HomeSections({
   const heroData = parseJsonObject<HeroData>(hero?.dataJson || "{}", {});
   const trustedData = parseJsonObject<TrustedData>(trusted?.dataJson || "{}", {});
   const ctaData = parseJsonObject<CtaData>(cta?.dataJson || "{}", {});
-  const heroFallback =
-    resolveCmsImage(hero?.imageUrl || "", mediaMap) || "/cms/mock-hero-instructor.jpg";
-  const heroSlides: HeroSlide[] = (
-    heroData.slides?.length
-      ? heroData.slides
-      : [{ imageUrl: heroFallback, alt: "Life Star Instructors Academy" }, ...DEFAULT_HERO_SLIDES.slice(1)]
-  )
+  const heroSlides: HeroSlide[] = (heroData.slides?.length ? heroData.slides : DEFAULT_HERO_SLIDES)
     .map((s) => ({
       imageUrl: resolveCmsImage(s.imageUrl, mediaMap) || s.imageUrl,
       alt: s.alt,
