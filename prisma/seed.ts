@@ -469,6 +469,8 @@ async function main() {
         acceptedKeywords: q.acceptedKeywords ? JSON.stringify(q.acceptedKeywords) : null,
         explanation: q.explanation,
         topic: q.topic,
+        // Curate a sample set into the admin-only Q&A slideshow (candidates never see this).
+        inAdminSlides: q.number <= 25,
       },
     });
   }

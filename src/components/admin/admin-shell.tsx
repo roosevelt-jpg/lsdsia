@@ -66,6 +66,7 @@ const nav: NavItem[] = [
       { href: "/admin/content", label: "Lessons" },
       { href: "/admin/materials", label: "Videos & Materials" },
       { href: "/admin/quizzes", label: "Assessments" },
+      { href: "/admin/quiz-slides", label: "Q&A Answer Slides" },
       { href: "/admin/candidates", label: "Certificates" },
     ],
   },

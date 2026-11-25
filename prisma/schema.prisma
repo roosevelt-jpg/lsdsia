@@ -279,6 +279,8 @@ model Question {
   acceptedKeywords String?
   explanation      String
   topic            String
+  /// Admin-only answer-key slideshow (never shown to candidates)
+  inAdminSlides    Boolean         @default(false)
   quiz             Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
   answers          AttemptAnswer[]
 
