@@ -49,6 +49,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       }}
       site={{
         brandName: site.brandName,
+        logoUrl: site.logoUrl,
         dashboardTagline: site.dashboardTagline,
         dashboardUpgradeImageUrl:
           resolveCmsImage(site.dashboardUpgradeImageUrl, mediaMap) || site.dashboardUpgradeImageUrl,

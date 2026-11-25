@@ -31,6 +31,7 @@ export type CandidateShellProps = {
   };
   site: {
     brandName: string;
+    logoUrl?: string;
     dashboardTagline: string;
     dashboardUpgradeImageUrl: string;
     dashboardUpgradeTitle: string;
@@ -81,14 +82,12 @@ export function CandidateShell({
     <aside className="flex h-full w-72 flex-col bg-[var(--navy-deep)] text-white">
       <div className="border-b border-white/10 px-5 py-5">
         <Link href="/app" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber)] text-[var(--navy-deep)]">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
-              <path d="M12 2.5l2.4 7.2h7.6l-6.2 4.5 2.4 7.3L12 17l-6.2 4.5 2.4-7.3L2 9.7h7.6L12 2.5z" />
-            </svg>
-          </span>
-          <span className="text-[10px] font-bold uppercase leading-tight tracking-[0.12em]">
-            {site.brandName}
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={(site as { logoUrl?: string }).logoUrl || "/cms/logo-full-light.png"}
+            alt={site.brandName}
+            className="h-10 w-auto max-w-[200px] object-contain object-left"
+          />
         </Link>
         <p className="mt-3 text-[11px] leading-snug text-white/55">{site.dashboardTagline}</p>
       </div>

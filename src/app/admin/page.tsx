@@ -260,22 +260,25 @@ export default async function AdminHome() {
             <p className="mt-2 max-w-xl text-sm text-white/85 sm:text-base">{site.adminHeroSubtitle}</p>
             <div className="mt-5 flex flex-wrap gap-2.5">
               <Link
-                href="/admin/levels"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--amber)] px-4 py-2.5 text-sm font-bold text-[var(--navy-deep)] hover:bg-[var(--amber-hot)]"
+                href={(site as { adminHeroCtaPrimaryHref?: string }).adminHeroCtaPrimaryHref || "/admin/candidates"}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-[var(--amber)] to-[#f0b92a] px-4 py-2.5 text-sm font-bold text-[var(--navy-deep)] hover:brightness-105"
               >
-                <Plus className="h-4 w-4" /> New Enrollment
+                <Plus className="h-4 w-4" />{" "}
+                {(site as { adminHeroCtaPrimaryLabel?: string }).adminHeroCtaPrimaryLabel || "New Enrollment"}
               </Link>
               <Link
-                href="#reports"
+                href={(site as { adminHeroCtaSecondaryHref?: string }).adminHeroCtaSecondaryHref || "#reports"}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-white/70 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
               >
-                <BarChart3 className="h-4 w-4" /> View Reports
+                <BarChart3 className="h-4 w-4" />{" "}
+                {(site as { adminHeroCtaSecondaryLabel?: string }).adminHeroCtaSecondaryLabel || "View Reports"}
               </Link>
               <Link
-                href="/admin/content"
+                href={(site as { adminHeroCtaTertiaryHref?: string }).adminHeroCtaTertiaryHref || "/admin/content"}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-white/70 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
               >
-                <BookOpen className="h-4 w-4" /> Manage Courses
+                <BookOpen className="h-4 w-4" />{" "}
+                {(site as { adminHeroCtaTertiaryLabel?: string }).adminHeroCtaTertiaryLabel || "Manage Courses"}
               </Link>
             </div>
           </div>

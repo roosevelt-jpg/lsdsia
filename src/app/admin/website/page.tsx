@@ -21,22 +21,42 @@ async function saveSite(formData: FormData) {
       id: "default",
       brandName: String(formData.get("brandName") || ""),
       tagline: String(formData.get("tagline") || ""),
+      logoUrl: String(formData.get("logoUrl") || "/cms/logo-full-light.png"),
+      logoMarkUrl: String(formData.get("logoMarkUrl") || "/cms/logo-mark.svg"),
+      headerTagline: String(formData.get("headerTagline") || ""),
+      headerMetaLeft: String(formData.get("headerMetaLeft") || ""),
+      headerMetaRight: String(formData.get("headerMetaRight") || ""),
+      applyCtaLabel: String(formData.get("applyCtaLabel") || "Apply Now"),
+      applyCtaHref: String(formData.get("applyCtaHref") || "/signup"),
+      loginCtaLabel: String(formData.get("loginCtaLabel") || "Login"),
+      themeJson: String(formData.get("themeJson") || "{}"),
       contactAddress: String(formData.get("contactAddress") || ""),
       contactPhone: String(formData.get("contactPhone") || ""),
       contactEmail: String(formData.get("contactEmail") || ""),
       ownerName: String(formData.get("ownerName") || "John Addo"),
       footerBlurb: String(formData.get("footerBlurb") || ""),
       copyrightText: String(formData.get("copyrightText") || ""),
+      newsletterBlurb: String(formData.get("newsletterBlurb") || ""),
     },
     update: {
       brandName: String(formData.get("brandName") || ""),
       tagline: String(formData.get("tagline") || ""),
+      logoUrl: String(formData.get("logoUrl") || "/cms/logo-full-light.png"),
+      logoMarkUrl: String(formData.get("logoMarkUrl") || "/cms/logo-mark.svg"),
+      headerTagline: String(formData.get("headerTagline") || ""),
+      headerMetaLeft: String(formData.get("headerMetaLeft") || ""),
+      headerMetaRight: String(formData.get("headerMetaRight") || ""),
+      applyCtaLabel: String(formData.get("applyCtaLabel") || "Apply Now"),
+      applyCtaHref: String(formData.get("applyCtaHref") || "/signup"),
+      loginCtaLabel: String(formData.get("loginCtaLabel") || "Login"),
+      themeJson: String(formData.get("themeJson") || "{}"),
       contactAddress: String(formData.get("contactAddress") || ""),
       contactPhone: String(formData.get("contactPhone") || ""),
       contactEmail: String(formData.get("contactEmail") || ""),
       ownerName: String(formData.get("ownerName") || "John Addo"),
       footerBlurb: String(formData.get("footerBlurb") || ""),
       copyrightText: String(formData.get("copyrightText") || ""),
+      newsletterBlurb: String(formData.get("newsletterBlurb") || ""),
     },
   });
   redirect("/admin/website?saved=site");
@@ -59,6 +79,10 @@ async function saveDashboardBanners(formData: FormData) {
       dashboardUpgradeBody: String(formData.get("dashboardUpgradeBody") || ""),
       dashboardUpgradeCtaLabel: String(formData.get("dashboardUpgradeCtaLabel") || ""),
       dashboardUpgradeCtaHref: String(formData.get("dashboardUpgradeCtaHref") || ""),
+      dashboardHeroCtaLabel: String(formData.get("dashboardHeroCtaLabel") || "Continue Learning"),
+      dashboardHeroCtaHref: String(formData.get("dashboardHeroCtaHref") || "/app/learn"),
+      dashboardHeroSecondaryLabel: String(formData.get("dashboardHeroSecondaryLabel") || "View My Progress"),
+      dashboardHeroSecondaryHref: String(formData.get("dashboardHeroSecondaryHref") || "/app"),
     },
     update: {
       dashboardTagline: String(formData.get("dashboardTagline") || ""),
@@ -71,6 +95,10 @@ async function saveDashboardBanners(formData: FormData) {
       dashboardUpgradeBody: String(formData.get("dashboardUpgradeBody") || ""),
       dashboardUpgradeCtaLabel: String(formData.get("dashboardUpgradeCtaLabel") || ""),
       dashboardUpgradeCtaHref: String(formData.get("dashboardUpgradeCtaHref") || ""),
+      dashboardHeroCtaLabel: String(formData.get("dashboardHeroCtaLabel") || "Continue Learning"),
+      dashboardHeroCtaHref: String(formData.get("dashboardHeroCtaHref") || "/app/learn"),
+      dashboardHeroSecondaryLabel: String(formData.get("dashboardHeroSecondaryLabel") || "View My Progress"),
+      dashboardHeroSecondaryHref: String(formData.get("dashboardHeroSecondaryHref") || "/app"),
     },
   });
   redirect("/admin/website?saved=dashboard");
@@ -92,6 +120,12 @@ async function saveAdminDashboardBanners(formData: FormData) {
       adminPromoImageUrl: String(formData.get("adminPromoImageUrl") || ""),
       adminPromoCtaLabel: String(formData.get("adminPromoCtaLabel") || ""),
       adminPromoCtaHref: String(formData.get("adminPromoCtaHref") || ""),
+      adminHeroCtaPrimaryLabel: String(formData.get("adminHeroCtaPrimaryLabel") || "New Enrollment"),
+      adminHeroCtaPrimaryHref: String(formData.get("adminHeroCtaPrimaryHref") || "/admin/candidates"),
+      adminHeroCtaSecondaryLabel: String(formData.get("adminHeroCtaSecondaryLabel") || "View Reports"),
+      adminHeroCtaSecondaryHref: String(formData.get("adminHeroCtaSecondaryHref") || "/admin"),
+      adminHeroCtaTertiaryLabel: String(formData.get("adminHeroCtaTertiaryLabel") || "Manage Courses"),
+      adminHeroCtaTertiaryHref: String(formData.get("adminHeroCtaTertiaryHref") || "/admin/content"),
     },
     update: {
       adminHeroTitle: String(formData.get("adminHeroTitle") || ""),
@@ -103,6 +137,12 @@ async function saveAdminDashboardBanners(formData: FormData) {
       adminPromoImageUrl: String(formData.get("adminPromoImageUrl") || ""),
       adminPromoCtaLabel: String(formData.get("adminPromoCtaLabel") || ""),
       adminPromoCtaHref: String(formData.get("adminPromoCtaHref") || ""),
+      adminHeroCtaPrimaryLabel: String(formData.get("adminHeroCtaPrimaryLabel") || "New Enrollment"),
+      adminHeroCtaPrimaryHref: String(formData.get("adminHeroCtaPrimaryHref") || "/admin/candidates"),
+      adminHeroCtaSecondaryLabel: String(formData.get("adminHeroCtaSecondaryLabel") || "View Reports"),
+      adminHeroCtaSecondaryHref: String(formData.get("adminHeroCtaSecondaryHref") || "/admin"),
+      adminHeroCtaTertiaryLabel: String(formData.get("adminHeroCtaTertiaryLabel") || "Manage Courses"),
+      adminHeroCtaTertiaryHref: String(formData.get("adminHeroCtaTertiaryHref") || "/admin/content"),
     },
   });
   redirect("/admin/website?saved=admin-dashboard");
@@ -327,6 +367,50 @@ export default async function AdminWebsiteCmsPage({
             <Input name="tagline" defaultValue={site?.tagline ?? ""} />
           </div>
           <div>
+            <Label>Logo lockup URL</Label>
+            <Input name="logoUrl" defaultValue={(site as { logoUrl?: string } | null)?.logoUrl ?? "/cms/logo-full-light.png"} />
+          </div>
+          <div>
+            <Label>Logo mark URL</Label>
+            <Input name="logoMarkUrl" defaultValue={(site as { logoMarkUrl?: string } | null)?.logoMarkUrl ?? "/cms/logo-mark.svg"} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Header tagline</Label>
+            <Input name="headerTagline" defaultValue={(site as { headerTagline?: string } | null)?.headerTagline ?? ""} />
+          </div>
+          <div>
+            <Label>Header meta left</Label>
+            <Input name="headerMetaLeft" defaultValue={(site as { headerMetaLeft?: string } | null)?.headerMetaLeft ?? ""} />
+          </div>
+          <div>
+            <Label>Header meta right</Label>
+            <Input name="headerMetaRight" defaultValue={(site as { headerMetaRight?: string } | null)?.headerMetaRight ?? ""} />
+          </div>
+          <div>
+            <Label>Apply CTA label</Label>
+            <Input name="applyCtaLabel" defaultValue={(site as { applyCtaLabel?: string } | null)?.applyCtaLabel ?? "Apply Now"} />
+          </div>
+          <div>
+            <Label>Apply CTA href</Label>
+            <Input name="applyCtaHref" defaultValue={(site as { applyCtaHref?: string } | null)?.applyCtaHref ?? "/signup"} />
+          </div>
+          <div>
+            <Label>Login CTA label</Label>
+            <Input name="loginCtaLabel" defaultValue={(site as { loginCtaLabel?: string } | null)?.loginCtaLabel ?? "Login"} />
+          </div>
+          <div>
+            <Label>Newsletter blurb</Label>
+            <Input name="newsletterBlurb" defaultValue={(site as { newsletterBlurb?: string } | null)?.newsletterBlurb ?? ""} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Theme JSON (colors / gradients / button styles)</Label>
+            <textarea
+              name="themeJson"
+              defaultValue={(site as { themeJson?: string } | null)?.themeJson ?? "{}"}
+              className="mt-1 min-h-24 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs"
+            />
+          </div>
+          <div>
             <Label>Owner name</Label>
             <Input name="ownerName" defaultValue={site?.ownerName ?? "John Addo"} />
           </div>
@@ -433,6 +517,22 @@ export default async function AdminWebsiteCmsPage({
             <Label>Upgrade CTA href</Label>
             <Input name="dashboardUpgradeCtaHref" defaultValue={site?.dashboardUpgradeCtaHref ?? ""} />
           </div>
+          <div>
+            <Label>Hero primary CTA label</Label>
+            <Input name="dashboardHeroCtaLabel" defaultValue={(site as { dashboardHeroCtaLabel?: string } | null)?.dashboardHeroCtaLabel ?? "Continue Learning"} />
+          </div>
+          <div>
+            <Label>Hero primary CTA href</Label>
+            <Input name="dashboardHeroCtaHref" defaultValue={(site as { dashboardHeroCtaHref?: string } | null)?.dashboardHeroCtaHref ?? "/app/learn"} />
+          </div>
+          <div>
+            <Label>Hero secondary CTA label</Label>
+            <Input name="dashboardHeroSecondaryLabel" defaultValue={(site as { dashboardHeroSecondaryLabel?: string } | null)?.dashboardHeroSecondaryLabel ?? "View My Progress"} />
+          </div>
+          <div>
+            <Label>Hero secondary CTA href</Label>
+            <Input name="dashboardHeroSecondaryHref" defaultValue={(site as { dashboardHeroSecondaryHref?: string } | null)?.dashboardHeroSecondaryHref ?? "/app"} />
+          </div>
           <Button type="submit" variant="outline">
             Save dashboard banners
           </Button>
@@ -506,6 +606,30 @@ export default async function AdminWebsiteCmsPage({
           <div>
             <Label>Promo CTA href</Label>
             <Input name="adminPromoCtaHref" defaultValue={site?.adminPromoCtaHref ?? ""} />
+          </div>
+          <div>
+            <Label>Hero CTA 1 label</Label>
+            <Input name="adminHeroCtaPrimaryLabel" defaultValue={(site as { adminHeroCtaPrimaryLabel?: string } | null)?.adminHeroCtaPrimaryLabel ?? "New Enrollment"} />
+          </div>
+          <div>
+            <Label>Hero CTA 1 href</Label>
+            <Input name="adminHeroCtaPrimaryHref" defaultValue={(site as { adminHeroCtaPrimaryHref?: string } | null)?.adminHeroCtaPrimaryHref ?? "/admin/candidates"} />
+          </div>
+          <div>
+            <Label>Hero CTA 2 label</Label>
+            <Input name="adminHeroCtaSecondaryLabel" defaultValue={(site as { adminHeroCtaSecondaryLabel?: string } | null)?.adminHeroCtaSecondaryLabel ?? "View Reports"} />
+          </div>
+          <div>
+            <Label>Hero CTA 2 href</Label>
+            <Input name="adminHeroCtaSecondaryHref" defaultValue={(site as { adminHeroCtaSecondaryHref?: string } | null)?.adminHeroCtaSecondaryHref ?? "/admin"} />
+          </div>
+          <div>
+            <Label>Hero CTA 3 label</Label>
+            <Input name="adminHeroCtaTertiaryLabel" defaultValue={(site as { adminHeroCtaTertiaryLabel?: string } | null)?.adminHeroCtaTertiaryLabel ?? "Manage Courses"} />
+          </div>
+          <div>
+            <Label>Hero CTA 3 href</Label>
+            <Input name="adminHeroCtaTertiaryHref" defaultValue={(site as { adminHeroCtaTertiaryHref?: string } | null)?.adminHeroCtaTertiaryHref ?? "/admin/content"} />
           </div>
           <Button type="submit" variant="outline">
             Save admin dashboard banners

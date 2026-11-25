@@ -35,6 +35,7 @@ export type AdminShellUser = {
 
 export type AdminShellSite = {
   brandName: string;
+  logoUrl?: string;
   dashboardTagline: string;
 };
 
@@ -138,18 +139,14 @@ export function AdminShell({
   const Sidebar = (
     <aside className="flex h-full w-[272px] flex-col bg-[var(--navy-deep)] text-white">
       <div className="border-b border-white/10 px-5 py-5">
-        <Link href="/admin" className="flex items-start gap-2.5" onClick={() => setMobileOpen(false)}>
-          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--amber)] text-[var(--navy-deep)]">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
-              <path d="M12 2.5l2.4 7.2h7.6l-6.2 4.5 2.4 7.3L12 17l-6.2 4.5 2.4-7.3L2 9.7h7.6L12 2.5z" />
-            </svg>
-          </span>
-          <span>
-            <span className="block text-[10px] font-bold uppercase leading-tight tracking-[0.12em]">
-              {site.brandName}
-            </span>
-            <span className="mt-1.5 block text-[11px] leading-snug text-white/55">{site.dashboardTagline}</span>
-          </span>
+        <Link href="/admin" className="block" onClick={() => setMobileOpen(false)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={site.logoUrl || "/cms/logo-full-light.png"}
+            alt={site.brandName}
+            className="h-10 w-auto max-w-[200px] object-contain object-left"
+          />
+          <span className="mt-2 block text-[11px] leading-snug text-white/55">{site.dashboardTagline}</span>
         </Link>
       </div>
 

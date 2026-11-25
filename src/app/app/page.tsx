@@ -185,16 +185,19 @@ export default async function AppHomePage({
             <p className="mt-3 max-w-xl text-sm text-white/85 sm:text-base">{site.dashboardHeroSubtitle}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href={nextLesson?.href || "/app/learn"}
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--amber)] px-4 py-2.5 text-sm font-bold text-[var(--navy-deep)] hover:bg-[var(--amber-hot)]"
+                href={(site as { dashboardHeroCtaHref?: string }).dashboardHeroCtaHref || nextLesson?.href || "/app/learn"}
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[var(--amber)] to-[#f0b92a] px-4 py-2.5 text-sm font-bold text-[var(--navy-deep)] hover:brightness-105"
               >
-                Continue Learning <ArrowRight className="h-4 w-4" />
+                {(site as { dashboardHeroCtaLabel?: string }).dashboardHeroCtaLabel || "Continue Learning"}{" "}
+                <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="#progress"
+                href={(site as { dashboardHeroSecondaryHref?: string }).dashboardHeroSecondaryHref || "#progress"}
                 className="inline-flex items-center gap-2 rounded-lg border border-white/70 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
               >
-                <BarChart3 className="h-4 w-4" /> View My Progress
+                <BarChart3 className="h-4 w-4" />{" "}
+                {(site as { dashboardHeroSecondaryLabel?: string }).dashboardHeroSecondaryLabel ||
+                  "View My Progress"}
               </Link>
             </div>
             <ul className="mt-6 flex flex-wrap gap-4 text-xs font-semibold text-white/90 sm:gap-6">

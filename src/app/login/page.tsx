@@ -50,16 +50,17 @@ export default async function LoginPage({
   return (
     <AuthShell
       headline="Welcome Back to Life Star Instructors Academy"
+      subheadline="Access your training, courses, certifications, and academy resources."
       imageSrc="/cms/mock-auth-car.jpg"
       bullets={[
-        { title: "World-Class Instructor Training", body: "Curriculum built for commercial driving instructors." },
-        { title: "Flexible Online Learning", body: "Study worldwide on your schedule." },
-        { title: "Minnesota Campus Practicals", body: "Hands-on training at our main campus." },
-        { title: "License & Business Preparation", body: "From certification to opening your own school." },
+        { title: "World-Class Instructor Training" },
+        { title: "Flexible Online Learning" },
+        { title: "Minnesota Campus Practical Training" },
+        { title: "Certification & Licensing Preparation" },
       ]}
     >
       <h2 className="text-2xl font-bold text-[var(--navy)]">Sign In to Your Account</h2>
-      <p className="mt-1 text-sm text-[var(--steel)]">Enter your credentials to continue.</p>
+      <p className="mt-1 text-sm text-[var(--steel)]">Continue your professional training journey.</p>
 
       {params.reset && (
         <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900">

@@ -27,6 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       }}
       site={{
         brandName: site.brandName,
+        logoUrl: site.logoUrl,
         dashboardTagline: site.dashboardTagline,
       }}
       logoutAction={logout}

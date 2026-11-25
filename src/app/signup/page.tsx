@@ -80,16 +80,17 @@ export default async function SignupPage({
   return (
     <AuthShell
       headline="Join Life Star Instructors Academy"
+      subheadline="Become a certified driving instructor, build your expertise, and grow your career globally."
       imageSrc="/cms/mock-auth-instructors.jpg"
       bullets={[
-        { title: "Build a teaching career", body: "Train to become a licensed commercial driving instructor." },
-        { title: "Learn from anywhere", body: "Online academy access for students worldwide." },
-        { title: "Campus practicals in Minnesota", body: "Complete hands-on intensives when you are ready." },
-        { title: "Launch your own school", body: "Post-certification coaching for school operators." },
+        { title: "Internationally Recognized Training" },
+        { title: "Instructor Licensing Preparation" },
+        { title: "Start Your Own Driving School" },
+        { title: "Ongoing Professional Support" },
       ]}
     >
       <h2 className="text-2xl font-bold text-[var(--navy)]">Create Your Account</h2>
-      <p className="mt-1 text-sm text-[var(--steel)]">Start your instructor journey in a few steps.</p>
+      <p className="mt-1 text-sm text-[var(--steel)]">Get started in just a few steps.</p>
 
       {params.error && (
         <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
