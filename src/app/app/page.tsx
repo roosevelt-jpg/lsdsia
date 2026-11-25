@@ -1,12 +1,58 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { formatUsd } from "@/lib/money";
+import { savePrivateUpload } from "@/lib/private-uploads";
+import { loadStudentIdPayload } from "@/lib/student-id";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { StudentIdCard } from "@/components/student-id-card";
 
-export default async function AppHomePage() {
+export const dynamic = "force-dynamic";
+
+async function uploadIdPhoto(formData: FormData) {
+  "use server";
+  const session = await requireUser(["candidate", "admin", "coach"]);
+  const file = formData.get("idPhoto");
+  if (!(file instanceof File) || file.size <= 0) {
+    redirect("/app?photoError=" + encodeURIComponent("Choose a passport-style photo to upload."));
+  }
+  if (!file.type.startsWith("image/")) {
+    redirect("/app?photoError=" + encodeURIComponent("ID photo must be an image (JPG or PNG)."));
+  }
+  try {
+    const upload = await savePrivateUpload({
+      userId: session.id,
+      kind: "student_id_photo",
+      file,
+    });
+    await prisma.profile.upsert({
+      where: { userId: session.id },
+      create: { userId: session.id, idPhotoUploadId: upload.id },
+      update: { idPhotoUploadId: upload.id },
+    });
+    await prisma.auditLog.create({
+      data: {
+        userId: session.id,
+        action: "student_id.photo_uploaded",
+        metaJson: JSON.stringify({ uploadId: upload.id }),
+      },
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Upload failed";
+    redirect("/app?photoError=" + encodeURIComponent(msg));
+  }
+  redirect("/app?photoOk=1");
+}
+
+export default async function AppHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ photoError?: string; photoOk?: string }>;
+}) {
   const session = await requireUser();
+  const params = await searchParams;
 
   const user = await prisma.user.findUnique({
     where: { id: session.id },
@@ -19,10 +65,12 @@ export default async function AppHomePage() {
       orders: { orderBy: { createdAt: "desc" }, take: 5 },
       licenseVerification: true,
       schoolLaunchPlan: true,
+      profile: true,
     },
   });
 
-  const enrollment = user?.enrollments[0];
+  const idPayload = await loadStudentIdPayload(session.id);
+  const enrollment = idPayload?.enrollment ?? user?.enrollments[0] ?? null;
   const lessonEntitlements = user?.entitlements.filter((e) => e.lessonId) ?? [];
   const practicalCredits =
     user?.entitlements
@@ -35,6 +83,9 @@ export default async function AppHomePage() {
   );
   const appPct = user?.applicationPacket?.completenessPercent ?? 0;
   const licenseStatus = user?.licenseVerification?.status ?? "not_submitted";
+  const photoUrl = user?.profile?.idPhotoUploadId
+    ? `/api/private-uploads/${user.profile.idPhotoUploadId}`
+    : null;
 
   let nextAction = { label: "Choose an enrollment level", href: "/app/enroll" };
   if (licenseStatus === "not_submitted") {
@@ -43,6 +94,8 @@ export default async function AppHomePage() {
     nextAction = { label: "Re-submit your driver’s license", href: "/app/onboarding/license" };
   } else if (!enrollment) {
     nextAction = { label: "Choose an enrollment level", href: "/app/enroll" };
+  } else if (!photoUrl) {
+    nextAction = { label: "Add your student ID photo", href: "/app#student-id" };
   } else if (lessonEntitlements.length === 0) {
     nextAction = { label: "Buy your first online lesson or package", href: "/app/store" };
   } else if (completedLessons < lessonEntitlements.length) {
@@ -52,22 +105,99 @@ export default async function AppHomePage() {
   } else if (appPct < 80) {
     nextAction = { label: "Complete your application packet", href: "/app/application" };
   } else if (practicalCredits < 1) {
-    nextAction = { label: "Purchase Minnesota practical credit", href: "/app/store" };
+    nextAction = { label: "Purchase Minnesota campus practical credit", href: "/app/store" };
   } else if ((bestQuiz ?? 0) >= 80 && completedLessons >= Math.min(lessonEntitlements.length, 4)) {
     nextAction = {
-      label: "Plan your driving-school registration & state operating license",
+      label: "Plan opening your driving school after certification",
       href: "/app/school-launch",
     };
   } else {
-    nextAction = { label: "Request a campus practicum date", href: "/app/practicum" };
+    nextAction = { label: "Request a Minnesota campus practicum date", href: "/app/practicum" };
   }
 
   return (
     <div className="mx-auto max-w-4xl animate-fade">
       <h1 className="font-display text-3xl text-[var(--navy)]">Candidate dashboard</h1>
       <p className="mt-2 text-[var(--steel)]">
-        Welcome back, {session.name}. Track your Life Star Instructor Academy progress.
+        Welcome back, {session.name}. Life Star Instructor Academy serves students worldwide — study online, then
+        complete campus practicals in Minnesota when you are ready.
       </p>
+
+      <section id="student-id" className="mt-8 scroll-mt-8">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.14em] text-[var(--amber)]">Your credentials</p>
+            <h2 className="font-display text-2xl text-[var(--navy)]">Student identity card</h2>
+            <p className="mt-1 max-w-xl text-sm text-[var(--steel)]">
+              Carry this Life Star ID for Minnesota campus examinations. After certification, graduates can return to
+              open their own driving school with Life Star coaching.
+            </p>
+          </div>
+        </div>
+
+        {params.photoError && (
+          <p className="mb-3 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{params.photoError}</p>
+        )}
+        {params.photoOk && (
+          <p className="mb-3 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+            ID photo saved privately.
+          </p>
+        )}
+
+        {enrollment ? (
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+            <StudentIdCard
+              data={{
+                studentName: session.name,
+                enrollmentNumber: enrollment.enrollmentNumber,
+                programName: enrollment.level.name,
+                enrolledAt: enrollment.startedAt,
+                completedAt: enrollment.completedAt,
+                photoUrl,
+              }}
+            />
+            {!photoUrl && (
+              <form
+                action={uploadIdPhoto}
+                className="max-w-sm rounded-lg border border-dashed border-[var(--navy)]/20 bg-white p-5"
+              >
+                <p className="font-medium text-[var(--navy)]">Add passport-style photo</p>
+                <p className="mt-1 text-xs text-[var(--steel)]">
+                  Clear head-and-shoulders image, JPG/PNG, under 900KB. Stored privately — not on a public URL.
+                </p>
+                <input
+                  name="idPhoto"
+                  type="file"
+                  accept="image/*"
+                  required
+                  className="mt-3 block w-full text-sm text-[var(--steel)]"
+                />
+                <Button type="submit" size="sm" className="mt-3">
+                  Upload photo
+                </Button>
+              </form>
+            )}
+            {photoUrl && (
+              <form action={uploadIdPhoto} className="max-w-sm text-sm text-[var(--steel)]">
+                <p>Replace ID photo</p>
+                <input name="idPhoto" type="file" accept="image/*" required className="mt-2 block w-full text-sm" />
+                <Button type="submit" size="sm" variant="outline" className="mt-2">
+                  Replace
+                </Button>
+              </form>
+            )}
+          </div>
+        ) : (
+          <Card>
+            <p className="text-sm text-[var(--steel)]">
+              Select an enrollment level to issue your Life Star student identity number and card.
+            </p>
+            <Button asChild className="mt-3" size="sm">
+              <Link href="/app/enroll">Choose enrollment level</Link>
+            </Button>
+          </Card>
+        )}
+      </section>
 
       <Card className="mt-8 border-[var(--amber)]/40 bg-[var(--navy)] text-white">
         <p className="text-sm uppercase tracking-wide text-[var(--amber)]">Next action</p>

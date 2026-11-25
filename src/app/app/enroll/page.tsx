@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { formatUsd } from "@/lib/money";
+import { generateEnrollmentNumber } from "@/lib/student-id";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -22,7 +23,12 @@ async function enrollAction(formData: FormData) {
     });
   } else {
     await prisma.enrollment.create({
-      data: { userId: session.id, levelId: level.id, status: "active" },
+      data: {
+        userId: session.id,
+        levelId: level.id,
+        status: "active",
+        enrollmentNumber: await generateEnrollmentNumber(),
+      },
     });
   }
   redirect("/app/store");

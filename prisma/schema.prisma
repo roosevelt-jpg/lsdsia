@@ -34,17 +34,19 @@ model User {
 }
 
 model Profile {
-  id        String  @id @default(cuid())
-  userId    String  @unique
-  phone     String?
-  address1  String?
-  address2  String?
-  city      String?
-  state     String?
-  zip       String?
-  /// Data URL or remote URL for profile image
-  avatarUrl String?
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  phone           String?
+  address1        String?
+  address2        String?
+  city            String?
+  state           String?
+  zip             String?
+  /// Data URL or remote URL for admin/UI avatar (legacy)
+  avatarUrl       String?
+  /// PrivateUpload id for passport-style student ID photo (served via /api/private-uploads)
+  idPhotoUploadId String?
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model EnrollmentLevel {
@@ -62,11 +64,14 @@ model EnrollmentLevel {
 }
 
 model Enrollment {
-  id        String   @id @default(cuid())
-  userId    String
-  levelId   String
-  startedAt DateTime @default(now())
-  status    String   @default("active") // active | paused | completed
+  id               String    @id @default(cuid())
+  userId           String
+  levelId          String
+  /// Human-readable Life Star ID, e.g. LS-2026-A7K3M2 — unique, stable, used as barcode value
+  enrollmentNumber String    @unique
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
+  status           String    @default("active") // active | paused | completed
 
   user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   level EnrollmentLevel @relation(fields: [levelId], references: [id])

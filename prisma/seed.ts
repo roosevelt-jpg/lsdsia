@@ -504,7 +504,11 @@ async function main() {
         },
       },
       enrollments: {
-        create: { levelId: professional.id, status: "active" },
+        create: {
+          levelId: professional.id,
+          status: "active",
+          enrollmentNumber: `LS-${new Date().getFullYear()}-DEMO01`,
+        },
       },
       applicationPacket: {
         create: {

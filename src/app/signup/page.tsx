@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSession, getSession, hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { generateEnrollmentNumber } from "@/lib/student-id";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +39,15 @@ async function signupAction(formData: FormData) {
         },
       },
       ...(level
-        ? { enrollments: { create: { levelId: level.id, status: "active" } } }
+        ? {
+            enrollments: {
+              create: {
+                levelId: level.id,
+                status: "active",
+                enrollmentNumber: await generateEnrollmentNumber(),
+              },
+            },
+          }
         : {}),
     },
   });

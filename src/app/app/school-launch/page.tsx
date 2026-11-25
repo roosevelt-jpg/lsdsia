@@ -121,9 +121,10 @@ export default async function SchoolLaunchPage({
         <p className="text-xs uppercase tracking-[0.14em] text-[var(--amber)]">After the program</p>
         <h1 className="mt-2 font-display text-3xl text-[var(--navy)]">Open your driving school</h1>
         <p className="mt-3 text-sm text-[var(--steel)]">
-          Life Star helps graduates register a commercial driving school in their chosen U.S. state and prepare the
-          DMV / state operator packet. This is coaching and document readiness — not legal advice, and Life Star does
-          not file applications with your state for you.
+          After Life Star training and certification, graduates — including international students who completed the
+          Minnesota campus track — can return to operate their own driving school. We coach you on registering in your
+          chosen U.S. state and preparing the DMV / state operator packet. This is coaching and document readiness —
+          not legal advice, and Life Star does not file applications for you.
         </p>
       </div>
 

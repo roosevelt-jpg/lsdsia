@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -73,24 +74,34 @@ export default async function AdminCandidatesPage() {
       <div className="mt-6 space-y-4">
         {candidates.map((c) => (
           <Card key={c.id}>
-            <p className="font-medium text-[var(--navy)]">
-              {c.name} · {c.email}
-            </p>
-            <p className="text-sm text-[var(--steel)]">
-              Level: {c.enrollments[0]?.level.name ?? "—"} · Lessons unlocked:{" "}
-              {c.entitlements.filter((e) => e.lessonId).length} · Practical credits:{" "}
-              {c.entitlements
-                .filter((e) => e.practicalSkuId)
-                .reduce((s, e) => s + e.creditsRemaining, 0)}
-            </p>
-            <p className="mt-1 text-sm capitalize text-[var(--steel)]">
-              License: {(c.licenseVerification?.status ?? "not submitted").replaceAll("_", " ")}
-              {c.schoolLaunchPlan
-                ? ` · School launch: ${c.schoolLaunchPlan.status.replaceAll("_", " ")}${
-                    c.schoolLaunchPlan.targetState ? ` (${c.schoolLaunchPlan.targetState})` : ""
-                  }`
-                : ""}
-            </p>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="font-medium text-[var(--navy)]">
+                  {c.name} · {c.email}
+                </p>
+                <p className="text-sm text-[var(--steel)]">
+                  Level: {c.enrollments[0]?.level.name ?? "—"}
+                  {c.enrollments[0]?.enrollmentNumber
+                    ? ` · ID ${c.enrollments[0].enrollmentNumber}`
+                    : ""}{" "}
+                  · Lessons unlocked: {c.entitlements.filter((e) => e.lessonId).length} · Practical credits:{" "}
+                  {c.entitlements
+                    .filter((e) => e.practicalSkuId)
+                    .reduce((s, e) => s + e.creditsRemaining, 0)}
+                </p>
+                <p className="mt-1 text-sm capitalize text-[var(--steel)]">
+                  License: {(c.licenseVerification?.status ?? "not submitted").replaceAll("_", " ")}
+                  {c.schoolLaunchPlan
+                    ? ` · School launch: ${c.schoolLaunchPlan.status.replaceAll("_", " ")}${
+                        c.schoolLaunchPlan.targetState ? ` (${c.schoolLaunchPlan.targetState})` : ""
+                      }`
+                    : ""}
+                </p>
+              </div>
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/admin/candidates/${c.id}/id-card`}>Print ID card</Link>
+              </Button>
+            </div>
             <form action={grantLesson} className="mt-3 flex flex-wrap items-end gap-2">
               <input type="hidden" name="userId" value={c.id} />
               <div>

@@ -12,11 +12,11 @@ export default function HomePage() {
             Life Star Driving School
           </p>
           <h1 className="animate-rise mt-5 max-w-2xl text-xl font-medium text-white/95 sm:text-2xl md:text-3xl">
-            Train to become a licensed commercial driving instructor — then earn your practicals in Minnesota.
+            Train to become a licensed commercial driving instructor — students welcome worldwide.
           </h1>
           <p className="animate-rise-delay mt-4 max-w-xl text-base text-white/80 sm:text-lg">
-            Study online with Life Star, then travel to our Minnesota main campus for laboratory training under
-            Minnesota Rules Part 7411.0630.
+            Study online with Life Star from anywhere, then travel to our Minnesota main campus for laboratory
+            training under Minnesota Rules Part 7411.0630 when you are ready.
           </p>
           <div className="animate-rise-delay mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
@@ -31,11 +31,13 @@ export default function HomePage() {
 
       <section className="bg-[var(--mist)] px-5 py-20">
         <div className="mx-auto max-w-3xl">
-          <h2 className="font-display text-3xl text-[var(--navy)] sm:text-4xl">Online study. Minnesota campus practicals.</h2>
+          <h2 className="font-display text-3xl text-[var(--navy)] sm:text-4xl">
+            Online study worldwide. Minnesota campus practicals.
+          </h2>
           <p className="mt-4 text-lg text-[var(--steel)]">
-            Life Star’s Instructor Academy coaches candidates through licensing knowledge, practice exams modeled on
-            the instructor Q&A set, a digital preparation packet for PS36008-10, and scheduled intensives at the
-            Minnesota campus — not a generic LMS template.
+            Life Star’s Instructor Academy coaches candidates across the globe through licensing knowledge, practice
+            exams, a digital preparation packet, and scheduled intensives at the Minnesota campus. After certification,
+            graduates can return to open their own driving school with Life Star school-launch coaching.
           </p>
           <div className="mt-8">
             <Button asChild variant="outline">

@@ -70,9 +70,9 @@ export default async function LicenseOnboardingPage({
       <p className="text-xs uppercase tracking-[0.14em] text-[var(--amber)]">Onboarding</p>
       <h1 className="mt-2 font-display text-3xl text-[var(--navy)]">Driver’s license verification</h1>
       <p className="mt-3 text-sm text-[var(--steel)]">
-        Life Star requires a government-issued driver’s license upload before you continue the Instructor Academy.
-        Files are stored privately (not on a public URL). An admin reviews submissions — approval can happen after you
-        upload; you only need to submit to unlock the rest of the academy.
+        Students worldwide are welcome. Life Star requires a government-issued driver’s license upload before you
+        continue the Instructor Academy. Files are stored privately (not on a public URL). An admin reviews
+        submissions — you only need to submit to unlock the rest of the academy.
       </p>
 
       {params.error && (

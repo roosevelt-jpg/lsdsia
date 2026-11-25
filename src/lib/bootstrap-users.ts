@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { generateEnrollmentNumber } from "@/lib/student-id";
 
 /**
  * If the database has zero users, create admin + demo from env passwords.
@@ -61,7 +62,11 @@ export async function ensureLoginUsers(): Promise<
           },
         },
         enrollments: {
-          create: { levelId: professional.id, status: "active" },
+          create: {
+            levelId: professional.id,
+            status: "active",
+            enrollmentNumber: await generateEnrollmentNumber(),
+          },
         },
       },
     });

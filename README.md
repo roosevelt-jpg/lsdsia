@@ -105,9 +105,10 @@ Login emails default to `admin@lifestar.academy` / `demo@lifestar.academy`; pass
 
 - Landing + `/pricing` (BTW $7,000 / Classroom $15,000 with 50% down payment plans; online levels separate)
 - Candidate: **driver’s license upload** (`/app/onboarding/license`) required before other `/app` routes; enroll, store, learn, quiz, application, practicum
-- **School launch** (`/app/school-launch`): after-program coaching to register a driving school in a U.S. state and prepare the DMV/operator packet (guidance + private document uploads — not legal advice)
-- Admin: premium console (header profile/settings/avatar), licenses review (`/admin/licenses`), school-launch coaching (`/admin/school-launch`), levels, pricing, candidates, orders, content, quizzes, practicum
+- **Student identity card** on the candidate dashboard: passport photo (private upload), enrollment number, program, dates, Code 128 barcode; admin print at `/admin/candidates/[id]/id-card` for Minnesota campus exams
+- **School launch** (`/app/school-launch`): after certification, coaching to register/operate a driving school (U.S. state DMV/operator packet — not legal advice); academy welcomes students worldwide (campus practicals remain in Minnesota)
+- Admin: premium console, licenses, school-launch, print student IDs, levels, pricing, candidates, orders, content, quizzes, practicum
 
 ### Private uploads
 
-License and school-launch files are stored in the database as private blobs and served only via `/api/private-uploads/[id]` to the owning candidate or an admin. They are never placed under `public/`.
+License, school-launch, and student ID photos are stored in the database as private blobs and served only via `/api/private-uploads/[id]` to the owning candidate or an admin. They are never placed under `public/`.
