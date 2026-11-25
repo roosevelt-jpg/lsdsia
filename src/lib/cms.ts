@@ -5,7 +5,7 @@ export type CmsBundle = Awaited<ReturnType<typeof loadCmsBundle>>;
 
 let cmsEnsurePromise: Promise<void> | null = null;
 
-const CMS_CONTENT_VERSION = 5;
+const CMS_CONTENT_VERSION = 7;
 
 /** Ensure marketing CMS tables have the ChatGPT-mock defaults (idempotent). */
 export async function ensureCmsDefaults() {
@@ -39,16 +39,28 @@ export async function loadCmsSite() {
   const s = site as Record<string, unknown>;
   if (!s.logoUrl) bannerDefaults.logoUrl = "/cms/logo-full-light.png";
   if (!s.logoMarkUrl) bannerDefaults.logoMarkUrl = "/cms/logo-mark.svg";
-  if (!site.dashboardHeroBgUrl) bannerDefaults.dashboardHeroBgUrl = "/cms/dashboard/hero-bg-hires.jpg";
+  if (!site.dashboardHeroBgUrl || site.dashboardHeroBgUrl.includes("hero-banner.jpg")) {
+    bannerDefaults.dashboardHeroBgUrl = "/cms/dashboard/hero-bg-hires.jpg";
+  }
   if (!site.dashboardHeroPersonUrl) bannerDefaults.dashboardHeroPersonUrl = "/cms/dashboard/hero-person.jpg";
+  if (!site.dashboardHeroSubtitle) {
+    bannerDefaults.dashboardHeroSubtitle =
+      "Continue your journey to becoming a certified driving instructor with Life Star Instructors Academy.";
+  }
   if (!site.dashboardUpgradeImageUrl) bannerDefaults.dashboardUpgradeImageUrl = "/cms/dashboard/upgrade-car.jpg";
   if (!site.dashboardContinueThumbUrl) bannerDefaults.dashboardContinueThumbUrl = "/cms/dashboard/continue-lesson.jpg";
   if (!s.dashboardHeroCtaLabel) bannerDefaults.dashboardHeroCtaLabel = "Continue Learning";
   if (!s.dashboardHeroSecondaryLabel) bannerDefaults.dashboardHeroSecondaryLabel = "View My Progress";
   if (!site.adminHeroBgUrl) bannerDefaults.adminHeroBgUrl = "/cms/admin/hero-banner.jpg";
+  // Always prefer the sharp text-free admin banner crop.
+  bannerDefaults.adminHeroBgUrl = "/cms/admin/hero-banner.jpg";
   if (!site.adminHeroPersonUrl) bannerDefaults.adminHeroPersonUrl = "/cms/admin/hero-person-hires.jpg";
   if (!site.adminPromoImageUrl) bannerDefaults.adminPromoImageUrl = "/cms/admin/promo-grow.jpg";
   if (!site.adminHeroTitle) bannerDefaults.adminHeroTitle = "Welcome to Life Star Instructors Academy";
+  if (!site.adminHeroSubtitle) {
+    bannerDefaults.adminHeroSubtitle =
+      "Manage training, students, instructors and academy operations all in one place.";
+  }
   if (!site.adminPromoTitle) bannerDefaults.adminPromoTitle = "Grow Your Driving School";
   if (!s.adminHeroCtaPrimaryLabel) bannerDefaults.adminHeroCtaPrimaryLabel = "New Enrollment";
   if (!s.adminHeroCtaSecondaryLabel) bannerDefaults.adminHeroCtaSecondaryLabel = "View Reports";

@@ -36,6 +36,15 @@ async function reviewLicense(formData: FormData) {
   redirect("/admin/licenses?ok=1");
 }
 
+function DocLink({ id, label }: { id: string | null; label: string }) {
+  if (!id) return <span className="text-amber-700">{label}: missing</span>;
+  return (
+    <a href={`/api/private-uploads/${id}`} target="_blank" rel="noreferrer" className="underline">
+      {label}
+    </a>
+  );
+}
+
 export default async function AdminLicensesPage({
   searchParams,
 }: {
@@ -56,7 +65,7 @@ export default async function AdminLicensesPage({
       <div>
         <p className="flex items-center gap-2 text-sm text-[var(--steel)]">
           <IdCard className="h-4 w-4 text-[var(--amber)]" />
-          Review candidate driver’s license uploads (private storage).
+          Review candidate identity documents (driver’s license, passport photo, travel passport).
         </p>
       </div>
       {params.ok && (
@@ -65,7 +74,7 @@ export default async function AdminLicensesPage({
 
       <section className="space-y-3">
         <h2 className="font-display text-xl text-[var(--navy)]">Pending ({pending.length})</h2>
-        {pending.length === 0 && <p className="text-sm text-[var(--steel)]">No pending licenses.</p>}
+        {pending.length === 0 && <p className="text-sm text-[var(--steel)]">No pending applications.</p>}
         {pending.map((r) => (
           <Card key={r.id} className="space-y-3">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -74,20 +83,16 @@ export default async function AdminLicensesPage({
                   {r.user.name} · {r.user.email}
                 </p>
                 <p className="text-sm text-[var(--steel)]">
-                  {r.licenseState || "—"} {r.licenseNumber ? `· ${r.licenseNumber}` : ""} · submitted{" "}
+                  {r.licenseState || "—"} {r.licenseNumber ? `· ${r.licenseNumber}` : ""}
+                  {r.passportNumber ? ` · passport ${r.passportNumber}` : ""} · submitted{" "}
                   {r.submittedAt?.toLocaleString() ?? "—"}
                 </p>
+                <p className="mt-2 flex flex-wrap gap-3 text-sm text-[var(--navy)]">
+                  <DocLink id={r.uploadId} label="Driver’s license" />
+                  <DocLink id={r.passportPhotoUploadId} label="Passport photo" />
+                  <DocLink id={r.travelPassportUploadId} label="Travel passport" />
+                </p>
               </div>
-              {r.uploadId && (
-                <a
-                  href={`/api/private-uploads/${r.uploadId}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm font-medium text-[var(--navy)] underline"
-                >
-                  Open upload
-                </a>
-              )}
             </div>
             <form action={reviewLicense} className="flex flex-wrap items-end gap-2">
               <input type="hidden" name="userId" value={r.userId} />
@@ -116,12 +121,12 @@ export default async function AdminLicensesPage({
                 {r.status.replaceAll("_", " ")}
                 {r.adminNote ? ` · ${r.adminNote}` : ""}
               </p>
+              <p className="mt-1 flex flex-wrap gap-3 text-sm text-[var(--navy)]">
+                <DocLink id={r.uploadId} label="DL" />
+                <DocLink id={r.passportPhotoUploadId} label="Photo" />
+                <DocLink id={r.travelPassportUploadId} label="Passport" />
+              </p>
             </div>
-            {r.uploadId && (
-              <a href={`/api/private-uploads/${r.uploadId}`} className="text-sm underline" target="_blank" rel="noreferrer">
-                View
-              </a>
-            )}
           </Card>
         ))}
       </section>

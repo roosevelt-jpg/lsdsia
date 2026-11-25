@@ -51,7 +51,7 @@ model Profile {
   avatarUrl       String?
   /// PrivateUpload id for passport-style student ID photo (served via /api/private-uploads)
   idPhotoUploadId String?
-  /// Onboarding wizard (1–4); 4 + profileCompletedAt means finished
+  /// Onboarding wizard (1–5); 5 + profileCompletedAt means finished
   onboardingStep  Int     @default(0)
   trainingGoal    String?
   experienceLevel String?
@@ -79,10 +79,11 @@ model EnrollmentLevel {
   sortOrder   Int     @default(0)
   isActive    Boolean @default(true)
 
-  enrollments     Enrollment[]
-  lessonPrices    LessonPrice[]
-  practicalPrices PracticalPrice[]
-  packages        LevelPackage[]
+  enrollments       Enrollment[]
+  lessonPrices      LessonPrice[]
+  practicalPrices   PracticalPrice[]
+  packages          LevelPackage[]
+  learningMaterials LearningMaterial[]
 }
 
 model Enrollment {
@@ -239,6 +240,23 @@ model LessonProgress {
   @@unique([userId, lessonId])
 }
 
+/// Admin-managed video / document links shown to enrolled candidates on their dashboard.
+model LearningMaterial {
+  id           String           @id @default(cuid())
+  title        String
+  description  String           @default("")
+  url          String
+  kind         String           @default("video") // video | document | link
+  /// null = available to every enrolled level
+  levelId      String?
+  thumbnailUrl String?
+  sortOrder    Int              @default(0)
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  level        EnrollmentLevel? @relation(fields: [levelId], references: [id], onDelete: SetNull)
+}
+
 model Quiz {
   id               String        @id @default(cuid())
   slug             String        @unique
@@ -261,6 +279,8 @@ model Question {
   acceptedKeywords String?
   explanation      String
   topic            String
+  /// Admin-only answer-key slideshow (never shown to candidates)
+  inAdminSlides    Boolean         @default(false)
   quiz             Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
   answers          AttemptAnswer[]
 
@@ -413,7 +433,7 @@ model Certificate {
 model PrivateUpload {
   id         String   @id @default(cuid())
   userId     String
-  kind       String // drivers_license | school_launch_*
+  kind       String // drivers_license | passport_photo | travel_passport | student_id_photo | school_launch_*
   fileName   String
   mimeType   String
   dataBase64 String
@@ -423,19 +443,25 @@ model PrivateUpload {
 }
 
 model LicenseVerification {
-  id            String    @id @default(cuid())
-  userId        String    @unique
-  status        String    @default("not_submitted") // not_submitted | pending | approved | rejected
-  uploadId      String?
-  licenseNumber String?
-  licenseState  String?
-  adminNote     String?
-  reviewedById  String?
-  reviewedAt    DateTime?
-  submittedAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  status                 String    @default("not_submitted") // not_submitted | pending | approved | rejected
+  /// PrivateUpload id — government driver’s license
+  uploadId               String?
+  /// PrivateUpload id — passport-style face photo
+  passportPhotoUploadId  String?
+  /// PrivateUpload id — travel passport bio page / copy
+  travelPassportUploadId String?
+  licenseNumber          String?
+  licenseState           String?
+  passportNumber         String?
+  adminNote              String?
+  reviewedById           String?
+  reviewedAt             DateTime?
+  submittedAt            DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model SchoolLaunchPlan {

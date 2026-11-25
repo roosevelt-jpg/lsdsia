@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { candidateNeedsIdentityDocs, getIdentityDocStatus } from "@/lib/identity-docs";
 
 export type LicenseStatus = "not_submitted" | "pending" | "approved" | "rejected";
 
@@ -6,12 +7,9 @@ export async function getLicenseVerification(userId: string) {
   return prisma.licenseVerification.findUnique({ where: { userId } });
 }
 
-/** Candidates must at least submit a license upload before using the rest of /app. */
+/** Candidates must submit DL + passport photo + travel passport before using the rest of /app. */
 export async function candidateNeedsLicenseUpload(userId: string, role: string) {
-  if (role !== "candidate") return false;
-  const row = await getLicenseVerification(userId);
-  if (!row) return true;
-  return row.status === "not_submitted";
+  return candidateNeedsIdentityDocs(userId, role);
 }
 
 export async function ensureLicenseRow(userId: string) {
@@ -21,3 +19,5 @@ export async function ensureLicenseRow(userId: string) {
     update: {},
   });
 }
+
+export { getIdentityDocStatus };
