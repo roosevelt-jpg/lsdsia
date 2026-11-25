@@ -12,6 +12,7 @@ const links = [
   { href: "/app/application", label: "Application" },
   { href: "/app/practicum", label: "Practicum" },
   { href: "/app/school-launch", label: "Open a school" },
+  { href: "/app/certificate", label: "Certificate" },
   { href: "/app/orders", label: "Orders" },
   { href: "/app/resources", label: "Resources" },
 ];

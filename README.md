@@ -106,8 +106,14 @@ Login emails default to `admin@lifestar.academy` / `demo@lifestar.academy`; pass
 - Landing + `/pricing` (BTW $7,000 / Classroom $15,000 with 50% down payment plans; online levels separate)
 - Candidate: **driver’s license upload** (`/app/onboarding/license`) required before other `/app` routes; enroll, store, learn, quiz, application, practicum
 - **Student identity card** on the candidate dashboard: passport photo (private upload), enrollment number, program, dates, Code 128 barcode; admin print at `/admin/candidates/[id]/id-card` for Minnesota campus exams
+- **Digital certificate** (`/app/certificate`): auto-issued when an admin marks the program certified (if the student has passed the practice exam); admins can also **Issue certificate** from Candidates (completes program + issues, with a clear error if not eligible). Public verify: `/verify/[code]`
 - **School launch** (`/app/school-launch`): after certification, coaching to register/operate a driving school (U.S. state DMV/operator packet — not legal advice); academy welcomes students worldwide (campus practicals remain in Minnesota)
-- Admin: premium console, licenses, school-launch, print student IDs, levels, pricing, candidates, orders, content, quizzes, practicum
+- Admin: premium console, licenses, school-launch, print student IDs, issue certificates, levels, pricing, candidates, orders, content, quizzes, practicum
+
+### Certificate signatories & registration IDs
+
+- Owner signature is fixed product copy: **John Addo**, Owner (`src/lib/certificate-brand.ts`).
+- Program Director name + MN registration / operator license placeholders live on `SchoolSetting` (`programDirectorName`, `schoolRegistrationId`, `operatorLicenseId`). Seed from env `PROGRAM_DIRECTOR_NAME`, `LSDS_SCHOOL_REGISTRATION_ID`, `LSDS_OPERATOR_LICENSE_ID`, or edit the `SchoolSetting` row / constants in `certificate-brand.ts`.
 
 ### Private uploads
 

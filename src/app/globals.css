@@ -218,4 +218,44 @@ body {
   .student-id-barcode svg {
     height: 0.42in;
   }
+
+  .lsds-certificate-actions {
+    display: none !important;
+  }
+
+  .lsds-certificate-sheet {
+    min-height: auto !important;
+    background: white !important;
+    padding: 0 !important;
+  }
+
+  .lsds-certificate {
+    width: 10in !important;
+    max-width: 10in !important;
+    min-height: 7.5in !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Digital certificate — landscape print-ready */
+.lsds-certificate {
+  width: 100%;
+  max-width: 56rem;
+  min-height: 26rem;
+  border-radius: 0.35rem;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 22px 48px rgba(11, 31, 51, 0.18);
+}
+
+.lsds-certificate-sheet {
+  min-height: 100vh;
+  background: var(--mist);
+  padding: 1.5rem 1rem 3rem;
+}
+
+.lsds-seal {
+  box-shadow: 0 0 0 3px rgba(230, 168, 23, 0.15);
 }

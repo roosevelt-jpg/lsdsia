@@ -31,6 +31,7 @@ model User {
   licenseVerification LicenseVerification?
   schoolLaunchPlan    SchoolLaunchPlan?
   privateUploads      PrivateUpload[]
+  certificates        Certificate[]
 }
 
 model Profile {
@@ -73,8 +74,9 @@ model Enrollment {
   completedAt      DateTime?
   status           String    @default("active") // active | paused | completed
 
-  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  level EnrollmentLevel @relation(fields: [levelId], references: [id])
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level       EnrollmentLevel @relation(fields: [levelId], references: [id])
+  certificate Certificate?
 
   @@unique([userId, levelId])
 }
@@ -353,11 +355,37 @@ model AuditLog {
 }
 
 model SchoolSetting {
-  id           String @id @default("default")
-  name         String @default("Life Star Driving School")
-  address      String @default("Minnesota main campus")
-  supportEmail String @default("academy@lifestardrivingschool.example")
-  supportPhone String @default("(651) 555-0147")
+  id                   String @id @default("default")
+  name                 String @default("Life Star Driving School")
+  address              String @default("Minnesota main campus")
+  supportEmail         String @default("academy@lifestardrivingschool.example")
+  supportPhone         String @default("(651) 555-0147")
+  /// Display name for Program Director signature on certificates (admin-editable)
+  programDirectorName  String @default("Alex Rivera")
+  /// Placeholder until official MN registration IDs are confirmed — edit in admin or seed
+  schoolRegistrationId String @default("LSDS-MN-REG-PENDING")
+  operatorLicenseId    String @default("MN-OP-LICENSE-PENDING")
+}
+
+/// Digital completion certificate for Instructor Academy graduates
+model Certificate {
+  id                String    @id @default(cuid())
+  /// Public verification code, e.g. LSDS-C-A7K3M2XQ
+  verificationCode  String    @unique
+  userId            String
+  enrollmentId      String    @unique
+  studentName       String
+  enrollmentNumber  String
+  programName       String
+  completedAt       DateTime
+  issuedAt          DateTime  @default(now())
+  issuedById        String?
+  ownerSignatory    String
+  directorSignatory String
+  revokedAt         DateTime?
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 }
 
 /// Private binary stored in DB (not under public/). Used for DL + school-launch docs on Vercel.

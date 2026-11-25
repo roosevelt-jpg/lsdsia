@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { formatUsd } from "@/lib/money";
 import { savePrivateUpload } from "@/lib/private-uploads";
+import { getCertificateForUser } from "@/lib/certificate";
 import { loadStudentIdPayload } from "@/lib/student-id";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -69,7 +70,10 @@ export default async function AppHomePage({
     },
   });
 
-  const idPayload = await loadStudentIdPayload(session.id);
+  const [idPayload, certificate] = await Promise.all([
+    loadStudentIdPayload(session.id),
+    getCertificateForUser(session.id),
+  ]);
   const enrollment = idPayload?.enrollment ?? user?.enrollments[0] ?? null;
   const lessonEntitlements = user?.entitlements.filter((e) => e.lessonId) ?? [];
   const practicalCredits =
@@ -106,6 +110,11 @@ export default async function AppHomePage({
     nextAction = { label: "Complete your application packet", href: "/app/application" };
   } else if (practicalCredits < 1) {
     nextAction = { label: "Purchase Minnesota campus practical credit", href: "/app/store" };
+  } else if (certificate) {
+    nextAction = {
+      label: "View your digital certificate — then plan opening your school",
+      href: "/app/certificate",
+    };
   } else if ((bestQuiz ?? 0) >= 80 && completedLessons >= Math.min(lessonEntitlements.length, 4)) {
     nextAction = {
       label: "Plan opening your driving school after certification",

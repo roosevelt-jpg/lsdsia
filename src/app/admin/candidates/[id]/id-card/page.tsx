@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { certifyAndMaybeIssueCertificate, getCertificateForUser } from "@/lib/certificate";
 import { loadStudentIdPayload } from "@/lib/student-id";
 import { StudentIdCard } from "@/components/student-id-card";
 import { Button } from "@/components/ui/button";
@@ -16,18 +16,18 @@ async function markCertified(formData: FormData) {
   const enrollmentId = String(formData.get("enrollmentId") || "");
   if (!userId || !enrollmentId) redirect(`/admin/candidates/${userId}/id-card`);
 
-  await prisma.enrollment.update({
-    where: { id: enrollmentId },
-    data: { status: "completed", completedAt: new Date() },
+  const { issued } = await certifyAndMaybeIssueCertificate({
+    userId,
+    enrollmentId,
+    adminId: admin.id,
   });
-  await prisma.auditLog.create({
-    data: {
-      userId: admin.id,
-      action: "admin.certify_enrollment",
-      metaJson: JSON.stringify({ userId, enrollmentId }),
-    },
-  });
-  redirect(`/admin/candidates/${userId}/id-card?certified=1`);
+
+  if (issued.ok) {
+    redirect(`/admin/candidates/${userId}/id-card?certified=1&cert=1`);
+  }
+  redirect(
+    `/admin/candidates/${userId}/id-card?certified=1&certError=${encodeURIComponent(issued.error)}`,
+  );
 }
 
 export default async function AdminStudentIdCardPage({
@@ -35,7 +35,7 @@ export default async function AdminStudentIdCardPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ certified?: string }>;
+  searchParams: Promise<{ certified?: string; cert?: string; certError?: string }>;
 }) {
   await requireUser(["admin"]);
   const { id } = await params;
@@ -44,6 +44,8 @@ export default async function AdminStudentIdCardPage({
   if (!payload || payload.user.role !== "candidate") notFound();
 
   const { user, enrollment, profile } = payload;
+  const existingCert = await getCertificateForUser(user.id);
+
   if (!enrollment) {
     return (
       <div className="mx-auto max-w-lg">
@@ -75,6 +77,11 @@ export default async function AdminStudentIdCardPage({
           </div>
           <div className="flex flex-wrap gap-2">
             <PrintButton />
+            {existingCert && (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/verify/${existingCert.verificationCode}`}>View certificate</Link>
+              </Button>
+            )}
             <Button asChild variant="outline" size="sm">
               <Link href="/admin/candidates">Candidates</Link>
             </Button>
@@ -83,6 +90,12 @@ export default async function AdminStudentIdCardPage({
         {sp.certified && (
           <p className="rounded-lg bg-emerald-50 px-4 py-2 text-sm text-emerald-900">
             Enrollment marked certified — completion date set on the card.
+            {sp.cert ? " Digital certificate auto-issued." : ""}
+          </p>
+        )}
+        {sp.certError && (
+          <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-950">
+            Certificate not issued: {sp.certError}
           </p>
         )}
         {!profile?.idPhotoUploadId && !profile?.avatarUrl && (

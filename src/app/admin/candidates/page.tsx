@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { issueCertificate } from "@/lib/certificate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -52,16 +53,42 @@ async function setCompetency(formData: FormData) {
   redirect("/admin/candidates?comp=1");
 }
 
-export default async function AdminCandidatesPage() {
+async function issueCertAction(formData: FormData) {
+  "use server";
+  const admin = await requireUser(["admin"]);
+  const userId = String(formData.get("userId") || "");
+  if (!userId) redirect("/admin/candidates");
+
+  const result = await issueCertificate({
+    userId,
+    issuedById: admin.id,
+    completeEnrollment: true,
+  });
+
+  if (!result.ok) {
+    redirect(`/admin/candidates?certError=${encodeURIComponent(result.error)}&user=${userId}`);
+  }
+  redirect(
+    `/admin/candidates?certIssued=1&code=${encodeURIComponent(result.certificate.verificationCode)}&user=${userId}`,
+  );
+}
+
+export default async function AdminCandidatesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ certError?: string; certIssued?: string; code?: string; user?: string }>;
+}) {
+  const sp = await searchParams;
   const [candidates, lessons] = await Promise.all([
     prisma.user.findMany({
       where: { role: "candidate" },
       include: {
-        enrollments: { include: { level: true } },
+        enrollments: { include: { level: true, certificate: true } },
         entitlements: true,
         practicumBookings: true,
         licenseVerification: true,
         schoolLaunchPlan: true,
+        certificates: { where: { revokedAt: null }, take: 1 },
       },
       orderBy: { createdAt: "desc" },
     }),
@@ -71,8 +98,23 @@ export default async function AdminCandidatesPage() {
   return (
     <div className="mx-auto max-w-4xl">
       <h1 className="font-display text-3xl text-[var(--navy)]">Candidates</h1>
+      {sp.certError && (
+        <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
+          Certificate not issued{sp.user ? ` (user ${sp.user.slice(0, 8)}…)` : ""}: {sp.certError}
+        </p>
+      )}
+      {sp.certIssued && sp.code && (
+        <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+          Certificate issued ·{" "}
+          <Link href={`/verify/${sp.code}`} className="font-mono underline">
+            {sp.code}
+          </Link>
+        </p>
+      )}
       <div className="mt-6 space-y-4">
-        {candidates.map((c) => (
+        {candidates.map((c) => {
+          const cert = c.certificates[0] ?? c.enrollments[0]?.certificate;
+          return (
           <Card key={c.id}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -96,11 +138,26 @@ export default async function AdminCandidatesPage() {
                         c.schoolLaunchPlan.targetState ? ` (${c.schoolLaunchPlan.targetState})` : ""
                       }`
                     : ""}
+                  {cert ? ` · Cert ${cert.verificationCode}` : ""}
                 </p>
               </div>
-              <Button asChild size="sm" variant="outline">
-                <Link href={`/admin/candidates/${c.id}/id-card`}>Print ID card</Link>
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button asChild size="sm" variant="outline">
+                  <Link href={`/admin/candidates/${c.id}/id-card`}>Print ID card</Link>
+                </Button>
+                {cert ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/verify/${cert.verificationCode}`}>View certificate</Link>
+                  </Button>
+                ) : (
+                  <form action={issueCertAction}>
+                    <input type="hidden" name="userId" value={c.id} />
+                    <Button type="submit" size="sm">
+                      Issue certificate
+                    </Button>
+                  </form>
+                )}
+              </div>
             </div>
             <form action={grantLesson} className="mt-3 flex flex-wrap items-end gap-2">
               <input type="hidden" name="userId" value={c.id} />
@@ -133,7 +190,8 @@ export default async function AdminCandidatesPage() {
               </Button>
             </form>
           </Card>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -304,6 +304,7 @@ async function main() {
   await prisma.lesson.deleteMany();
   await prisma.module.deleteMany();
   await prisma.practicalSku.deleteMany();
+  await prisma.certificate.deleteMany();
   await prisma.enrollment.deleteMany();
   await prisma.profile.deleteMany();
   await prisma.auditLog.deleteMany();
@@ -318,6 +319,9 @@ async function main() {
       address: "Life Star Driving School — Minnesota main campus",
       supportEmail: "academy@lifestardrivingschool.example",
       supportPhone: "(651) 555-0147",
+      programDirectorName: process.env.PROGRAM_DIRECTOR_NAME || "Alex Rivera",
+      schoolRegistrationId: process.env.LSDS_SCHOOL_REGISTRATION_ID || "LSDS-MN-REG-PENDING",
+      operatorLicenseId: process.env.LSDS_OPERATOR_LICENSE_ID || "MN-OP-LICENSE-PENDING",
     },
   });
 

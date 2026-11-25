@@ -52,15 +52,43 @@ async function saveProfile(formData: FormData) {
   redirect("/admin/settings?saved=1");
 }
 
+async function saveSchoolCertificateSettings(formData: FormData) {
+  "use server";
+  await requireUser(["admin"]);
+  const programDirectorName = String(formData.get("programDirectorName") || "").trim() || "Alex Rivera";
+  const schoolRegistrationId =
+    String(formData.get("schoolRegistrationId") || "").trim() || "LSDS-MN-REG-PENDING";
+  const operatorLicenseId =
+    String(formData.get("operatorLicenseId") || "").trim() || "MN-OP-LICENSE-PENDING";
+
+  await prisma.schoolSetting.upsert({
+    where: { id: "default" },
+    create: {
+      id: "default",
+      programDirectorName,
+      schoolRegistrationId,
+      operatorLicenseId,
+    },
+    update: {
+      programDirectorName,
+      schoolRegistrationId,
+      operatorLicenseId,
+    },
+  });
+
+  redirect("/admin/settings?schoolSaved=1");
+}
+
 export default async function AdminSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ saved?: string; error?: string }>;
+  searchParams: Promise<{ saved?: string; schoolSaved?: string; error?: string }>;
 }) {
   const user = await requireUser(["admin"]);
   const params = await searchParams;
   const profile = await prisma.profile.findUnique({ where: { userId: user.id } });
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  const school = await prisma.schoolSetting.findUnique({ where: { id: "default" } });
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -70,6 +98,12 @@ export default async function AdminSettingsPage({
 
       {params.saved && (
         <p className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-900">Profile saved.</p>
+      )}
+      {params.schoolSaved && (
+        <p className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+          Certificate school settings saved. New certificates will use these values (existing certificates keep their
+          snapshotted signatures).
+        </p>
       )}
       {params.error && (
         <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{params.error}</p>
@@ -126,6 +160,49 @@ export default async function AdminSettingsPage({
           </div>
 
           <Button type="submit">Save profile</Button>
+        </form>
+      </Card>
+
+      <Card className="space-y-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.14em] text-[var(--steel)]">Digital certificates</p>
+          <h2 className="font-display text-xl text-[var(--navy)]">Signatories & registration</h2>
+          <p className="mt-1 text-sm text-[var(--steel)]">
+            Owner signature is always <strong>John Addo</strong>. Set the Program Director display name and Minnesota
+            registration identifiers shown on certificates and verification pages.
+          </p>
+        </div>
+        <form action={saveSchoolCertificateSettings} className="space-y-4">
+          <div>
+            <Label htmlFor="programDirectorName">Program Director name</Label>
+            <Input
+              id="programDirectorName"
+              name="programDirectorName"
+              defaultValue={school?.programDirectorName ?? "Alex Rivera"}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="schoolRegistrationId">School registration ID</Label>
+            <Input
+              id="schoolRegistrationId"
+              name="schoolRegistrationId"
+              defaultValue={school?.schoolRegistrationId ?? "LSDS-MN-REG-PENDING"}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="operatorLicenseId">Operator license ID</Label>
+            <Input
+              id="operatorLicenseId"
+              name="operatorLicenseId"
+              defaultValue={school?.operatorLicenseId ?? "MN-OP-LICENSE-PENDING"}
+              required
+            />
+          </div>
+          <Button type="submit" variant="outline">
+            Save certificate settings
+          </Button>
         </form>
       </Card>
     </div>
