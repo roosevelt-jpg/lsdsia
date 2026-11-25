@@ -5,6 +5,13 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/*": ["./prisma/**/*"],
   },
+  experimental: {
+    // DL + passport photo + travel passport in one onboarding submit (~3×900KB).
+    serverActions: {
+      bodySizeLimit: "4mb",
+    },
+  },
+
   async headers() {
     return [
       {

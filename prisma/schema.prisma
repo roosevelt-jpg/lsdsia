@@ -51,7 +51,7 @@ model Profile {
   avatarUrl       String?
   /// PrivateUpload id for passport-style student ID photo (served via /api/private-uploads)
   idPhotoUploadId String?
-  /// Onboarding wizard (1–4); 4 + profileCompletedAt means finished
+  /// Onboarding wizard (1–5); 5 + profileCompletedAt means finished
   onboardingStep  Int     @default(0)
   trainingGoal    String?
   experienceLevel String?
@@ -413,7 +413,7 @@ model Certificate {
 model PrivateUpload {
   id         String   @id @default(cuid())
   userId     String
-  kind       String // drivers_license | school_launch_*
+  kind       String // drivers_license | passport_photo | travel_passport | student_id_photo | school_launch_*
   fileName   String
   mimeType   String
   dataBase64 String
@@ -423,19 +423,25 @@ model PrivateUpload {
 }
 
 model LicenseVerification {
-  id            String    @id @default(cuid())
-  userId        String    @unique
-  status        String    @default("not_submitted") // not_submitted | pending | approved | rejected
-  uploadId      String?
-  licenseNumber String?
-  licenseState  String?
-  adminNote     String?
-  reviewedById  String?
-  reviewedAt    DateTime?
-  submittedAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  status                 String    @default("not_submitted") // not_submitted | pending | approved | rejected
+  /// PrivateUpload id — government driver’s license
+  uploadId               String?
+  /// PrivateUpload id — passport-style face photo
+  passportPhotoUploadId  String?
+  /// PrivateUpload id — travel passport bio page / copy
+  travelPassportUploadId String?
+  licenseNumber          String?
+  licenseState           String?
+  passportNumber         String?
+  adminNote              String?
+  reviewedById           String?
+  reviewedAt             DateTime?
+  submittedAt            DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model SchoolLaunchPlan {
