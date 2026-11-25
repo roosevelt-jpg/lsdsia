@@ -12,6 +12,11 @@ export default async function AdminContentPage() {
       <h1 className="font-display text-3xl text-[var(--navy)]">Content</h1>
       <p className="mt-2 text-sm text-[var(--steel)]">
         Modules and lessons seeded for v1. Full CRUD editor can expand later; prices are editable under Pricing.
+        Publish YouTube and document links for enrolled students under{" "}
+        <a href="/admin/materials" className="font-semibold text-[#2b6cb0] underline">
+          Videos & Materials
+        </a>
+        .
       </p>
       <div className="mt-6 space-y-4">
         {modules.map((m) => (

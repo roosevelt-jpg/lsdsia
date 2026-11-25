@@ -21,8 +21,10 @@ import { prisma } from "@/lib/db";
 import { savePrivateUpload } from "@/lib/private-uploads";
 import { getCertificateForUser } from "@/lib/certificate";
 import { loadCmsSite, resolveCmsImage } from "@/lib/cms";
+import { listMaterialsForUser } from "@/lib/learning-materials";
 import { loadStudentIdPayload } from "@/lib/student-id";
 import { StudentIdCard } from "@/components/student-id-card";
+import { LearningMaterialsSection } from "@/components/candidate/learning-materials-section";
 
 export const dynamic = "force-dynamic";
 
@@ -63,7 +65,7 @@ export default async function AppHomePage({
   const session = await requireUser();
   const params = await searchParams;
 
-  const [user, site, media, modules, certificate, idPayload, bookings] = await Promise.all([
+  const [user, site, media, modules, certificate, idPayload, bookings, learningMaterials] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.id },
       include: {
@@ -90,6 +92,7 @@ export default async function AppHomePage({
       orderBy: { createdAt: "desc" },
       take: 3,
     }),
+    listMaterialsForUser(session.id),
   ]);
 
   const mediaMap = Object.fromEntries(media.map((m) => [m.key, `/api/cms-media/${m.key}`]));
@@ -161,9 +164,19 @@ export default async function AppHomePage({
   const learningHours = Math.max(1, Math.round(completedLessons.length * 1.5 + lessonEntitlements.length * 0.5));
 
   const enrollment = idPayload?.enrollment ?? user?.enrollments[0] ?? null;
+  const isEnrolled = Boolean(user?.enrollments.some((e) => e.status === "active"));
   const photoUrl = user?.profile?.idPhotoUploadId
     ? `/api/private-uploads/${user.profile.idPhotoUploadId}`
     : null;
+  const materialCards = learningMaterials.map((m) => ({
+    id: m.id,
+    title: m.title,
+    description: m.description,
+    url: m.url,
+    kind: m.kind,
+    thumbnailUrl: m.thumbnailUrl,
+    levelName: m.level?.name ?? null,
+  }));
 
   const donut = overallProgress;
   const circumference = 2 * Math.PI * 42;
@@ -341,11 +354,13 @@ export default async function AppHomePage({
             </div>
           </section>
 
+          <LearningMaterialsSection materials={materialCards} enrolled={isEnrolled} />
+
           <section className="grid gap-3 sm:grid-cols-2">
             {[
               { href: "/app/practicum", label: "Book a Practical Training", icon: CalendarDays },
               { href: "/app/quiz", label: "Take an Assessment", icon: ClipboardList },
-              { href: "/app/resources", label: "Download Resources", icon: FolderOpen },
+              { href: "/app/videos", label: "Watch Learning Videos", icon: FolderOpen },
               { href: "/app/support", label: "Get Support", icon: LifeBuoy },
             ].map((a) => {
               const Icon = a.icon;

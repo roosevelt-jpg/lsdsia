@@ -64,6 +64,7 @@ const nav: NavItem[] = [
     children: [
       { href: "/admin/content", label: "Courses" },
       { href: "/admin/content", label: "Lessons" },
+      { href: "/admin/materials", label: "Videos & Materials" },
       { href: "/admin/quizzes", label: "Assessments" },
       { href: "/admin/candidates", label: "Certificates" },
     ],

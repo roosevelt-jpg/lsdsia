@@ -14,6 +14,7 @@ const links = [
   { href: "/app/school-launch", label: "Open a school" },
   { href: "/app/certificate", label: "Certificate" },
   { href: "/app/orders", label: "Orders" },
+  { href: "/app/videos", label: "Videos" },
   { href: "/app/resources", label: "Resources" },
 ];
 
