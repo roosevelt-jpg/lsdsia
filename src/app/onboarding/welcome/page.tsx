@@ -38,7 +38,7 @@ export default async function WelcomeOnboardingPage() {
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage:
-            "linear-gradient(160deg, rgba(6,21,38,0.92), rgba(11,31,51,0.82)), url(/cms/auth-welcome.jpg)",
+            "linear-gradient(160deg, rgba(6,21,38,0.92), rgba(11,31,51,0.82)), url(/cms/mock-auth-welcome.jpg)",
         }}
       />
       {/* confetti-ish accents */}

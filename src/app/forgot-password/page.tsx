@@ -35,7 +35,7 @@ export default async function ForgotPasswordPage({
   return (
     <AuthShell
       headline="Forgot Your Password?"
-      imageSrc="/cms/auth-car.jpg"
+      imageSrc="/cms/mock-auth-car.jpg"
       bullets={[
         { title: "Secure reset link", body: "We email a one-hour link to set a new password." },
         { title: "Account safety", body: "Your session stays protected while you reset." },

@@ -77,13 +77,30 @@ export async function loadCmsBundle() {
   return { site, nav, home, programs, stats, testimonials, mediaMap };
 }
 
+/** Map legacy stock placeholders → ChatGPT mock crops (same subjects as designs). */
+const MOCK_IMAGE_REMAP: Record<string, string> = {
+  "/cms/hero-instructor.jpg": "/cms/mock-hero-instructor.jpg",
+  "/cms/program-cert.jpg": "/cms/mock-program-cert.jpg",
+  "/cms/program-license.jpg": "/cms/mock-program-license.jpg",
+  "/cms/program-business.jpg": "/cms/mock-program-business.jpg",
+  "/cms/testimonial-1.jpg": "/cms/mock-testimonial-1.jpg",
+  "/cms/testimonial-2.jpg": "/cms/mock-testimonial-2.jpg",
+  "/cms/testimonial-3.jpg": "/cms/mock-testimonial-3.jpg",
+  "/cms/cta-road.jpg": "/cms/mock-cta-road.jpg",
+  "/cms/trusted-bg.jpg": "/cms/mock-trusted-bg.jpg",
+  "/cms/auth-car.jpg": "/cms/mock-auth-car.jpg",
+  "/cms/auth-instructors.jpg": "/cms/mock-auth-instructors.jpg",
+  "/cms/auth-road.jpg": "/cms/mock-auth-road.jpg",
+  "/cms/auth-welcome.jpg": "/cms/mock-auth-welcome.jpg",
+};
+
 export function resolveCmsImage(url: string, mediaMap: Record<string, string>) {
   if (!url) return "";
   if (url.startsWith("cms:")) {
     const key = url.slice(4);
     return mediaMap[key] || "";
   }
-  return url;
+  return MOCK_IMAGE_REMAP[url] || url;
 }
 
 export function parseJsonArray<T>(raw: string, fallback: T[]): T[] {

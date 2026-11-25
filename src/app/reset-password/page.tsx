@@ -35,7 +35,7 @@ export default async function ResetPasswordPage({
     return (
       <AuthShell
         headline="Reset link required"
-        imageSrc="/cms/auth-car.jpg"
+        imageSrc="/cms/mock-auth-car.jpg"
         bullets={[{ title: "Request a new link", body: "Use Forgot Password to get a fresh reset email." }]}
       >
         <h2 className="text-2xl font-bold text-[var(--navy)]">Invalid reset link</h2>
@@ -50,7 +50,7 @@ export default async function ResetPasswordPage({
   return (
     <AuthShell
       headline="Choose a new password"
-      imageSrc="/cms/auth-car.jpg"
+      imageSrc="/cms/mock-auth-car.jpg"
       bullets={[
         { title: "Use 8+ characters", body: "Strong passwords protect your academy account." },
         { title: "One-time link", body: "This reset token expires after use or one hour." },

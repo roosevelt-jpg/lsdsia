@@ -75,7 +75,7 @@ export async function seedCms(prisma: PrismaClient) {
       heroTitle: "Become a Certified Driving Instructor with Life Star",
       heroSubtitle:
         "World-class licensing preparation and business-launch coaching for aspiring instructors and school owners — study from anywhere, then train on our Minnesota campus.",
-      heroImageUrl: "/cms/hero-instructor.jpg",
+      heroImageUrl: "/cms/mock-hero-instructor.jpg",
       ctaPrimaryLabel: "Apply Now",
       ctaPrimaryHref: "/signup",
       ctaSecondaryLabel: "Explore Programs",
@@ -149,7 +149,7 @@ export async function seedCms(prisma: PrismaClient) {
       body: "Under Owner John Addo, Life Star Driving School has built a worldwide academy that pairs rigorous online study with Minnesota campus practicals — so graduates can teach, license, and open schools with confidence.",
       ctaLabel: "Apply Today",
       ctaHref: "/signup",
-      imageUrl: "/cms/trusted-bg.jpg",
+      imageUrl: "/cms/mock-trusted-bg.jpg",
       dataJson: JSON.stringify({
         features: [
           {
@@ -205,7 +205,7 @@ export async function seedCms(prisma: PrismaClient) {
       title: "Ready to Start Your Journey?",
       subtitle:
         "Apply today to join Life Star Instructors Academy — online learning worldwide, practical training in Minnesota.",
-      imageUrl: "/cms/cta-road.jpg",
+      imageUrl: "/cms/mock-cta-road.jpg",
       ctaLabel: "Apply Now",
       ctaHref: "/signup",
       dataJson: JSON.stringify({
@@ -221,7 +221,7 @@ export async function seedCms(prisma: PrismaClient) {
       title: "Driving Instructor Certification",
       blurb:
         "Complete online instructor coursework, practice exams, and application packet prep for commercial driving instructor credentials.",
-      imageUrl: "/cms/program-cert.jpg",
+      imageUrl: "/cms/mock-program-cert.jpg",
       href: "/programs#certification",
       iconKey: "graduation",
       sortOrder: 0,
@@ -230,7 +230,7 @@ export async function seedCms(prisma: PrismaClient) {
       title: "Instructor License Preparation",
       blurb:
         "Classroom and behind-the-wheel pathways with Minnesota campus practicals — including BTW ($7,000) and Classroom ($15,000) tuition options.",
-      imageUrl: "/cms/program-license.jpg",
+      imageUrl: "/cms/mock-program-license.jpg",
       href: "/programs#license",
       iconKey: "license",
       sortOrder: 1,
@@ -239,7 +239,7 @@ export async function seedCms(prisma: PrismaClient) {
       title: "Driving School Business Launch",
       blurb:
         "Post-certification coaching to register and operate your own driving school — state/DMV operator packet readiness with Life Star guidance.",
-      imageUrl: "/cms/program-business.jpg",
+      imageUrl: "/cms/mock-program-business.jpg",
       href: "/programs#business",
       iconKey: "building",
       sortOrder: 2,
@@ -265,7 +265,7 @@ export async function seedCms(prisma: PrismaClient) {
         "Life Star’s online track let me study from abroad, then the Minnesota practicals made licensing feel achievable. I now teach full time.",
       name: "Marcus Okonkwo",
       title: "Certified Driving Instructor",
-      photoUrl: "/cms/testimonial-1.jpg",
+      photoUrl: "/cms/mock-testimonial-1.jpg",
       stars: 5,
       sortOrder: 0,
     },
@@ -274,7 +274,7 @@ export async function seedCms(prisma: PrismaClient) {
         "The business launch coaching was the missing piece. After certification I opened my own school with a clear DMV packet plan.",
       name: "Sofia Ramirez",
       title: "School Owner · Graduate",
-      photoUrl: "/cms/testimonial-2.jpg",
+      photoUrl: "/cms/mock-testimonial-2.jpg",
       stars: 5,
       sortOrder: 1,
     },
@@ -283,7 +283,7 @@ export async function seedCms(prisma: PrismaClient) {
         "Professional curriculum, real campus training, and support that treats international students as first-class candidates.",
       name: "James Chen",
       title: "Instructor Academy Alumnus",
-      photoUrl: "/cms/testimonial-3.jpg",
+      photoUrl: "/cms/mock-testimonial-3.jpg",
       stars: 5,
       sortOrder: 2,
     },

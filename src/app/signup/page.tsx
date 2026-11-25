@@ -80,7 +80,7 @@ export default async function SignupPage({
   return (
     <AuthShell
       headline="Join Life Star Instructors Academy"
-      imageSrc="/cms/auth-instructors.jpg"
+      imageSrc="/cms/mock-auth-instructors.jpg"
       bullets={[
         { title: "Build a teaching career", body: "Train to become a licensed commercial driving instructor." },
         { title: "Learn from anywhere", body: "Online academy access for students worldwide." },

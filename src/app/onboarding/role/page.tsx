@@ -84,7 +84,7 @@ export default async function RoleOnboardingPage({
   return (
     <AuthShell
       headline="Choose Your Role"
-      imageSrc="/cms/auth-road.jpg"
+      imageSrc="/cms/mock-auth-road.jpg"
       bullets={[
         { title: "Student pathway", body: "Full Instructor Academy learning and certification." },
         { title: "Instructor pathway", body: "Coach tools and practicum support." },

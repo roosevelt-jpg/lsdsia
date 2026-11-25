@@ -84,7 +84,7 @@ export default async function ProfileOnboardingPage({
   return (
     <AuthShell
       headline="Complete Your Profile"
-      imageSrc="/cms/auth-instructors.jpg"
+      imageSrc="/cms/mock-auth-instructors.jpg"
       bullets={[]}
       stepper={{ steps: STEPS, activeIndex: step - 1 }}
     >

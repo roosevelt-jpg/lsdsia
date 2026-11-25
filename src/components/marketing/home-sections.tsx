@@ -56,7 +56,7 @@ export function HomeSections({
   const heroData = parseJsonObject<HeroData>(hero?.dataJson || "{}", {});
   const trustedData = parseJsonObject<TrustedData>(trusted?.dataJson || "{}", {});
   const ctaData = parseJsonObject<CtaData>(cta?.dataJson || "{}", {});
-  const heroImage = resolveCmsImage(hero?.imageUrl || "", mediaMap) || "/cms/hero-instructor.jpg";
+  const heroImage = resolveCmsImage(hero?.imageUrl || "", mediaMap) || "/cms/mock-hero-instructor.jpg";
 
   return (
     <>
@@ -285,7 +285,7 @@ export function HomeSections({
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `linear-gradient(115deg, rgba(6,21,38,0.88), rgba(11,31,51,0.72)), url(${resolveCmsImage(cta.imageUrl, mediaMap) || cta.imageUrl || "/cms/cta-road.jpg"})`,
+              backgroundImage: `linear-gradient(115deg, rgba(6,21,38,0.88), rgba(11,31,51,0.72)), url(${resolveCmsImage(cta.imageUrl, mediaMap) || cta.imageUrl || "/cms/mock-cta-road.jpg"})`,
             }}
           />
           <div className="relative mx-auto max-w-3xl text-center">

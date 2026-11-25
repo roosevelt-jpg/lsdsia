@@ -50,7 +50,7 @@ export default async function LoginPage({
   return (
     <AuthShell
       headline="Welcome Back to Life Star Instructors Academy"
-      imageSrc="/cms/auth-car.jpg"
+      imageSrc="/cms/mock-auth-car.jpg"
       bullets={[
         { title: "World-Class Instructor Training", body: "Curriculum built for commercial driving instructors." },
         { title: "Flexible Online Learning", body: "Study worldwide on your schedule." },
