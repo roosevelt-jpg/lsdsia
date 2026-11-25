@@ -1,21 +1,27 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Mail, User, ArrowRight } from "lucide-react";
 import { createSession, getSession, hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { generateEnrollmentNumber } from "@/lib/student-id";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { PasswordField } from "@/components/auth/password-field";
 
 async function signupAction(formData: FormData) {
   "use server";
   const name = String(formData.get("name") || "").trim();
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
-  const levelCode = String(formData.get("levelCode") || "professional");
+  const confirm = String(formData.get("confirmPassword") || "");
+  const terms = formData.get("terms") === "1";
 
   if (!name || !email || password.length < 8) {
     redirect(`/signup?error=${encodeURIComponent("Name, email, and password (8+ chars) are required.")}`);
+  }
+  if (password !== confirm) {
+    redirect(`/signup?error=${encodeURIComponent("Passwords do not match.")}`);
+  }
+  if (!terms) {
+    redirect(`/signup?error=${encodeURIComponent("Please agree to the Terms of Service and Privacy Policy.")}`);
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });
@@ -23,14 +29,13 @@ async function signupAction(formData: FormData) {
     redirect(`/signup?error=${encodeURIComponent("An account with that email already exists.")}`);
   }
 
-  const level = await prisma.enrollmentLevel.findUnique({ where: { code: levelCode } });
   const user = await prisma.user.create({
     data: {
       name,
       email,
       passwordHash: await hashPassword(password),
       role: "candidate",
-      profile: { create: {} },
+      profile: { create: { onboardingStep: 0 } },
       applicationPacket: {
         create: {
           fullName: name,
@@ -38,17 +43,6 @@ async function signupAction(formData: FormData) {
           employingSchoolAddress: "Minnesota main campus",
         },
       },
-      ...(level
-        ? {
-            enrollments: {
-              create: {
-                levelId: level.id,
-                status: "active",
-                enrollmentNumber: await generateEnrollmentNumber(),
-              },
-            },
-          }
-        : {}),
     },
   });
 
@@ -58,7 +52,16 @@ async function signupAction(formData: FormData) {
     name: user.name,
     role: user.role as "candidate" | "coach" | "admin",
   });
-  redirect("/app");
+
+  await prisma.auditLog.create({
+    data: {
+      userId: user.id,
+      action: "auth.signup",
+      metaJson: JSON.stringify({ email }),
+    },
+  });
+
+  redirect("/onboarding/role");
 }
 
 export default async function SignupPage({
@@ -67,60 +70,102 @@ export default async function SignupPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const session = await getSession();
-  if (session) redirect("/app");
+  if (session) {
+    const profile = await prisma.profile.findUnique({ where: { userId: session.id } });
+    if (!profile?.profileCompletedAt) redirect("/onboarding/role");
+    redirect(session.role === "admin" ? "/admin" : "/app");
+  }
   const params = await searchParams;
-  const levels = await prisma.enrollmentLevel.findMany({
-    where: { isActive: true },
-    orderBy: { sortOrder: "asc" },
-  });
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--mist)] px-5 py-16">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-sm ring-1 ring-[var(--navy)]/10">
-        <p className="font-display text-2xl text-[var(--navy)]">Life Star Driving School</p>
-        <h1 className="mt-2 text-lg text-[var(--steel)]">Create your academy account</h1>
-        {params.error && (
-          <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
-        )}
-        <form action={signupAction} className="mt-6 space-y-4">
-          <div>
-            <Label htmlFor="name">Full name</Label>
-            <Input id="name" name="name" required />
+    <AuthShell
+      headline="Join Life Star Instructors Academy"
+      imageSrc="/cms/auth-instructors.jpg"
+      bullets={[
+        { title: "Build a teaching career", body: "Train to become a licensed commercial driving instructor." },
+        { title: "Learn from anywhere", body: "Online academy access for students worldwide." },
+        { title: "Campus practicals in Minnesota", body: "Complete hands-on intensives when you are ready." },
+        { title: "Launch your own school", body: "Post-certification coaching for school operators." },
+      ]}
+    >
+      <h2 className="text-2xl font-bold text-[var(--navy)]">Create Your Account</h2>
+      <p className="mt-1 text-sm text-[var(--steel)]">Start your instructor journey in a few steps.</p>
+
+      {params.error && (
+        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
+      )}
+
+      <form action={signupAction} className="mt-6 space-y-4">
+        <div>
+          <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-[var(--navy)]">
+            Full Name
+          </label>
+          <div className="relative">
+            <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--steel)]" />
+            <input
+              id="name"
+              name="name"
+              required
+              className="flex h-11 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
+            />
           </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" required />
+        </div>
+
+        <div>
+          <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[var(--navy)]">
+            Email Address
+          </label>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--steel)]" />
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              className="flex h-11 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
+            />
           </div>
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" minLength={8} required />
-          </div>
-          <div>
-            <Label htmlFor="levelCode">Enrollment level</Label>
-            <select
-              id="levelCode"
-              name="levelCode"
-              defaultValue="professional"
-              className="flex h-10 w-full rounded-md border border-[var(--navy)]/15 bg-white px-3 text-sm"
-            >
-              {levels.map((l) => (
-                <option key={l.id} value={l.code}>
-                  {l.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <Button type="submit" className="w-full">
-            Create account
-          </Button>
-        </form>
-        <p className="mt-4 text-sm text-[var(--steel)]">
-          Already enrolled?{" "}
-          <Link href="/login" className="font-medium text-[var(--navy)] underline">
-            Log in
-          </Link>
-        </p>
-      </div>
-    </main>
+        </div>
+
+        <PasswordField id="password" name="password" label="Password" autoComplete="new-password" minLength={8} />
+        <PasswordField
+          id="confirmPassword"
+          name="confirmPassword"
+          label="Confirm Password"
+          autoComplete="new-password"
+          minLength={8}
+        />
+
+        <label className="flex items-start gap-2 text-sm text-[var(--navy)]">
+          <input type="checkbox" name="terms" value="1" required className="mt-1 h-4 w-4 rounded border-[var(--navy)]/30" />
+          <span>
+            I agree to the{" "}
+            <Link href="/resources#terms" className="font-semibold underline">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/resources#privacy" className="font-semibold underline">
+              Privacy Policy
+            </Link>
+            .
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--amber)] px-4 py-3 text-sm font-bold text-[var(--navy-deep)] hover:bg-[var(--amber-hot)]"
+        >
+          Create Account <ArrowRight className="h-4 w-4" />
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-[var(--steel)]">
+        Already have an account?{" "}
+        <Link href="/login" className="font-bold text-[var(--navy)] hover:underline">
+          Sign In
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

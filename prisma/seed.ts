@@ -306,6 +306,7 @@ async function main() {
   await prisma.module.deleteMany();
   await prisma.practicalSku.deleteMany();
   await prisma.certificate.deleteMany();
+  await prisma.passwordResetToken.deleteMany();
   await prisma.enrollment.deleteMany();
   await prisma.profile.deleteMany();
   await prisma.auditLog.deleteMany();

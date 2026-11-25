@@ -1,25 +1,30 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Mail, ArrowRight } from "lucide-react";
 import { getSession, loginWithCredentials } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { prisma } from "@/lib/db";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { PasswordField } from "@/components/auth/password-field";
 
 async function loginAction(formData: FormData) {
   "use server";
   try {
     const email = String(formData.get("email") || "");
     const password = String(formData.get("password") || "");
-    const result = await loginWithCredentials(email, password);
+    const remember = formData.get("remember") === "1";
+    const result = await loginWithCredentials(email, password, { remember });
     if ("error" in result && result.error) {
       redirect(`/login?error=${encodeURIComponent(result.error)}`);
     }
     if (!("user" in result) || !result.user) {
       redirect(`/login?error=${encodeURIComponent("Invalid email or password")}`);
     }
-    redirect(result.user.role === "admin" ? "/admin" : "/app");
+
+    const profile = await prisma.profile.findUnique({ where: { userId: result.user.id } });
+    if (result.user.role === "admin") redirect("/admin");
+    if (!profile?.profileCompletedAt) redirect("/onboarding/profile");
+    redirect("/app");
   } catch (err) {
-    // redirect() throws; rethrow Next navigation errors
     const digest = err && typeof err === "object" && "digest" in err ? String((err as { digest?: string }).digest) : "";
     if (digest.startsWith("NEXT_REDIRECT") || digest.startsWith("NEXT_NOT_FOUND")) throw err;
     console.error("loginAction", err);
@@ -34,45 +39,107 @@ async function loginAction(formData: FormData) {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; reset?: string }>;
 }) {
   const session = await getSession();
   if (session) redirect(session.role === "admin" ? "/admin" : "/app");
   const params = await searchParams;
+  const googleConfigured = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+  const microsoftConfigured = Boolean(process.env.AZURE_AD_CLIENT_ID && process.env.AZURE_AD_CLIENT_SECRET);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--mist)] px-5 py-16">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-sm ring-1 ring-[var(--navy)]/10">
-        <p className="font-display text-2xl text-[var(--navy)]">Life Star Driving School</p>
-        <h1 className="mt-2 text-lg text-[var(--steel)]">Log in to the Instructor Academy</h1>
-        {params.error && (
-          <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
-        )}
-        <form action={loginAction} className="mt-6 space-y-4">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" required autoComplete="email" />
+    <AuthShell
+      headline="Welcome Back to Life Star Instructors Academy"
+      imageSrc="/cms/auth-car.jpg"
+      bullets={[
+        { title: "World-Class Instructor Training", body: "Curriculum built for commercial driving instructors." },
+        { title: "Flexible Online Learning", body: "Study worldwide on your schedule." },
+        { title: "Minnesota Campus Practicals", body: "Hands-on training at our main campus." },
+        { title: "License & Business Preparation", body: "From certification to opening your own school." },
+      ]}
+    >
+      <h2 className="text-2xl font-bold text-[var(--navy)]">Sign In to Your Account</h2>
+      <p className="mt-1 text-sm text-[var(--steel)]">Enter your credentials to continue.</p>
+
+      {params.reset && (
+        <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+          Password updated. Sign in with your new password.
+        </p>
+      )}
+      {params.error && (
+        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
+      )}
+
+      <form action={loginAction} className="mt-6 space-y-4">
+        <div>
+          <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[var(--navy)]">
+            Email Address
+          </label>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--steel)]" />
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              className="flex h-11 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
+            />
           </div>
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" required autoComplete="current-password" />
-          </div>
-          <Button type="submit" className="w-full">
-            Log in
-          </Button>
-        </form>
-        <p className="mt-4 text-sm text-[var(--steel)]">
-          New candidate?{" "}
-          <Link href="/signup" className="font-medium text-[var(--navy)] underline">
-            Create an account
+        </div>
+
+        <PasswordField id="password" name="password" label="Password" autoComplete="current-password" />
+
+        <div className="flex items-center justify-between gap-3 text-sm">
+          <label className="flex items-center gap-2 text-[var(--navy)]">
+            <input type="checkbox" name="remember" value="1" className="h-4 w-4 rounded border-[var(--navy)]/30" />
+            Remember me
+          </label>
+          <Link href="/forgot-password" className="font-semibold text-[var(--navy)] hover:underline">
+            Forgot password?
           </Link>
-        </p>
-        <p className="mt-4 text-xs text-[var(--steel)]">
-          Admin email defaults to <span className="font-medium">admin@lifestar.academy</span>. The password is whatever
-          you set as <span className="font-medium">ADMIN_PASSWORD</span> in Vercel Environment Variables (then Redeploy
-          if you just added it).
-        </p>
+        </div>
+
+        <button
+          type="submit"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--navy)] px-4 py-3 text-sm font-bold text-white hover:bg-[var(--navy-deep)]"
+        >
+          Sign In <ArrowRight className="h-4 w-4" />
+        </button>
+      </form>
+
+      <div className="my-6 flex items-center gap-3">
+        <div className="h-px flex-1 bg-[var(--navy)]/10" />
+        <span className="text-xs uppercase tracking-wide text-[var(--steel)]">or continue with</span>
+        <div className="h-px flex-1 bg-[var(--navy)]/10" />
       </div>
-    </main>
+
+      <div className="grid gap-3">
+        <a
+          href={googleConfigured ? "/api/auth/oauth/google" : "/login?error=" + encodeURIComponent("Google sign-in is not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel.")}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--navy)]/15 px-4 py-2.5 text-sm font-semibold text-[var(--navy)] hover:bg-[var(--mist)]"
+        >
+          Continue with Google
+        </a>
+        <a
+          href={
+            microsoftConfigured
+              ? "/api/auth/oauth/microsoft"
+              : "/login?error=" +
+                encodeURIComponent("Microsoft sign-in is not configured. Set AZURE_AD_CLIENT_ID and AZURE_AD_CLIENT_SECRET in Vercel.")
+          }
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--navy)]/15 px-4 py-2.5 text-sm font-semibold text-[var(--navy)] hover:bg-[var(--mist)]"
+        >
+          Continue with Microsoft
+        </a>
+      </div>
+
+      <p className="mt-6 text-center text-sm text-[var(--steel)]">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="font-bold text-[var(--navy)] hover:underline">
+          Create Account
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

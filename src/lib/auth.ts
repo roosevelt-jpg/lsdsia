@@ -34,7 +34,8 @@ export async function verifyPassword(password: string, hash: string) {
   return bcrypt.compare(password, hash);
 }
 
-export async function createSession(user: SessionUser) {
+export async function createSession(user: SessionUser, opts?: { remember?: boolean }) {
+  const days = opts?.remember ? 30 : 14;
   const token = await new SignJWT({
     id: user.id,
     email: user.email,
@@ -43,7 +44,7 @@ export async function createSession(user: SessionUser) {
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("14d")
+    .setExpirationTime(`${days}d`)
     .sign(secret());
 
   const jar = await cookies();
@@ -52,7 +53,7 @@ export async function createSession(user: SessionUser) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 24 * 14,
+    maxAge: 60 * 60 * 24 * days,
   });
 }
 
@@ -93,7 +94,11 @@ export async function requireUser(roles?: Role[]) {
   return session;
 }
 
-export async function loginWithCredentials(email: string, password: string) {
+export async function loginWithCredentials(
+  email: string,
+  password: string,
+  opts?: { remember?: boolean },
+) {
   try {
     const boot = await ensureLoginUsers();
     if (!boot.ok) return { error: boot.error };
@@ -112,12 +117,15 @@ export async function loginWithCredentials(email: string, password: string) {
           "Invalid email or password. The password must match ADMIN_PASSWORD or DEMO_PASSWORD as set in Vercel (not an old README password)." as const,
       };
     }
-    await createSession({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role as Role,
-    });
+    await createSession(
+      {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role as Role,
+      },
+      { remember: opts?.remember },
+    );
     return { user: { ...user, role: user.role as Role } };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Login failed";

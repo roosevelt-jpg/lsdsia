@@ -32,12 +32,16 @@ model User {
   schoolLaunchPlan    SchoolLaunchPlan?
   privateUploads      PrivateUpload[]
   certificates        Certificate[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 model Profile {
   id              String  @id @default(cuid())
   userId          String  @unique
   phone           String?
+  phoneCountry    String? @default("US")
+  dateOfBirth     String?
+  country         String? @default("United States")
   address1        String?
   address2        String?
   city            String?
@@ -47,7 +51,24 @@ model Profile {
   avatarUrl       String?
   /// PrivateUpload id for passport-style student ID photo (served via /api/private-uploads)
   idPhotoUploadId String?
+  /// Onboarding wizard (1–4); 4 + profileCompletedAt means finished
+  onboardingStep  Int     @default(0)
+  trainingGoal    String?
+  experienceLevel String?
+  howHeard        String?
+  additionalNotes String?
+  profileCompletedAt DateTime?
   user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model EnrollmentLevel {
