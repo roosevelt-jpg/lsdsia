@@ -17,6 +17,8 @@ export default async function AppHomePage() {
       quizAttempts: { where: { submittedAt: { not: null } }, orderBy: { submittedAt: "desc" }, take: 5 },
       applicationPacket: true,
       orders: { orderBy: { createdAt: "desc" }, take: 5 },
+      licenseVerification: true,
+      schoolLaunchPlan: true,
     },
   });
 
@@ -32,9 +34,14 @@ export default async function AppHomePage() {
     0
   );
   const appPct = user?.applicationPacket?.completenessPercent ?? 0;
+  const licenseStatus = user?.licenseVerification?.status ?? "not_submitted";
 
   let nextAction = { label: "Choose an enrollment level", href: "/app/enroll" };
-  if (!enrollment) {
+  if (licenseStatus === "not_submitted") {
+    nextAction = { label: "Upload your driver’s license for verification", href: "/app/onboarding/license" };
+  } else if (licenseStatus === "rejected") {
+    nextAction = { label: "Re-submit your driver’s license", href: "/app/onboarding/license" };
+  } else if (!enrollment) {
     nextAction = { label: "Choose an enrollment level", href: "/app/enroll" };
   } else if (lessonEntitlements.length === 0) {
     nextAction = { label: "Buy your first online lesson or package", href: "/app/store" };
@@ -46,6 +53,11 @@ export default async function AppHomePage() {
     nextAction = { label: "Complete your application packet", href: "/app/application" };
   } else if (practicalCredits < 1) {
     nextAction = { label: "Purchase Minnesota practical credit", href: "/app/store" };
+  } else if ((bestQuiz ?? 0) >= 80 && completedLessons >= Math.min(lessonEntitlements.length, 4)) {
+    nextAction = {
+      label: "Plan your driving-school registration & state operating license",
+      href: "/app/school-launch",
+    };
   } else {
     nextAction = { label: "Request a campus practicum date", href: "/app/practicum" };
   }
@@ -88,6 +100,19 @@ export default async function AppHomePage() {
           <p className="text-sm text-[var(--steel)]">Application · MN practical credits</p>
           <p className="mt-1 font-display text-xl text-[var(--navy)]">
             {appPct}% · {practicalCredits} credit{practicalCredits === 1 ? "" : "s"}
+          </p>
+        </Card>
+        <Card>
+          <p className="text-sm text-[var(--steel)]">License verification</p>
+          <p className="mt-1 font-display text-xl capitalize text-[var(--navy)]">
+            {licenseStatus.replaceAll("_", " ")}
+          </p>
+        </Card>
+        <Card>
+          <p className="text-sm text-[var(--steel)]">School launch</p>
+          <p className="mt-1 font-display text-xl capitalize text-[var(--navy)]">
+            {(user?.schoolLaunchPlan?.status ?? "not started").replaceAll("_", " ")}
+            {user?.schoolLaunchPlan?.targetState ? ` · ${user.schoolLaunchPlan.targetState}` : ""}
           </p>
         </Card>
       </div>

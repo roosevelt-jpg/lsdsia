@@ -103,6 +103,11 @@ Login emails default to `admin@lifestar.academy` / `demo@lifestar.academy`; pass
 
 ## Product surface
 
-- Landing + `/pricing` by enrollment level (Foundation / Professional / School Operator)
-- Candidate: enroll, store, learn (locks), practice exam (~125 cleaned Q&A items), application packet, MN practicum
-- Admin: levels, pricing matrices, candidates, orders, content, quizzes, practicum confirmations
+- Landing + `/pricing` (BTW $7,000 / Classroom $15,000 with 50% down payment plans; online levels separate)
+- Candidate: **driver’s license upload** (`/app/onboarding/license`) required before other `/app` routes; enroll, store, learn, quiz, application, practicum
+- **School launch** (`/app/school-launch`): after-program coaching to register a driving school in a U.S. state and prepare the DMV/operator packet (guidance + private document uploads — not legal advice)
+- Admin: premium console (header profile/settings/avatar), licenses review (`/admin/licenses`), school-launch coaching (`/admin/school-launch`), levels, pricing, candidates, orders, content, quizzes, practicum
+
+### Private uploads
+
+License and school-launch files are stored in the database as private blobs and served only via `/api/private-uploads/[id]` to the owning candidate or an admin. They are never placed under `public/`.

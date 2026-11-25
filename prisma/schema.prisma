@@ -18,16 +18,19 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  profile           Profile?
-  enrollments       Enrollment[]
-  orders            Order[]
-  entitlements      Entitlement[]
-  lessonProgress    LessonProgress[]
-  quizAttempts      QuizAttempt[]
-  applicationPacket ApplicationPacket?
-  competencyRecords CompetencyRecord[]
-  practicumBookings PracticumBooking[]
-  auditLogs         AuditLog[]
+  profile             Profile?
+  enrollments         Enrollment[]
+  orders              Order[]
+  entitlements        Entitlement[]
+  lessonProgress      LessonProgress[]
+  quizAttempts        QuizAttempt[]
+  applicationPacket   ApplicationPacket?
+  competencyRecords   CompetencyRecord[]
+  practicumBookings   PracticumBooking[]
+  auditLogs           AuditLog[]
+  licenseVerification LicenseVerification?
+  schoolLaunchPlan    SchoolLaunchPlan?
+  privateUploads      PrivateUpload[]
 }
 
 model Profile {
@@ -350,4 +353,57 @@ model SchoolSetting {
   address      String @default("Minnesota main campus")
   supportEmail String @default("academy@lifestardrivingschool.example")
   supportPhone String @default("(651) 555-0147")
+}
+
+/// Private binary stored in DB (not under public/). Used for DL + school-launch docs on Vercel.
+model PrivateUpload {
+  id         String   @id @default(cuid())
+  userId     String
+  kind       String // drivers_license | school_launch_*
+  fileName   String
+  mimeType   String
+  dataBase64 String
+  byteSize   Int
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LicenseVerification {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  status        String    @default("not_submitted") // not_submitted | pending | approved | rejected
+  uploadId      String?
+  licenseNumber String?
+  licenseState  String?
+  adminNote     String?
+  reviewedById  String?
+  reviewedAt    DateTime?
+  submittedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SchoolLaunchPlan {
+  id            String                 @id @default(cuid())
+  userId        String                 @unique
+  targetState   String?
+  schoolName    String?
+  status        String                 @default("not_started") // not_started | in_progress | docs_submitted | coaching | completed
+  checklistJson String                 @default("{}")
+  adminNote     String?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents     SchoolLaunchDocument[]
+}
+
+model SchoolLaunchDocument {
+  id         String           @id @default(cuid())
+  planId     String
+  kind       String // state_application | bond_insurance | entity_docs | facility | instructor_roster | other
+  uploadId   String?
+  label      String
+  createdAt  DateTime         @default(now())
+  plan       SchoolLaunchPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 }

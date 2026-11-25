@@ -59,6 +59,8 @@ export default async function AdminCandidatesPage() {
         enrollments: { include: { level: true } },
         entitlements: true,
         practicumBookings: true,
+        licenseVerification: true,
+        schoolLaunchPlan: true,
       },
       orderBy: { createdAt: "desc" },
     }),
@@ -80,6 +82,14 @@ export default async function AdminCandidatesPage() {
               {c.entitlements
                 .filter((e) => e.practicalSkuId)
                 .reduce((s, e) => s + e.creditsRemaining, 0)}
+            </p>
+            <p className="mt-1 text-sm capitalize text-[var(--steel)]">
+              License: {(c.licenseVerification?.status ?? "not submitted").replaceAll("_", " ")}
+              {c.schoolLaunchPlan
+                ? ` · School launch: ${c.schoolLaunchPlan.status.replaceAll("_", " ")}${
+                    c.schoolLaunchPlan.targetState ? ` (${c.schoolLaunchPlan.targetState})` : ""
+                  }`
+                : ""}
             </p>
             <form action={grantLesson} className="mt-3 flex flex-wrap items-end gap-2">
               <input type="hidden" name="userId" value={c.id} />

@@ -289,6 +289,10 @@ async function main() {
   await prisma.practicumSession.deleteMany();
   await prisma.applicationDocument.deleteMany();
   await prisma.applicationPacket.deleteMany();
+  await prisma.schoolLaunchDocument.deleteMany();
+  await prisma.schoolLaunchPlan.deleteMany();
+  await prisma.licenseVerification.deleteMany();
+  await prisma.privateUpload.deleteMany();
   await prisma.competencyRecord.deleteMany();
   await prisma.lessonProgress.deleteMany();
   await prisma.entitlement.deleteMany();

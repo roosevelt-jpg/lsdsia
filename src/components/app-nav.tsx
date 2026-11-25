@@ -4,12 +4,14 @@ import { redirect } from "next/navigation";
 
 const links = [
   { href: "/app", label: "Home" },
+  { href: "/app/onboarding/license", label: "License" },
   { href: "/app/enroll", label: "Level" },
   { href: "/app/store", label: "Store" },
   { href: "/app/learn", label: "Learn" },
   { href: "/app/quiz", label: "Quiz" },
   { href: "/app/application", label: "Application" },
   { href: "/app/practicum", label: "Practicum" },
+  { href: "/app/school-launch", label: "Open a school" },
   { href: "/app/orders", label: "Orders" },
   { href: "/app/resources", label: "Resources" },
 ];

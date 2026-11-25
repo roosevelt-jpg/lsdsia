@@ -17,6 +17,8 @@ import {
   GraduationCap,
   ChevronDown,
   Bell,
+  IdCard,
+  Building2,
 } from "lucide-react";
 
 export type AdminShellUser = {
@@ -35,6 +37,8 @@ const links = [
   { href: "/admin/content", label: "Content", icon: BookOpen },
   { href: "/admin/quizzes", label: "Quizzes", icon: ClipboardList },
   { href: "/admin/practicum", label: "Practicum", icon: CalendarDays },
+  { href: "/admin/licenses", label: "Licenses", icon: IdCard },
+  { href: "/admin/school-launch", label: "School launch", icon: Building2 },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

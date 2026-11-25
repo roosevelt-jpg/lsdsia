@@ -39,6 +39,8 @@ export default async function AdminHome() {
     lessons,
     recentOrders,
     recentCandidates,
+    licensesPending,
+    schoolPlansActive,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "candidate" } }),
     prisma.user.count({ where: { role: "coach" } }),
@@ -64,9 +66,13 @@ export default async function AdminHome() {
     }),
     prisma.user.findMany({
       where: { role: "candidate" },
-      include: { enrollments: { include: { level: true } } },
+      include: { enrollments: { include: { level: true } }, licenseVerification: true },
       orderBy: { createdAt: "desc" },
       take: 5,
+    }),
+    prisma.licenseVerification.count({ where: { status: "pending" } }),
+    prisma.schoolLaunchPlan.count({
+      where: { status: { in: ["in_progress", "docs_submitted", "coaching"] } },
     }),
   ]);
 
@@ -150,6 +156,12 @@ export default async function AdminHome() {
             </Button>
             <Button asChild size="sm">
               <Link href="/admin/orders">View orders</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/admin/licenses">Licenses ({licensesPending})</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/admin/school-launch">School launch ({schoolPlansActive})</Link>
             </Button>
           </div>
         </div>
@@ -299,7 +311,12 @@ export default async function AdminHome() {
                   <p className="text-sm font-medium text-[var(--navy)]">{c.name}</p>
                   <p className="text-xs text-[var(--steel)]">{c.email}</p>
                 </div>
-                <p className="text-xs text-[var(--steel)]">{c.enrollments[0]?.level.name ?? "No level"}</p>
+                <div className="text-right text-xs text-[var(--steel)]">
+                  <p>{c.enrollments[0]?.level.name ?? "No level"}</p>
+                  <p className="capitalize">
+                    DL: {(c.licenseVerification?.status ?? "not submitted").replaceAll("_", " ")}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
