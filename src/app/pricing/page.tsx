@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { formatUsd, paymentPlanSummary } from "@/lib/money";
-import { SiteHeader } from "@/components/site-header";
+import { loadCmsBundle } from "@/lib/cms";
+import { MarketingHeader } from "@/components/marketing/marketing-header";
+import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
@@ -91,16 +93,18 @@ export default async function PricingPage() {
     programs = FALLBACK_PROGRAMS;
   }
 
+  const { site, nav } = await loadCmsBundle();
+
   return (
-    <main className="min-h-screen bg-[var(--mist)]">
-      <div className="bg-[var(--navy)] pb-24 pt-4 text-white">
-        <SiteHeader />
-        <div className="mx-auto max-w-6xl px-5 pt-24">
-          <p className="font-display text-3xl sm:text-5xl">Life Star Driving School</p>
+    <main className="min-h-screen bg-[var(--mist)] font-[family-name:var(--font-marketing)]">
+      <MarketingHeader site={site} nav={nav} />
+      <div className="bg-[var(--navy)] pb-24 pt-10 text-white">
+        <div className="mx-auto max-w-6xl px-5">
+          <p className="text-3xl font-bold sm:text-5xl">Life Star Driving School</p>
           <h1 className="mt-3 text-xl text-white/85 sm:text-2xl">Training tuition & payment plans</h1>
           <p className="mt-3 max-w-2xl text-white/70">
             Classroom and behind-the-wheel programs use a 50% down payment online; the balance is spread on a Life Star
-            payment plan. Currency: USD.
+            payment plan. Currency: USD. Owner: John Addo.
           </p>
         </div>
       </div>
@@ -157,6 +161,7 @@ export default async function PricingPage() {
           </div>
         </section>
       )}
+      <MarketingFooter site={site} nav={nav} />
     </main>
   );
 }

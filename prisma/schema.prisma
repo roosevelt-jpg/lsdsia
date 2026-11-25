@@ -440,3 +440,112 @@ model SchoolLaunchDocument {
   createdAt  DateTime         @default(now())
   plan       SchoolLaunchPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 }
+
+/// Marketing CMS — site-wide chrome + contact
+model CmsSite {
+  id              String @id @default("default")
+  brandName       String @default("LIFE STAR INSTRUCTORS ACADEMY")
+  tagline         String @default("International instructor training · Minnesota campus practicals")
+  contactAddress  String @default("Minnesota main campus, USA")
+  contactPhone    String @default("(651) 555-0147")
+  contactEmail    String @default("academy@lifestardrivingschool.example")
+  ownerName       String @default("John Addo")
+  footerBlurb     String @default("Life Star Driving School trains commercial driving instructors worldwide — study online, complete practicals in Minnesota, then launch your own school.")
+  copyrightText   String @default("© 2026 Life Star Instructors Academy. All rights reserved.")
+  privacyHref     String @default("/resources#privacy")
+  termsHref       String @default("/resources#terms")
+  refundHref      String @default("/resources#refund")
+  socialJson      String @default("[]")
+  searchEnabled   Boolean @default(true)
+}
+
+model CmsNavItem {
+  id        String  @id @default(cuid())
+  label     String
+  href      String
+  sortOrder Int     @default(0)
+  published Boolean @default(true)
+}
+
+/// CMS pages: home + Programs / Admissions / Students / Resources / About
+model CmsPage {
+  id              String  @id @default(cuid())
+  slug            String  @unique
+  title           String
+  metaDescription String  @default("")
+  heroBadge       String  @default("")
+  heroTitle       String  @default("")
+  heroSubtitle    String  @default("")
+  heroImageUrl    String  @default("")
+  bodyMarkdown    String  @default("")
+  ctaPrimaryLabel String  @default("")
+  ctaPrimaryHref  String  @default("")
+  ctaSecondaryLabel String @default("")
+  ctaSecondaryHref  String @default("")
+  published       Boolean @default(true)
+  sortOrder       Int     @default(0)
+  sections        CmsSection[]
+}
+
+model CmsSection {
+  id           String  @id @default(cuid())
+  pageId       String
+  key          String // hero | programs | trusted | stats | testimonials | cta | custom
+  eyebrow      String  @default("")
+  title        String  @default("")
+  subtitle     String  @default("")
+  body         String  @default("")
+  imageUrl     String  @default("")
+  ctaLabel     String  @default("")
+  ctaHref      String  @default("")
+  dataJson     String  @default("{}")
+  sortOrder    Int     @default(0)
+  published    Boolean @default(true)
+  page         CmsPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, key])
+}
+
+model CmsProgramCard {
+  id        String  @id @default(cuid())
+  title     String
+  blurb     String
+  imageUrl  String  @default("")
+  href      String  @default("/programs")
+  iconKey   String  @default("graduation")
+  sortOrder Int     @default(0)
+  published Boolean @default(true)
+}
+
+model CmsStat {
+  id        String  @id @default(cuid())
+  value     String
+  label     String
+  iconKey   String  @default("users")
+  sortOrder Int     @default(0)
+  published Boolean @default(true)
+}
+
+model CmsTestimonial {
+  id        String  @id @default(cuid())
+  quote     String
+  name      String
+  title     String
+  photoUrl  String  @default("")
+  stars     Int     @default(5)
+  sortOrder Int     @default(0)
+  published Boolean @default(true)
+}
+
+/// Public marketing media (admin uploads replace placeholders)
+model CmsMedia {
+  id         String   @id @default(cuid())
+  key        String   @unique // e.g. hero_image, program_1
+  label      String
+  fileName   String
+  mimeType   String
+  dataBase64 String
+  byteSize   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

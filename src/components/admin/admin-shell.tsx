@@ -19,6 +19,7 @@ import {
   Bell,
   IdCard,
   Building2,
+  Globe,
 } from "lucide-react";
 
 export type AdminShellUser = {
@@ -39,6 +40,7 @@ const links = [
   { href: "/admin/practicum", label: "Practicum", icon: CalendarDays },
   { href: "/admin/licenses", label: "Licenses", icon: IdCard },
   { href: "/admin/school-launch", label: "School launch", icon: Building2 },
+  { href: "/admin/website", label: "Website CMS", icon: Globe },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

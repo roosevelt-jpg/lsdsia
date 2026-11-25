@@ -103,12 +103,13 @@ Login emails default to `admin@lifestar.academy` / `demo@lifestar.academy`; pass
 
 ## Product surface
 
-- Landing + `/pricing` (BTW $7,000 / Classroom $15,000 with 50% down payment plans; online levels separate)
+- **Marketing site (CMS-driven)** — homepage matches the ChatGPT Life Star mock (navy/gold): `/`, `/programs`, `/admissions`, `/students`, `/resources`, `/about`. Admin manages copy/images at **`/admin/website`**. Defaults seed from `src/lib/cms-seed.ts`; placeholder photos in `public/cms/` (replace via CMS upload → `/api/cms-media/[key]`).
+- `/pricing` (BTW $7,000 / Classroom $15,000 with 50% down payment plans; online levels separate) — tuition prefs unchanged
 - Candidate: **driver’s license upload** (`/app/onboarding/license`) required before other `/app` routes; enroll, store, learn, quiz, application, practicum
 - **Student identity card** on the candidate dashboard: passport photo (private upload), enrollment number, program, dates, Code 128 barcode; admin print at `/admin/candidates/[id]/id-card` for Minnesota campus exams
 - **Digital certificate** (`/app/certificate`): auto-issued when an admin marks the program certified (if the student has passed the practice exam); admins can also **Issue certificate** from Candidates (completes program + issues, with a clear error if not eligible). Public verify: `/verify/[code]`
 - **School launch** (`/app/school-launch`): after certification, coaching to register/operate a driving school (U.S. state DMV/operator packet — not legal advice); academy welcomes students worldwide (campus practicals remain in Minnesota)
-- Admin: premium console, licenses, school-launch, print student IDs, issue certificates, levels, pricing, candidates, orders, content, quizzes, practicum
+- Admin: premium console, **Website CMS**, licenses, school-launch, print student IDs, issue certificates, levels, pricing, candidates, orders, content, quizzes, practicum
 
 ### Certificate signatories & registration IDs
 

@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import fs from "fs";
 import path from "path";
+import { seedCms } from "../src/lib/cms-seed";
 
 const prisma = new PrismaClient();
 
@@ -550,6 +551,8 @@ async function main() {
   console.log(`Seeded ${lessonIds.length} lessons, ${bank.length} questions.`);
   console.log(`Admin: ${adminEmail} / (ADMIN_PASSWORD)`);
   console.log(`Demo:  ${demoEmail} / (DEMO_PASSWORD) on Professional with ${firstLessons.length} unlocked lessons`);
+
+  await seedCms(prisma);
 }
 
 main()

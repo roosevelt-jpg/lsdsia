@@ -1,51 +1,33 @@
-import Link from "next/link";
-import { SiteHeader } from "@/components/site-header";
-import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+import { loadCmsBundle } from "@/lib/cms";
+import { MarketingHeader } from "@/components/marketing/marketing-header";
+import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { HomeSections } from "@/components/marketing/home-sections";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { home } = await loadCmsBundle();
+  return {
+    title: home?.title || "Life Star Instructors Academy",
+    description: home?.metaDescription || undefined,
+  };
+}
+
+export default async function HomePage() {
+  const { site, nav, home, programs, stats, testimonials, mediaMap } = await loadCmsBundle();
+
   return (
-    <main>
-      <section className="hero-plane relative min-h-[100svh] text-white">
-        <SiteHeader />
-        <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-5 pb-16 pt-28 sm:justify-center sm:pb-24">
-          <p className="animate-fade font-display text-4xl font-semibold tracking-tight text-white sm:text-6xl md:text-7xl">
-            Life Star Driving School
-          </p>
-          <h1 className="animate-rise mt-5 max-w-2xl text-xl font-medium text-white/95 sm:text-2xl md:text-3xl">
-            Train to become a licensed commercial driving instructor — students welcome worldwide.
-          </h1>
-          <p className="animate-rise-delay mt-4 max-w-xl text-base text-white/80 sm:text-lg">
-            Study online with Life Star from anywhere, then travel to our Minnesota main campus for laboratory
-            training under Minnesota Rules Part 7411.0630 when you are ready.
-          </p>
-          <div className="animate-rise-delay mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link href="/signup">Start learning</Link>
-            </Button>
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/pricing">View tuition & payment plans</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[var(--mist)] px-5 py-20">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="font-display text-3xl text-[var(--navy)] sm:text-4xl">
-            Online study worldwide. Minnesota campus practicals.
-          </h2>
-          <p className="mt-4 text-lg text-[var(--steel)]">
-            Life Star’s Instructor Academy coaches candidates across the globe through licensing knowledge, practice
-            exams, a digital preparation packet, and scheduled intensives at the Minnesota campus. After certification,
-            graduates can return to open their own driving school with Life Star school-launch coaching.
-          </p>
-          <div className="mt-8">
-            <Button asChild variant="outline">
-              <Link href="/app">Open candidate dashboard</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-    </main>
+    <div className="min-h-screen bg-white font-[family-name:var(--font-marketing)]">
+      <MarketingHeader site={site} nav={nav} />
+      <HomeSections
+        sections={home?.sections || []}
+        programs={programs}
+        stats={stats}
+        testimonials={testimonials}
+        mediaMap={mediaMap}
+      />
+      <MarketingFooter site={site} nav={nav} />
+    </div>
   );
 }
