@@ -96,9 +96,6 @@ export default async function AppHomePage({
   ]);
 
   const mediaMap = Object.fromEntries(media.map((m) => [m.key, `/api/cms-media/${m.key}`]));
-  const heroBg = resolveCmsImage(site.dashboardHeroBgUrl, mediaMap) || site.dashboardHeroBgUrl;
-  const heroPerson =
-    resolveCmsImage(site.dashboardHeroPersonUrl, mediaMap) || site.dashboardHeroPersonUrl;
   const continueThumb =
     resolveCmsImage(site.dashboardContinueThumbUrl, mediaMap) || site.dashboardContinueThumbUrl;
 
@@ -182,20 +179,35 @@ export default async function AppHomePage({
   const circumference = 2 * Math.PI * 42;
   const dash = (donut / 100) * circumference;
 
+  const heroImage =
+    resolveCmsImage(site.dashboardHeroBgUrl, mediaMap) ||
+    "/cms/dashboard/hero-bg-hires.jpg";
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      {/* HERO */}
+      {/* HERO — photo is text-free; CMS copy overlays via HTML */}
       <section className="relative overflow-hidden rounded-2xl text-white shadow-[0_16px_40px_rgba(11,31,51,0.18)]">
+        {/* Sharp clean banner photo (no baked-in UI text) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={heroImage}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-[72%_center]"
+        />
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0"
           style={{
-            backgroundImage: `linear-gradient(105deg, rgba(8,24,48,0.92) 0%, rgba(11,40,80,0.78) 48%, rgba(11,40,80,0.45) 100%), url(${heroBg})`,
+            background:
+              "linear-gradient(105deg, rgba(8,24,48,0.94) 0%, rgba(10,32,64,0.82) 38%, rgba(11,40,80,0.35) 68%, rgba(11,40,80,0.18) 100%)",
           }}
         />
-        <div className="relative grid gap-6 px-6 py-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:px-8 lg:py-10">
+        <div className="relative grid gap-6 px-6 py-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:px-8 lg:py-10">
           <div>
-            <h1 className="text-3xl font-bold sm:text-4xl">Welcome Back, {firstName}! 👋</h1>
-            <p className="mt-3 max-w-xl text-sm text-white/85 sm:text-base">{site.dashboardHeroSubtitle}</p>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Welcome Back, {firstName}! 👋</h1>
+            <p className="mt-3 max-w-xl text-sm text-white/85 sm:text-base">
+              {site.dashboardHeroSubtitle ||
+                "Continue your journey to becoming a certified driving instructor with Life Star Instructors Academy."}
+            </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href={(site as { dashboardHeroCtaHref?: string }).dashboardHeroCtaHref || nextLesson?.href || "/app/learn"}
@@ -206,33 +218,34 @@ export default async function AppHomePage({
               </Link>
               <Link
                 href={(site as { dashboardHeroSecondaryHref?: string }).dashboardHeroSecondaryHref || "#progress"}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/70 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/75 bg-transparent px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
               >
                 <BarChart3 className="h-4 w-4" />{" "}
                 {(site as { dashboardHeroSecondaryLabel?: string }).dashboardHeroSecondaryLabel ||
                   "View My Progress"}
               </Link>
             </div>
-            <ul className="mt-6 flex flex-wrap gap-4 text-xs font-semibold text-white/90 sm:gap-6">
-              <li className="flex items-center gap-2">
-                <Globe2 className="h-4 w-4 text-[var(--amber)]" /> Learn Online Worldwide
-              </li>
-              <li className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[var(--amber)]" /> Train at Our Minnesota Campus
-              </li>
-              <li className="flex items-center gap-2">
-                <BadgeCheck className="h-4 w-4 text-[var(--amber)]" /> Get Licensed & Start Your Business
-              </li>
-            </ul>
           </div>
-          <div className="relative hidden justify-end lg:flex">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroPerson}
-              alt="Life Star instructor"
-              className="max-h-64 w-auto object-contain drop-shadow-2xl"
-            />
-          </div>
+          <ul className="ml-auto hidden w-full max-w-xs flex-col gap-3 rounded-xl bg-[rgba(8,24,48,0.55)] p-4 backdrop-blur-sm ring-1 ring-white/15 lg:flex">
+            <li className="flex items-center gap-3 text-sm font-semibold text-white">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber)]/15 text-[var(--amber)]">
+                <Globe2 className="h-4 w-4" />
+              </span>
+              Learn Online Worldwide
+            </li>
+            <li className="flex items-center gap-3 text-sm font-semibold text-white">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber)]/15 text-[var(--amber)]">
+                <MapPin className="h-4 w-4" />
+              </span>
+              Train at Our Minnesota Campus
+            </li>
+            <li className="flex items-center gap-3 text-sm font-semibold text-white">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber)]/15 text-[var(--amber)]">
+                <BadgeCheck className="h-4 w-4" />
+              </span>
+              Get Licensed & Start Your Business
+            </li>
+          </ul>
         </div>
       </section>
 
@@ -272,7 +285,10 @@ export default async function AppHomePage({
         ].map((s) => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-[var(--navy)]/8">
+            <div
+              key={s.label}
+              className="rounded-xl bg-white p-4 shadow-[0_8px_24px_rgba(43,108,176,0.10)] ring-1 ring-[#2b6cb0]/8"
+            >
               <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${s.tone}`}>
                 <Icon className="h-4 w-4" />
               </span>
@@ -294,18 +310,41 @@ export default async function AppHomePage({
               </Link>
             </div>
             <ul className="space-y-4">
-              {(courseCards.length ? courseCards : [
-                {
-                  id: "placeholder",
-                  title: "Driving Instructor Certification Program",
-                  thumb: "/cms/dashboard/course-1.jpg",
-                  progress: 0,
-                  status: "Module 1 of 8 • Not Started",
-                  href: "/app/learn",
-                  cta: "Start Course",
-                  slug: "",
-                },
-              ]).map((c) => (
+              {(courseCards.length
+                ? courseCards
+                : [
+                    {
+                      id: "c1",
+                      title: "Driving Instructor Certification Program",
+                      thumb: "/cms/dashboard/course-1.jpg",
+                      progress: 62,
+                      status: "Module 4 of 8 • In Progress",
+                      href: "/app/learn",
+                      cta: "Continue",
+                      slug: "",
+                    },
+                    {
+                      id: "c2",
+                      title: "Teaching & Coaching Techniques",
+                      thumb: "/cms/dashboard/course-2.jpg",
+                      progress: 0,
+                      status: "Module 1 of 8 • Not Started",
+                      href: "/app/learn",
+                      cta: "Start Course",
+                      slug: "",
+                    },
+                    {
+                      id: "c3",
+                      title: "Start Your Driving School Business",
+                      thumb: "/cms/dashboard/course-3.jpg",
+                      progress: 28,
+                      status: "Module 2 of 8 • In Progress",
+                      href: "/app/learn",
+                      cta: "Continue",
+                      slug: "",
+                    },
+                  ]
+              ).map((c) => (
                 <li key={c.id} className="flex flex-wrap items-center gap-4 rounded-lg border border-[var(--navy)]/8 p-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={c.thumb} alt="" className="h-14 w-20 rounded-md object-cover" />
@@ -354,13 +393,11 @@ export default async function AppHomePage({
             </div>
           </section>
 
-          <LearningMaterialsSection materials={materialCards} enrolled={isEnrolled} />
-
           <section className="grid gap-3 sm:grid-cols-2">
             {[
               { href: "/app/practicum", label: "Book a Practical Training", icon: CalendarDays },
               { href: "/app/quiz", label: "Take an Assessment", icon: ClipboardList },
-              { href: "/app/videos", label: "Watch Learning Videos", icon: FolderOpen },
+              { href: "/app/resources", label: "Download Resources", icon: FolderOpen },
               { href: "/app/support", label: "Get Support", icon: LifeBuoy },
             ].map((a) => {
               const Icon = a.icon;
@@ -517,6 +554,8 @@ export default async function AppHomePage({
           </section>
         </div>
       </div>
+
+      <LearningMaterialsSection materials={materialCards} enrolled={isEnrolled} />
 
       {/* Student ID retained */}
       <section id="student-id" className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8">

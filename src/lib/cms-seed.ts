@@ -51,7 +51,7 @@ export async function seedCms(prisma: PrismaClient) {
         { network: "tiktok", href: "https://tiktok.com" },
       ]),
       newsletterBlurb: "Get training updates, new courses and special offers.",
-      contentVersion: 4,
+      contentVersion: 5,
       dashboardTagline: "Learn Globally. Train Professionally. Lead Confidently.",
       dashboardHeroBgUrl: "/cms/dashboard/hero-bg-hires.jpg",
       dashboardHeroPersonUrl: "/cms/dashboard/hero-person.jpg",
@@ -66,7 +66,7 @@ export async function seedCms(prisma: PrismaClient) {
       dashboardHeroCtaLabel: "Continue Learning",
       dashboardHeroCtaHref: "/app/learn",
       dashboardHeroSecondaryLabel: "View My Progress",
-      dashboardHeroSecondaryHref: "/app",
+      dashboardHeroSecondaryHref: "#progress",
       adminHeroTitle: "Welcome to Life Star Instructors Academy",
       adminHeroSubtitle:
         "Manage training, students, instructors and academy operations all in one place.",

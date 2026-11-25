@@ -5,7 +5,7 @@ export type CmsBundle = Awaited<ReturnType<typeof loadCmsBundle>>;
 
 let cmsEnsurePromise: Promise<void> | null = null;
 
-const CMS_CONTENT_VERSION = 4;
+const CMS_CONTENT_VERSION = 5;
 
 /** Ensure marketing CMS tables have the ChatGPT-mock defaults (idempotent). */
 export async function ensureCmsDefaults() {
@@ -39,8 +39,14 @@ export async function loadCmsSite() {
   const s = site as Record<string, unknown>;
   if (!s.logoUrl) bannerDefaults.logoUrl = "/cms/logo-full-light.png";
   if (!s.logoMarkUrl) bannerDefaults.logoMarkUrl = "/cms/logo-mark.svg";
-  if (!site.dashboardHeroBgUrl) bannerDefaults.dashboardHeroBgUrl = "/cms/dashboard/hero-bg-hires.jpg";
+  if (!site.dashboardHeroBgUrl || site.dashboardHeroBgUrl.includes("hero-banner.jpg")) {
+    bannerDefaults.dashboardHeroBgUrl = "/cms/dashboard/hero-bg-hires.jpg";
+  }
   if (!site.dashboardHeroPersonUrl) bannerDefaults.dashboardHeroPersonUrl = "/cms/dashboard/hero-person.jpg";
+  if (!site.dashboardHeroSubtitle) {
+    bannerDefaults.dashboardHeroSubtitle =
+      "Continue your journey to becoming a certified driving instructor with Life Star Instructors Academy.";
+  }
   if (!site.dashboardUpgradeImageUrl) bannerDefaults.dashboardUpgradeImageUrl = "/cms/dashboard/upgrade-car.jpg";
   if (!site.dashboardContinueThumbUrl) bannerDefaults.dashboardContinueThumbUrl = "/cms/dashboard/continue-lesson.jpg";
   if (!s.dashboardHeroCtaLabel) bannerDefaults.dashboardHeroCtaLabel = "Continue Learning";
