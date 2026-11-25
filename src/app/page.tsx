@@ -19,13 +19,13 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-white font-[family-name:var(--font-marketing)]">
-      <MarketingHeader site={site} nav={nav} />
       <HomeSections
         sections={home?.sections || []}
         programs={programs}
         stats={stats}
         testimonials={testimonials}
         mediaMap={mediaMap}
+        header={<MarketingHeader site={site} nav={nav} overlay />}
       />
       <MarketingFooter site={site} nav={nav} />
     </div>

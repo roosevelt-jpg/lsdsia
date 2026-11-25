@@ -12,10 +12,13 @@ export function HeroSlider({
   slides,
   intervalMs = 5500,
   className = "",
+  fullBleed = false,
 }: {
   slides: HeroSlide[];
   intervalMs?: number;
   className?: string;
+  /** Full-bleed behind homepage hero copy (mock). */
+  fullBleed?: boolean;
 }) {
   const items = slides.filter((s) => Boolean(s.imageUrl));
   const [index, setIndex] = useState(0);
@@ -41,7 +44,11 @@ export function HeroSlider({
 
   return (
     <div
-      className={`absolute inset-y-0 right-0 w-[58%] ${className}`}
+      className={
+        fullBleed
+          ? `absolute inset-0 ${className}`
+          : `absolute inset-y-0 right-0 w-[58%] ${className}`
+      }
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       role="region"
@@ -51,9 +58,9 @@ export function HeroSlider({
       {items.map((slide, i) => (
         <div
           key={`${slide.imageUrl}-${i}`}
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-out ${
-            i === index ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 bg-cover transition-opacity duration-700 ease-out ${
+            fullBleed ? "bg-[center_right]" : "bg-center"
+          } ${i === index ? "opacity-100" : "opacity-0"}`}
           style={{ backgroundImage: `url(${slide.imageUrl})` }}
           role="img"
           aria-label={slide.alt || `Slide ${i + 1}`}
@@ -61,7 +68,7 @@ export function HeroSlider({
         />
       ))}
 
-      {items.length > 1 && (
+      {items.length > 1 && !fullBleed && (
         <>
           <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 backdrop-blur-sm">
             <button

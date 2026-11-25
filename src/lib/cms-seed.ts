@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
+import { DEFAULT_FOOTER_COLUMNS } from "@/lib/footer-nav";
 
 /** Default marketing CMS content matching the hi-res ChatGPT homepage / auth / dashboard mocks. */
 export async function seedCms(prisma: PrismaClient) {
@@ -36,22 +37,21 @@ export async function seedCms(prisma: PrismaClient) {
         secondaryBtnBorder: "#FFFFFF",
         secondaryBtnText: "#FFFFFF",
       }),
-      contactAddress: "Minnesota Campus, 1234 Life Star Drive, Minneapolis, MN 55420, USA",
-      contactPhone: "+1 (612) 555-0147",
+      contactAddress: "Minnesota, USA",
+      contactPhone: "+1 952-222-7777",
       contactEmail: "info@lifestarinstructorsacademy.com",
       ownerName: "John Addo",
-      footerBlurb:
-        "International driving instructor training, licensing preparation and driving school business support.",
+      footerBlurb: "Learn globally. Train professionally. Lead confidently.",
       copyrightText: "© 2025 Life Star Instructors Academy. All Rights Reserved.",
       socialJson: JSON.stringify([
         { network: "facebook", href: "https://facebook.com" },
         { network: "instagram", href: "https://instagram.com" },
         { network: "youtube", href: "https://youtube.com" },
         { network: "linkedin", href: "https://linkedin.com" },
-        { network: "tiktok", href: "https://tiktok.com" },
       ]),
+      footerNavJson: JSON.stringify(DEFAULT_FOOTER_COLUMNS, null, 2),
       newsletterBlurb: "Get training updates, new courses and special offers.",
-      contentVersion: 4,
+      contentVersion: 5,
       dashboardTagline: "Learn Globally. Train Professionally. Lead Confidently.",
       dashboardHeroBgUrl: "/cms/dashboard/hero-bg-hires.jpg",
       dashboardHeroPersonUrl: "/cms/dashboard/hero-person.jpg",
@@ -88,9 +88,9 @@ export async function seedCms(prisma: PrismaClient) {
 
   const nav = [
     { label: "Home", href: "/", sortOrder: 0 },
-    { label: "Courses", href: "/programs", sortOrder: 1 },
+    { label: "Programs", href: "/programs", sortOrder: 1 },
     { label: "Admissions", href: "/admissions", sortOrder: 2 },
-    { label: "Training", href: "/students", sortOrder: 3 },
+    { label: "Students", href: "/students", sortOrder: 3 },
     { label: "Resources", href: "/resources", sortOrder: 4 },
     { label: "About", href: "/about", sortOrder: 5 },
   ];
@@ -104,15 +104,15 @@ export async function seedCms(prisma: PrismaClient) {
       title: "Life Star Instructors Academy",
       metaDescription:
         "Learn globally. Train professionally. Lead confidently. Premier international academy for driving instructor training.",
-      heroBadge: "",
-      heroTitle: "Learn globally. Train professionally. Lead confidently.",
+      heroBadge: "International Instructor Training Platform",
+      heroTitle: "Become a Certified Driving Instructor with Life Star",
       heroSubtitle:
-        "The premier international academy for driving instructor training, licensing preparation and driving school business launch support.",
-      heroImageUrl: "/cms/hero-slide-1.jpg",
-      ctaPrimaryLabel: "Apply for Training",
+        "A world-class academy that prepares you to become a licensed driving instructor, build a rewarding career, or launch your own school — anywhere in the world.",
+      heroImageUrl: "/cms/hero-homepage-bg.jpg",
+      ctaPrimaryLabel: "Apply Now",
       ctaPrimaryHref: "/signup",
-      ctaSecondaryLabel: "Watch Academy Overview",
-      ctaSecondaryHref: "/about",
+      ctaSecondaryLabel: "Explore Programs",
+      ctaSecondaryHref: "/programs",
       sortOrder: 0,
     },
   });
@@ -121,46 +121,61 @@ export async function seedCms(prisma: PrismaClient) {
     data: {
       pageId: home.id,
       key: "hero",
+      eyebrow: "International Instructor Training Platform",
       title: home.heroTitle,
       subtitle: home.heroSubtitle,
       imageUrl: home.heroImageUrl,
       ctaLabel: home.ctaPrimaryLabel,
       ctaHref: home.ctaPrimaryHref,
       dataJson: JSON.stringify({
+        eyebrow: "International Instructor Training Platform",
         secondaryCtaLabel: home.ctaSecondaryLabel,
         secondaryCtaHref: home.ctaSecondaryHref,
-        slideIntervalMs: 5500,
+        slideIntervalMs: 6500,
         slides: [
+          {
+            imageUrl: "/cms/hero-homepage-bg.jpg",
+            alt: "Life Star instructor and student with branded vehicle",
+          },
+          {
+            imageUrl: "/cms/hero-homepage-photo.jpg",
+            alt: "Life Star training vehicle and instructor",
+          },
           {
             imageUrl: "/cms/hero-slide-1.jpg",
             alt: "Life Star instructor beside training vehicle",
           },
           {
-            imageUrl: "/cms/hero-slide-2.jpg",
-            alt: "Life Star academy instructors",
-          },
-          {
             imageUrl: "/cms/hero-slide-3.jpg",
             alt: "Life Star branded training car",
           },
-          {
-            imageUrl: "/cms/hero-slide-4.jpg",
-            alt: "Life Star Instructors Academy campus",
-          },
-          {
-            imageUrl: "/cms/hero-slide-5.jpg",
-            alt: "Instructor with Life Star training vehicle",
-          },
-          {
-            imageUrl: "/cms/hero-slide-6.jpg",
-            alt: "Campus instructor in safety vest",
-          },
+        ],
+        checks: [
+          "Online Learning (Worldwide)",
+          "Practical Training (Minnesota)",
+          "License & Business Support",
         ],
         tiles: [
-          { title: "Online Learning Worldwide", body: "", icon: "globe" },
-          { title: "Hands-on Training at Our Minnesota Campus", body: "", icon: "map" },
-          { title: "Licensing Preparation", body: "", icon: "badge" },
-          { title: "Start Your Driving School", body: "", icon: "building" },
+          {
+            title: "Learn Online",
+            body: "Flexible, self-paced training accessible from anywhere in the world.",
+            icon: "laptop",
+          },
+          {
+            title: "Train In Minnesota",
+            body: "Gain hands-on, real-world experience at our Minnesota campus.",
+            icon: "person",
+          },
+          {
+            title: "Get Licensed",
+            body: "Meet state requirements with expert guidance and exam prep.",
+            icon: "license",
+          },
+          {
+            title: "Start Your Own School",
+            body: "Get the tools, guidance, and business support to launch.",
+            icon: "rocket",
+          },
         ],
       }),
       sortOrder: 0,
@@ -172,8 +187,9 @@ export async function seedCms(prisma: PrismaClient) {
       pageId: home.id,
       key: "programs",
       eyebrow: "OUR PROGRAMS",
-      title: "Professional Training Programs",
-      subtitle: "Comprehensive, flexible and globally recognized driving instructor training courses.",
+      title: "Comprehensive Instructor Training Programs",
+      subtitle:
+        "Flexible pathways to certification, licensing, and launching your own driving school.",
       sortOrder: 1,
     },
   });
@@ -183,33 +199,34 @@ export async function seedCms(prisma: PrismaClient) {
       pageId: home.id,
       key: "trusted",
       eyebrow: "WHY LIFE STAR",
-      title: "A Global Academy Built for Your Success",
-      body: "World-class training, real-world experience and ongoing support to help you become a licensed instructor and confidently build your career or business.",
-      imageUrl: "/cms/hero-slide-4.jpg",
-      ctaLabel: "Explore Campus",
-      ctaHref: "/about",
+      title: "A Trusted Global Leader in Instructor Training",
+      body: "We combine expert instruction, real-world experience, and business guidance to help you build a long-term, impactful career in driver education.",
+      imageUrl: "/cms/mock-trusted-bg.jpg",
+      ctaLabel: "Apply Today",
+      ctaHref: "/signup",
       dataJson: JSON.stringify({
-        checklist: [
-          "Internationally recognized training",
-          "Expert, experienced instructors",
-          "Flexible online and in-person options",
-          "Hands-on practical training in Minnesota",
-          "Business launch and growth support",
-          "Ongoing student and graduate support",
+        pillars: [
+          {
+            title: "Proven Expertise",
+            body: "Years of experience in driver education and instructor training.",
+            icon: "trophy",
+          },
+          {
+            title: "Global Access",
+            body: "Online training for students worldwide.",
+            icon: "globe",
+          },
+          {
+            title: "Experienced Instructors",
+            body: "Learn from licensed, industry-leading professionals.",
+            icon: "users",
+          },
+          {
+            title: "Career & Business Support",
+            body: "From licensing to launching your own driving school.",
+            icon: "shield",
+          },
         ],
-        campusCard: {
-          title: "Minnesota Campus Training",
-          location: "Minnesota, USA",
-          body: "Get real-world, hands-on instructor training at our state-of-the-art campus in Minnesota.",
-          items: [
-            "On-road practical training",
-            "Real classroom instruction",
-            "Modern training vehicles",
-            "Access to experienced mentors",
-          ],
-          ctaLabel: "Explore Campus",
-          ctaHref: "/about",
-        },
       }),
       sortOrder: 2,
     },
@@ -229,8 +246,8 @@ export async function seedCms(prisma: PrismaClient) {
       pageId: home.id,
       key: "testimonials",
       eyebrow: "WHAT OUR GRADUATES SAY",
-      title: "Trusted by Instructors Around the World",
-      subtitle: "Real graduates who trained with Life Star and built careers worldwide.",
+      title: "Success Stories from Around the World",
+      subtitle: "",
       sortOrder: 4,
     },
   });
@@ -239,13 +256,14 @@ export async function seedCms(prisma: PrismaClient) {
     data: {
       pageId: home.id,
       key: "cta",
-      title: "Ready to Start Your Instructor Journey?",
-      subtitle: "Join a global community of professional driving instructors today.",
-      imageUrl: "/cms/mock-cta-car.jpg",
+      title: "Ready to Start Your Journey?",
+      subtitle:
+        "Apply now to join Life Star Instructors Academy and take the first step toward a rewarding, high-impact career.",
+      imageUrl: "/cms/cta-journey-road.jpg",
       ctaLabel: "Apply Now",
       ctaHref: "/signup",
       dataJson: JSON.stringify({
-        secondaryCtaLabel: "Talk to an Advisor",
+        secondaryCtaLabel: "Speak with an Advisor",
         secondaryCtaHref: "/admissions",
       }),
       sortOrder: 5,
@@ -254,36 +272,29 @@ export async function seedCms(prisma: PrismaClient) {
 
   const programCards = [
     {
-      title: "Driving Instructor Training Program",
-      blurb: "Complete training to become a certified driving instructor.",
+      title: "Driving Instructor Certification Program",
+      blurb:
+        "Complete professional training to become a certified driving instructor with online theory and Minnesota practicals.",
       imageUrl: "/cms/mock-program-training.jpg",
       href: "/programs#certification",
       iconKey: "graduation",
       sortOrder: 0,
     },
     {
-      title: "Instructor Licensing Preparation",
-      blurb: "Get fully prepared for your state instructor licensing exams.",
+      title: "Instructor License Preparation",
+      blurb: "Get fully prepared for your state instructor licensing exams with expert guidance.",
       imageUrl: "/cms/mock-program-licensing.jpg",
       href: "/programs#license",
       iconKey: "license",
       sortOrder: 1,
     },
     {
-      title: "Start a Driving School Business",
-      blurb: "Step-by-step guidance to launch and grow your own driving school.",
+      title: "Driving School Business Launch Program",
+      blurb: "Step-by-step guidance, tools, and coaching to launch and grow your own driving school.",
       imageUrl: "/cms/mock-program-business.jpg",
       href: "/programs#business",
-      iconKey: "building",
+      iconKey: "rocket",
       sortOrder: 2,
-    },
-    {
-      title: "Flexible Online Learning (Worldwide)",
-      blurb: "Study from anywhere with our interactive, self-paced courses.",
-      imageUrl: "/cms/mock-program-online.jpg",
-      href: "/programs#online",
-      iconKey: "globe",
-      sortOrder: 3,
     },
   ];
   for (const p of programCards) {
@@ -291,10 +302,10 @@ export async function seedCms(prisma: PrismaClient) {
   }
 
   const stats = [
-    { value: "10,000+", label: "Trained Instructors", iconKey: "users", sortOrder: 0 },
-    { value: "50+", label: "Countries Worldwide", iconKey: "globe", sortOrder: 1 },
-    { value: "95%", label: "Licensing Success Rate", iconKey: "badge", sortOrder: 2 },
-    { value: "Minnesota, USA", label: "Practical Training Campus", iconKey: "building", sortOrder: 3 },
+    { value: "5,000+", label: "Students Trained", iconKey: "users", sortOrder: 0 },
+    { value: "98%", label: "Certification Success Rate", iconKey: "award", sortOrder: 1 },
+    { value: "50+", label: "Countries Served", iconKey: "globe", sortOrder: 2 },
+    { value: "1", label: "Minnesota Training Campus", iconKey: "building", sortOrder: 3 },
   ];
   for (const s of stats) {
     await prisma.cmsStat.create({ data: s });
@@ -303,26 +314,26 @@ export async function seedCms(prisma: PrismaClient) {
   const testimonials = [
     {
       quote:
-        "Life Star’s online track let me study from abroad, then the Minnesota practicals made licensing feel achievable. I now teach full time.",
-      name: "Amina R.",
-      title: "Driving Instructor, UK",
+        "Life Star gave me the knowledge, confidence, and support to become a licensed instructor. The training was professional and practical!",
+      name: "Daniel K.",
+      title: "Certified Driving Instructor",
       photoUrl: "/cms/mock-testimonial-1.jpg",
       stars: 5,
       sortOrder: 0,
     },
     {
       quote:
-        "The business launch coaching was the missing piece. After certification I opened my own school with a clear operator packet plan.",
-      name: "James K.",
-      title: "Licensed Instructor, Canada",
+        "The program was well-structured and flexible. I completed the online training from my country and later did my practical training in Minnesota.",
+      name: "Maria E.",
+      title: "International Graduate",
       photoUrl: "/cms/mock-testimonial-2.jpg",
       stars: 5,
       sortOrder: 1,
     },
     {
       quote:
-        "Professional curriculum, real campus training, and support that treats international students as first-class candidates.",
-      name: "Maria S.",
+        "With Life Star's guidance, I not only got my instructor license but also launched my own driving school. Highly recommended!",
+      name: "James T.",
       title: "Driving School Owner",
       photoUrl: "/cms/mock-testimonial-3.jpg",
       stars: 5,

@@ -488,6 +488,8 @@ model CmsSite {
   termsHref       String @default("/resources#terms")
   refundHref      String @default("/resources#refund")
   socialJson      String @default("[]")
+  /// Footer column menus (Programs / Admissions / Students / About) — JSON array
+  footerNavJson   String @default("[]")
   searchEnabled   Boolean @default(true)
   newsletterBlurb String @default("Get training updates, new courses and special offers.")
   contentVersion  Int     @default(2)

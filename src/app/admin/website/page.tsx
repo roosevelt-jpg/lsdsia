@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ensureCmsDefaults } from "@/lib/cms";
+import { DEFAULT_FOOTER_COLUMNS } from "@/lib/footer-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +38,8 @@ async function saveSite(formData: FormData) {
       footerBlurb: String(formData.get("footerBlurb") || ""),
       copyrightText: String(formData.get("copyrightText") || ""),
       newsletterBlurb: String(formData.get("newsletterBlurb") || ""),
+      socialJson: String(formData.get("socialJson") || "[]"),
+      footerNavJson: String(formData.get("footerNavJson") || "[]"),
     },
     update: {
       brandName: String(formData.get("brandName") || ""),
@@ -57,6 +60,8 @@ async function saveSite(formData: FormData) {
       footerBlurb: String(formData.get("footerBlurb") || ""),
       copyrightText: String(formData.get("copyrightText") || ""),
       newsletterBlurb: String(formData.get("newsletterBlurb") || ""),
+      socialJson: String(formData.get("socialJson") || "[]"),
+      footerNavJson: String(formData.get("footerNavJson") || "[]"),
     },
   });
   redirect("/admin/website?saved=site");
@@ -432,6 +437,27 @@ export default async function AdminWebsiteCmsPage({
               name="footerBlurb"
               defaultValue={site?.footerBlurb ?? ""}
               className="mt-1 min-h-20 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Social links JSON</Label>
+            <textarea
+              name="socialJson"
+              defaultValue={site?.socialJson && site.socialJson !== "[]" ? site.socialJson : '[{"network":"facebook","href":"https://facebook.com"},{"network":"instagram","href":"https://instagram.com"},{"network":"youtube","href":"https://youtube.com"},{"network":"linkedin","href":"https://linkedin.com"}]'}
+              className="mt-1 min-h-20 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Footer menus JSON (Programs / Admissions / Students / About)</Label>
+            <textarea
+              name="footerNavJson"
+              defaultValue={
+                (site as { footerNavJson?: string } | null)?.footerNavJson &&
+                (site as { footerNavJson?: string }).footerNavJson !== "[]"
+                  ? (site as { footerNavJson?: string }).footerNavJson
+                  : JSON.stringify(DEFAULT_FOOTER_COLUMNS, null, 2)
+              }
+              className="mt-1 min-h-48 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs"
             />
           </div>
           <div className="sm:col-span-2">
