@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronDown, Search, User } from "lucide-react";
 import { getSession } from "@/lib/auth";
+import { publicNavHref } from "@/lib/auth-paths";
 import type { CmsNavItem, CmsSite } from "@prisma/client";
 import { BrandLogo } from "@/components/brand-logo";
 
@@ -17,10 +18,11 @@ export async function MarketingHeader({
   overlay?: boolean;
 }) {
   const session = await getSession();
+  const authenticated = Boolean(session);
   const logoUrl = (site as { logoUrl?: string }).logoUrl || "/cms/logo-full-light.png";
   const logoMarkUrl = (site as { logoMarkUrl?: string }).logoMarkUrl || "/cms/logo-mark.svg";
   const applyLabel = (site as { applyCtaLabel?: string }).applyCtaLabel || "Apply Now";
-  const applyHref = (site as { applyCtaHref?: string }).applyCtaHref || "/signup";
+  const applyHref = publicNavHref((site as { applyCtaHref?: string }).applyCtaHref || "/signup", authenticated);
   const loginLabel = (site as { loginCtaLabel?: string }).loginCtaLabel || "Login";
 
   return (
@@ -42,12 +44,13 @@ export async function MarketingHeader({
 
         <nav className="hidden items-center gap-1 lg:flex">
           {nav.map((item) => {
+            const href = publicNavHref(item.href, authenticated);
             const isHome = item.href === "/";
             const showCaret = DROPDOWN_HREFS.has(item.href);
             return (
               <Link
                 key={item.id}
-                href={item.href}
+                href={href}
                 className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-medium transition ${
                   isHome
                     ? "border-b-2 border-[var(--amber)] text-white"
@@ -98,7 +101,7 @@ export async function MarketingHeader({
         {nav.map((item) => (
           <Link
             key={item.id}
-            href={item.href}
+            href={publicNavHref(item.href, authenticated)}
             className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10"
           >
             {item.label}

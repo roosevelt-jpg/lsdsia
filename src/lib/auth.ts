@@ -1,8 +1,9 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { ensureLoginUsers } from "@/lib/bootstrap-users";
+import { loginHref } from "@/lib/auth-paths";
 import { prisma } from "@/lib/db";
 
 export type Role = "candidate" | "coach" | "admin";
@@ -115,7 +116,11 @@ export async function getAuthorizedUser(roles?: Role[]) {
 /** For pages and server actions: redirect to login when unauthorized. */
 export async function requireUser(roles?: Role[]) {
   const session = await getAuthorizedUser(roles);
-  if (!session) redirect("/login");
+  if (!session) {
+    const hdrs = await headers();
+    const path = hdrs.get("x-url-path") || hdrs.get("x-pathname") || "/app";
+    redirect(loginHref(path));
+  }
   return session;
 }
 

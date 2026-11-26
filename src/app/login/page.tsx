@@ -2,48 +2,72 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Mail, ArrowRight } from "lucide-react";
 import { getSession, loginWithCredentials } from "@/lib/auth";
+import { isGatedPath, safeNextPath } from "@/lib/auth-paths";
 import { prisma } from "@/lib/db";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { PasswordField } from "@/components/auth/password-field";
 
+function postLoginPath(role: string, nextRaw: string | null, profileDone: boolean): string {
+  const next = safeNextPath(nextRaw, "");
+  if (next) {
+    if (next.startsWith("/admin")) {
+      return role === "admin" ? next : "/app";
+    }
+    if (isGatedPath(next.split("?")[0])) return next;
+    if (next.startsWith("/")) return next;
+  }
+  if (role === "admin") return "/admin";
+  if (!profileDone) return "/onboarding/profile";
+  return "/app";
+}
+
 async function loginAction(formData: FormData) {
   "use server";
+  const nextRaw = String(formData.get("next") || "");
   try {
     const email = String(formData.get("email") || "");
     const password = String(formData.get("password") || "");
     const remember = formData.get("remember") === "1";
     const result = await loginWithCredentials(email, password, { remember });
     if ("error" in result && result.error) {
-      redirect(`/login?error=${encodeURIComponent(result.error)}`);
+      const q = new URLSearchParams({ error: result.error });
+      if (nextRaw) q.set("next", nextRaw);
+      redirect(`/login?${q.toString()}`);
     }
     if (!("user" in result) || !result.user) {
-      redirect(`/login?error=${encodeURIComponent("Invalid email or password")}`);
+      const q = new URLSearchParams({ error: "Invalid email or password" });
+      if (nextRaw) q.set("next", nextRaw);
+      redirect(`/login?${q.toString()}`);
     }
 
     const profile = await prisma.profile.findUnique({ where: { userId: result.user.id } });
-    if (result.user.role === "admin") redirect("/admin");
-    if (!profile?.profileCompletedAt) redirect("/onboarding/profile");
-    redirect("/app");
+    redirect(
+      postLoginPath(result.user.role, nextRaw, Boolean(profile?.profileCompletedAt)),
+    );
   } catch (err) {
     const digest = err && typeof err === "object" && "digest" in err ? String((err as { digest?: string }).digest) : "";
     if (digest.startsWith("NEXT_REDIRECT") || digest.startsWith("NEXT_NOT_FOUND")) throw err;
     console.error("loginAction", err);
-    redirect(
-      `/login?error=${encodeURIComponent(
+    const q = new URLSearchParams({
+      error:
         "Login failed on the server. Set AUTH_SECRET, ADMIN_PASSWORD, and DEMO_PASSWORD in Vercel, then Redeploy.",
-      )}`,
-    );
+    });
+    if (nextRaw) q.set("next", nextRaw);
+    redirect(`/login?${q.toString()}`);
   }
 }
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; reset?: string }>;
+  searchParams: Promise<{ error?: string; reset?: string; next?: string }>;
 }) {
-  const session = await getSession();
-  if (session) redirect(session.role === "admin" ? "/admin" : "/app");
   const params = await searchParams;
+  const next = safeNextPath(params.next, "");
+  const session = await getSession();
+  if (session) {
+    redirect(postLoginPath(session.role, next || null, true));
+  }
   const googleConfigured = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
   const microsoftConfigured = Boolean(process.env.AZURE_AD_CLIENT_ID && process.env.AZURE_AD_CLIENT_SECRET);
 
@@ -72,6 +96,7 @@ export default async function LoginPage({
       )}
 
       <form action={loginAction} className="mt-6 space-y-4">
+        {next ? <input type="hidden" name="next" value={next} /> : null}
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[var(--navy)]">
             Email Address
@@ -117,7 +142,12 @@ export default async function LoginPage({
 
       <div className="grid gap-3">
         <a
-          href={googleConfigured ? "/api/auth/oauth/google" : "/login?error=" + encodeURIComponent("Google sign-in is not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel.")}
+          href={
+            googleConfigured
+              ? `/api/auth/oauth/google${next ? `?next=${encodeURIComponent(next)}` : ""}`
+              : "/login?error=" +
+                encodeURIComponent("Google sign-in is not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel.")
+          }
           className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--navy)]/15 px-4 py-2.5 text-sm font-semibold text-[var(--navy)] hover:bg-[var(--mist)]"
         >
           Continue with Google
@@ -125,9 +155,11 @@ export default async function LoginPage({
         <a
           href={
             microsoftConfigured
-              ? "/api/auth/oauth/microsoft"
+              ? `/api/auth/oauth/microsoft${next ? `?next=${encodeURIComponent(next)}` : ""}`
               : "/login?error=" +
-                encodeURIComponent("Microsoft sign-in is not configured. Set AZURE_AD_CLIENT_ID and AZURE_AD_CLIENT_SECRET in Vercel.")
+                encodeURIComponent(
+                  "Microsoft sign-in is not configured. Set AZURE_AD_CLIENT_ID and AZURE_AD_CLIENT_SECRET in Vercel.",
+                )
           }
           className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--navy)]/15 px-4 py-2.5 text-sm font-semibold text-[var(--navy)] hover:bg-[var(--mist)]"
         >

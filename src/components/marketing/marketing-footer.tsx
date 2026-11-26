@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 import type { CmsNavItem, CmsSite } from "@prisma/client";
+import { getSession } from "@/lib/auth";
+import { publicNavHref } from "@/lib/auth-paths";
 import { parseJsonArray } from "@/lib/cms";
 import { BrandLogo } from "@/components/brand-logo";
 import { parseFooterColumns } from "@/lib/footer-nav";
@@ -18,7 +20,9 @@ const socialLabels: Record<string, string> = {
   in: "in",
 };
 
-export function MarketingFooter({ site }: { site: CmsSite; nav: CmsNavItem[] }) {
+export async function MarketingFooter({ site }: { site: CmsSite; nav: CmsNavItem[] }) {
+  const session = await getSession();
+  const authenticated = Boolean(session);
   const social = parseJsonArray<Social>(site.socialJson, []);
   const columns = parseFooterColumns((site as { footerNavJson?: string }).footerNavJson);
   const logoUrl = (site as { logoUrl?: string }).logoUrl || "/cms/logo-full-light.png";
@@ -65,7 +69,10 @@ export function MarketingFooter({ site }: { site: CmsSite; nav: CmsNavItem[] }) 
             <ul className="mt-3 space-y-2">
               {col.links.map((l) => (
                 <li key={l.href + l.label}>
-                  <Link href={l.href} className="text-sm text-white/75 transition hover:text-white">
+                  <Link
+                    href={publicNavHref(l.href, authenticated)}
+                    className="text-sm text-white/75 transition hover:text-white"
+                  >
                     {l.label}
                   </Link>
                 </li>
