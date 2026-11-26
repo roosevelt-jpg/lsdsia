@@ -37,8 +37,8 @@ export async function seedCms(prisma: PrismaClient) {
         secondaryBtnBorder: "#FFFFFF",
         secondaryBtnText: "#FFFFFF",
       }),
-      contactAddress: "Minnesota, USA",
-      contactPhone: "+1 952-222-7777",
+      contactAddress: "7240 Brooklyn Blvd, Minneapolis, MN 55429, United States",
+      contactPhone: "+1 763-390-7637",
       contactEmail: "info@lifestarinstructorsacademy.com",
       ownerName: "John Addo",
       footerBlurb: "Learn globally. Train professionally. Lead confidently.",
@@ -51,7 +51,7 @@ export async function seedCms(prisma: PrismaClient) {
       ]),
       footerNavJson: JSON.stringify(DEFAULT_FOOTER_COLUMNS, null, 2),
       newsletterBlurb: "Get training updates, new courses and special offers.",
-      contentVersion: 7,
+      contentVersion: 8,
       dashboardTagline: "Learn Globally. Train Professionally. Lead Confidently.",
       dashboardHeroBgUrl: "/cms/dashboard/hero-bg-hires.jpg",
       dashboardHeroPersonUrl: "/cms/dashboard/hero-person.jpg",
@@ -430,7 +430,7 @@ Post-program coaching to register and operate your driving school.`,
       heroSubtitle: "Find course catalogs, licensing guides, and academy policies.",
       heroImageUrl: "/cms/mock-auth-road.jpg",
       bodyMarkdown: `## Support
-Email info@lifestarinstructorsacademy.com or call +1 (612) 555-0147.
+Email info@lifestarinstructorsacademy.com or call +1 763-390-7637.
 
 ## Course Catalog
 Browse professional training programs and online learning pathways.

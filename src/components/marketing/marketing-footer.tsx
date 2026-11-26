@@ -79,7 +79,9 @@ export function MarketingFooter({ site }: { site: CmsSite; nav: CmsNavItem[] }) 
           <ul className="mt-3 space-y-3 text-sm text-white/75">
             <li className="flex items-start gap-2.5">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[var(--amber)]" />
-              <span>{site.contactAddress || "Minnesota, USA"}</span>
+              <span>
+                {site.contactAddress || "7240 Brooklyn Blvd, Minneapolis, MN 55429, United States"}
+              </span>
             </li>
             <li className="flex items-start gap-2.5">
               <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[var(--amber)]" />
