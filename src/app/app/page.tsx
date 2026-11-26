@@ -95,7 +95,7 @@ export default async function AppHomePage({
     listMaterialsForUser(session.id),
   ]);
 
-  const mediaMap = Object.fromEntries(media.map((m) => [m.key, `/api/cms-media/${m.key}`]));
+  const mediaMap = Object.fromEntries(media.map((m) => [m.key, m.blobUrl || `/api/cms-media/${m.key}`]));
   const continueThumb =
     resolveCmsImage(site.dashboardContinueThumbUrl, mediaMap) || site.dashboardContinueThumbUrl;
 

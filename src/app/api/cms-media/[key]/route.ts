@@ -7,6 +7,15 @@ export async function GET(_req: Request, ctx: { params: Promise<{ key: string }>
   const media = await prisma.cmsMedia.findUnique({ where: { key } });
   if (!media) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // Prefer Vercel Blob CDN URL when the file lives there.
+  if (media.blobUrl) {
+    return NextResponse.redirect(media.blobUrl, 302);
+  }
+
+  if (!media.dataBase64) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const body = Buffer.from(media.dataBase64, "base64");
   return new NextResponse(body, {
     headers: {

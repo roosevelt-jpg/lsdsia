@@ -22,7 +22,7 @@ export function IdentityDocumentsFields({
   return (
     <div className="space-y-4">
       <p className="text-sm text-[var(--steel)]">
-        Upload clear photos or PDFs of your identity documents. Files stay in private storage (max 900KB each) for
+        Upload clear photos or PDFs of your identity documents. Files stay in private Vercel Blob storage (max 4.5MB each) for
         academy verification — they are not published on the open web.
       </p>
 

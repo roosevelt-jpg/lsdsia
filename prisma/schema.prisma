@@ -445,7 +445,10 @@ model PrivateUpload {
   kind       String // drivers_license | passport_photo | travel_passport | student_id_photo | school_launch_*
   fileName   String
   mimeType   String
-  dataBase64 String
+  /// Legacy inline payload (empty when stored on Vercel Blob)
+  dataBase64 String   @default("")
+  /// Vercel Blob URL (private access) — preferred storage
+  blobUrl    String?
   byteSize   Int
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -646,7 +649,10 @@ model CmsMedia {
   label      String
   fileName   String
   mimeType   String
-  dataBase64 String
+  /// Legacy inline payload (empty when stored on Vercel Blob)
+  dataBase64 String   @default("")
+  /// Vercel Blob public URL — preferred storage
+  blobUrl    String?
   byteSize   Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

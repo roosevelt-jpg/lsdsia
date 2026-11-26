@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ensureCmsDefaults } from "@/lib/cms";
+import { saveCmsMedia } from "@/lib/cms-media";
 import { footerColumnsForForm, footerNavJsonFromForm } from "@/lib/cms-footer-form";
 import {
   ctaDataJsonFromForm,
@@ -27,7 +28,6 @@ import { Card } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
-const MAX_MEDIA = 1_500_000;
 
 async function saveSite(formData: FormData) {
   "use server";
@@ -259,32 +259,12 @@ async function uploadMedia(formData: FormData) {
   if (!key || !(file instanceof File) || file.size <= 0) {
     redirect("/admin/website?error=" + encodeURIComponent("Media key and image file are required."));
   }
-  if (!file.type.startsWith("image/")) {
-    redirect("/admin/website?error=" + encodeURIComponent("Upload an image file."));
+  try {
+    await saveCmsMedia({ key, label, file });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Upload failed";
+    redirect("/admin/website?error=" + encodeURIComponent(msg));
   }
-  if (file.size > MAX_MEDIA) {
-    redirect("/admin/website?error=" + encodeURIComponent("Image must be under 1.5MB."));
-  }
-  const buf = Buffer.from(await file.arrayBuffer());
-  const dataBase64 = buf.toString("base64");
-  await prisma.cmsMedia.upsert({
-    where: { key },
-    create: {
-      key,
-      label,
-      fileName: file.name || `${key}.jpg`,
-      mimeType: file.type,
-      dataBase64,
-      byteSize: buf.length,
-    },
-    update: {
-      label,
-      fileName: file.name || `${key}.jpg`,
-      mimeType: file.type,
-      dataBase64,
-      byteSize: buf.length,
-    },
-  });
   // Point common keys at CMS media URL
   if (key === "hero_image") {
     const home = await prisma.cmsPage.findUnique({ where: { slug: "home" } });
@@ -714,7 +694,8 @@ export default async function AdminWebsiteCmsPage({
       <Card className="space-y-4">
         <h2 className="font-display text-xl text-[var(--navy)]">Upload marketing image</h2>
         <p className="text-sm text-[var(--steel)]">
-          Uploads are stored in the database and served at <code className="text-xs">/api/cms-media/[key]</code>. Use
+          Uploads go to <strong>Vercel Blob</strong> (when <code className="text-xs">BLOB_READ_WRITE_TOKEN</code> is
+          set) and are served at <code className="text-xs">/api/cms-media/[key]</code> or the Blob CDN URL. Use
           key <code className="text-xs">hero_image</code> for the marketing homepage hero; candidate keys{" "}
           <code className="text-xs">dashboard_*</code>; or admin keys <code className="text-xs">admin_hero_bg</code>,{" "}
           <code className="text-xs">admin_hero_person</code>, <code className="text-xs">admin_promo</code> to replace

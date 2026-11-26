@@ -98,7 +98,9 @@ export async function loadCmsBundle() {
     prisma.cmsMedia.findMany(),
   ]);
 
-  const mediaMap = Object.fromEntries(media.map((m) => [m.key, `/api/cms-media/${m.key}`]));
+  const mediaMap = Object.fromEntries(
+    media.map((m) => [m.key, m.blobUrl || `/api/cms-media/${m.key}`]),
+  );
 
   return { site, nav, home, programs, stats, testimonials, mediaMap };
 }

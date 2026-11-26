@@ -33,7 +33,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       where: { userId: user.id, status: { in: ["requested", "confirmed"] } },
     }),
   ]);
-  const mediaMap = Object.fromEntries(media.map((m) => [m.key, `/api/cms-media/${m.key}`]));
+  const mediaMap = Object.fromEntries(media.map((m) => [m.key, m.blobUrl || `/api/cms-media/${m.key}`]));
 
   const avatarUrl = profile?.idPhotoUploadId
     ? `/api/private-uploads/${profile.idPhotoUploadId}`

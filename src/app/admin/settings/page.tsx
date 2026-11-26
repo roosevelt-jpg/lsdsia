@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
+import { avatarBlobPath, deleteBlobUrl, isBlobConfigured, putBlobFile } from "@/lib/blob-storage";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,7 @@ import { Card } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
-const MAX_AVATAR_BYTES = 400_000;
+const MAX_AVATAR_BYTES = 1_500_000;
 
 async function saveProfile(formData: FormData) {
   "use server";
@@ -18,18 +19,37 @@ async function saveProfile(formData: FormData) {
   const removeAvatar = formData.get("removeAvatar") === "1";
   const file = formData.get("avatar");
 
+  const existingProfile = await prisma.profile.findUnique({ where: { userId: user.id } });
+
   let avatarUrl: string | null | undefined = undefined;
   if (removeAvatar) {
+    if (existingProfile?.avatarUrl?.includes("blob.vercel-storage.com")) {
+      await deleteBlobUrl(existingProfile.avatarUrl);
+    }
     avatarUrl = null;
   } else if (file && file instanceof File && file.size > 0) {
     if (!file.type.startsWith("image/")) {
       redirect("/admin/settings?error=" + encodeURIComponent("Avatar must be an image file."));
     }
     if (file.size > MAX_AVATAR_BYTES) {
-      redirect("/admin/settings?error=" + encodeURIComponent("Avatar must be under 400KB."));
+      redirect("/admin/settings?error=" + encodeURIComponent("Avatar must be under 1.5MB."));
     }
     const buf = Buffer.from(await file.arrayBuffer());
-    avatarUrl = `data:${file.type};base64,${buf.toString("base64")}`;
+    if (isBlobConfigured()) {
+      const stored = await putBlobFile({
+        pathname: avatarBlobPath(user.id, file.name || "avatar.jpg"),
+        body: buf,
+        contentType: file.type,
+        access: "public",
+      });
+      if (existingProfile?.avatarUrl?.includes("blob.vercel-storage.com")) {
+        await deleteBlobUrl(existingProfile.avatarUrl);
+      }
+      avatarUrl = stored.url;
+    } else {
+      console.warn("[settings] BLOB_READ_WRITE_TOKEN missing — storing avatar as data URL (dev fallback).");
+      avatarUrl = `data:${file.type};base64,${buf.toString("base64")}`;
+    }
   }
 
   if (name) {

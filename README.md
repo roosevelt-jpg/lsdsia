@@ -76,6 +76,15 @@ Entitlements are granted only after `checkout.session.completed` (webhook) or an
 | `RESEND_API_KEY` | From **Vercel Marketplace → Resend** plugin (or Resend dashboard). Required for outbound email. |
 | `EMAIL_FROM` | Verified Resend from-address, e.g. `Life Star Instructors Academy <noreply@your-domain>` |
 | `APP_URL` | Canonical site URL used in email links (defaults to `NEXTAUTH_URL` / `https://lifestar.myflynai.com`) |
+| `BLOB_READ_WRITE_TOKEN` | From **Vercel → Storage → Blob** (auto-bound when you create/connect a Blob store). Required for file uploads in production. |
+
+### Vercel Blob (file uploads)
+
+1. In the Vercel project: **Storage → Create → Blob** (or Marketplace Blob). Connect the store to **Production** so `BLOB_READ_WRITE_TOKEN` is injected.
+2. Redeploy. New uploads go to Blob:
+   - **Private** (licenses, ID photos, school-launch docs) — `access: private`, served only through `/api/private-uploads/[id]` after auth.
+   - **Public** (CMS marketing media, admin avatar) — `access: public`, CDN URLs stored on the media/avatar row.
+3. If `BLOB_READ_WRITE_TOKEN` is missing (local/dev), the app falls back to DB base64 / data URLs and logs a warning — do not rely on that for production.
 
 ### Resend email (Vercel Marketplace)
 
@@ -135,4 +144,4 @@ Login emails default to `admin@lifestar.academy` / `demo@lifestar.academy`; pass
 
 ### Private uploads
 
-License, school-launch, and student ID photos are stored in the database as private blobs and served only via `/api/private-uploads/[id]` to the owning candidate or an admin. They are never placed under `public/`.
+License, school-launch, and student ID photos are stored on **Vercel Blob** (`access: private`) with metadata in Prisma (`PrivateUpload.blobUrl`). They are served only via `/api/private-uploads/[id]` to the owning candidate or an admin — never under `public/`. Legacy rows may still have inline `dataBase64` until re-uploaded.
