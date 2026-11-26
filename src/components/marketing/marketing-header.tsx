@@ -26,8 +26,9 @@ export async function MarketingHeader({
   return (
     <header
       className={
+        // Same navy as MarketingFooter (`--navy-deep`) on every marketing page, including homepage overlay.
         overlay
-          ? "absolute inset-x-0 top-0 z-50 text-white"
+          ? "absolute inset-x-0 top-0 z-50 bg-[var(--navy-deep)] text-white"
           : "relative z-50 bg-[var(--navy-deep)] text-white"
       }
     >
