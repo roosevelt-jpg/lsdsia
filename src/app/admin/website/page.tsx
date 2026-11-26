@@ -3,7 +3,23 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ensureCmsDefaults } from "@/lib/cms";
-import { DEFAULT_FOOTER_COLUMNS } from "@/lib/footer-nav";
+import { footerColumnsForForm, footerNavJsonFromForm } from "@/lib/cms-footer-form";
+import {
+  ctaDataJsonFromForm,
+  heroDataJsonFromForm,
+  parseCtaData,
+  parseHeroData,
+  parseTrustedData,
+  trustedDataJsonFromForm,
+} from "@/lib/cms-section-data";
+import { SOCIAL_NETWORKS, parseSocialLinks, socialHrefMap, socialJsonFromForm } from "@/lib/cms-social";
+import {
+  THEME_COLOR_FIELDS,
+  THEME_TEXT_FIELDS,
+  parseCmsTheme,
+  themeJsonFromForm,
+} from "@/lib/cms-theme";
+import { CmsColorField } from "@/components/admin/cms-color-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,53 +32,35 @@ const MAX_MEDIA = 1_500_000;
 async function saveSite(formData: FormData) {
   "use server";
   await requireUser(["admin"]);
+  const themeJson = themeJsonFromForm(formData);
+  const socialJson = socialJsonFromForm(formData);
+  const footerNavJson = footerNavJsonFromForm(formData);
+  const payload = {
+    brandName: String(formData.get("brandName") || ""),
+    tagline: String(formData.get("tagline") || ""),
+    logoUrl: String(formData.get("logoUrl") || "/cms/logo-full-light.png"),
+    logoMarkUrl: String(formData.get("logoMarkUrl") || "/cms/logo-mark.svg"),
+    headerTagline: String(formData.get("headerTagline") || ""),
+    headerMetaLeft: String(formData.get("headerMetaLeft") || ""),
+    headerMetaRight: String(formData.get("headerMetaRight") || ""),
+    applyCtaLabel: String(formData.get("applyCtaLabel") || "Apply Now"),
+    applyCtaHref: String(formData.get("applyCtaHref") || "/signup"),
+    loginCtaLabel: String(formData.get("loginCtaLabel") || "Login"),
+    themeJson,
+    contactAddress: String(formData.get("contactAddress") || ""),
+    contactPhone: String(formData.get("contactPhone") || ""),
+    contactEmail: String(formData.get("contactEmail") || ""),
+    ownerName: String(formData.get("ownerName") || "John Addo"),
+    footerBlurb: String(formData.get("footerBlurb") || ""),
+    copyrightText: String(formData.get("copyrightText") || ""),
+    newsletterBlurb: String(formData.get("newsletterBlurb") || ""),
+    socialJson,
+    footerNavJson,
+  };
   await prisma.cmsSite.upsert({
     where: { id: "default" },
-    create: {
-      id: "default",
-      brandName: String(formData.get("brandName") || ""),
-      tagline: String(formData.get("tagline") || ""),
-      logoUrl: String(formData.get("logoUrl") || "/cms/logo-full-light.png"),
-      logoMarkUrl: String(formData.get("logoMarkUrl") || "/cms/logo-mark.svg"),
-      headerTagline: String(formData.get("headerTagline") || ""),
-      headerMetaLeft: String(formData.get("headerMetaLeft") || ""),
-      headerMetaRight: String(formData.get("headerMetaRight") || ""),
-      applyCtaLabel: String(formData.get("applyCtaLabel") || "Apply Now"),
-      applyCtaHref: String(formData.get("applyCtaHref") || "/signup"),
-      loginCtaLabel: String(formData.get("loginCtaLabel") || "Login"),
-      themeJson: String(formData.get("themeJson") || "{}"),
-      contactAddress: String(formData.get("contactAddress") || ""),
-      contactPhone: String(formData.get("contactPhone") || ""),
-      contactEmail: String(formData.get("contactEmail") || ""),
-      ownerName: String(formData.get("ownerName") || "John Addo"),
-      footerBlurb: String(formData.get("footerBlurb") || ""),
-      copyrightText: String(formData.get("copyrightText") || ""),
-      newsletterBlurb: String(formData.get("newsletterBlurb") || ""),
-      socialJson: String(formData.get("socialJson") || "[]"),
-      footerNavJson: String(formData.get("footerNavJson") || "[]"),
-    },
-    update: {
-      brandName: String(formData.get("brandName") || ""),
-      tagline: String(formData.get("tagline") || ""),
-      logoUrl: String(formData.get("logoUrl") || "/cms/logo-full-light.png"),
-      logoMarkUrl: String(formData.get("logoMarkUrl") || "/cms/logo-mark.svg"),
-      headerTagline: String(formData.get("headerTagline") || ""),
-      headerMetaLeft: String(formData.get("headerMetaLeft") || ""),
-      headerMetaRight: String(formData.get("headerMetaRight") || ""),
-      applyCtaLabel: String(formData.get("applyCtaLabel") || "Apply Now"),
-      applyCtaHref: String(formData.get("applyCtaHref") || "/signup"),
-      loginCtaLabel: String(formData.get("loginCtaLabel") || "Login"),
-      themeJson: String(formData.get("themeJson") || "{}"),
-      contactAddress: String(formData.get("contactAddress") || ""),
-      contactPhone: String(formData.get("contactPhone") || ""),
-      contactEmail: String(formData.get("contactEmail") || ""),
-      ownerName: String(formData.get("ownerName") || "John Addo"),
-      footerBlurb: String(formData.get("footerBlurb") || ""),
-      copyrightText: String(formData.get("copyrightText") || ""),
-      newsletterBlurb: String(formData.get("newsletterBlurb") || ""),
-      socialJson: String(formData.get("socialJson") || "[]"),
-      footerNavJson: String(formData.get("footerNavJson") || "[]"),
-    },
+    create: { id: "default", ...payload },
+    update: payload,
   });
   redirect("/admin/website?saved=site");
 }
@@ -228,6 +226,14 @@ async function saveSection(formData: FormData) {
   "use server";
   await requireUser(["admin"]);
   const id = String(formData.get("id") || "");
+  const existing = await prisma.cmsSection.findUnique({ where: { id } });
+  if (!existing) redirect("/admin/website?error=" + encodeURIComponent("Section not found."));
+
+  let dataJson = existing.dataJson || "{}";
+  if (existing.key === "hero") dataJson = heroDataJsonFromForm(formData, dataJson);
+  else if (existing.key === "trusted") dataJson = trustedDataJsonFromForm(formData, dataJson);
+  else if (existing.key === "cta") dataJson = ctaDataJsonFromForm(formData, dataJson);
+
   await prisma.cmsSection.update({
     where: { id },
     data: {
@@ -238,7 +244,7 @@ async function saveSection(formData: FormData) {
       imageUrl: String(formData.get("imageUrl") || ""),
       ctaLabel: String(formData.get("ctaLabel") || ""),
       ctaHref: String(formData.get("ctaHref") || ""),
-      dataJson: String(formData.get("dataJson") || "{}"),
+      dataJson,
     },
   });
   redirect("/admin/website?saved=section");
@@ -341,6 +347,10 @@ export default async function AdminWebsiteCmsPage({
     }),
   ]);
 
+  const theme = parseCmsTheme(site?.themeJson);
+  const socialMap = socialHrefMap(parseSocialLinks(site?.socialJson));
+  const footerCols = footerColumnsForForm((site as { footerNavJson?: string } | null)?.footerNavJson);
+
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       <div>
@@ -407,13 +417,25 @@ export default async function AdminWebsiteCmsPage({
             <Label>Newsletter blurb</Label>
             <Input name="newsletterBlurb" defaultValue={(site as { newsletterBlurb?: string } | null)?.newsletterBlurb ?? ""} />
           </div>
-          <div className="sm:col-span-2">
-            <Label>Theme JSON (colors / gradients / button styles)</Label>
-            <textarea
-              name="themeJson"
-              defaultValue={(site as { themeJson?: string } | null)?.themeJson ?? "{}"}
-              className="mt-1 min-h-24 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs"
-            />
+          <div className="sm:col-span-2 space-y-3 rounded-xl border border-[var(--navy)]/10 bg-[var(--mist)]/40 p-4">
+            <div>
+              <p className="text-sm font-semibold text-[var(--navy)]">Theme colors & styles</p>
+              <p className="text-xs text-[var(--steel)]">Stored as JSON under the hood — edit with pickers and plain fields.</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {THEME_COLOR_FIELDS.map((f) => (
+                <CmsColorField key={f.key} name={`theme_${f.key}`} label={f.label} defaultValue={theme[f.key]} />
+              ))}
+            </div>
+            <div className="grid gap-3">
+              {THEME_TEXT_FIELDS.map((f) => (
+                <div key={f.key}>
+                  <Label>{f.label}</Label>
+                  <Input name={`theme_${f.key}`} defaultValue={theme[f.key]} className="font-mono text-xs" />
+                  {f.hint && <p className="mt-1 text-[11px] text-[var(--steel)]">{f.hint}</p>}
+                </div>
+              ))}
+            </div>
           </div>
           <div>
             <Label>Owner name</Label>
@@ -439,26 +461,52 @@ export default async function AdminWebsiteCmsPage({
               className="mt-1 min-h-20 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 text-sm"
             />
           </div>
-          <div className="sm:col-span-2">
-            <Label>Social links JSON</Label>
-            <textarea
-              name="socialJson"
-              defaultValue={site?.socialJson && site.socialJson !== "[]" ? site.socialJson : '[{"network":"facebook","href":"https://facebook.com"},{"network":"instagram","href":"https://instagram.com"},{"network":"youtube","href":"https://youtube.com"},{"network":"linkedin","href":"https://linkedin.com"}]'}
-              className="mt-1 min-h-20 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs"
-            />
+          <div className="sm:col-span-2 space-y-3 rounded-xl border border-[var(--navy)]/10 bg-[var(--mist)]/40 p-4">
+            <div>
+              <p className="text-sm font-semibold text-[var(--navy)]">Social links</p>
+              <p className="text-xs text-[var(--steel)]">Leave blank to omit a network from the footer.</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {SOCIAL_NETWORKS.map((n) => (
+                <div key={n.id}>
+                  <Label>{n.label} URL</Label>
+                  <Input
+                    name={`social_${n.id}`}
+                    type="url"
+                    placeholder={`https://${n.id}.com/...`}
+                    defaultValue={socialMap[n.id] || ""}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="sm:col-span-2">
-            <Label>Footer menus JSON (Programs / Admissions / Students / About)</Label>
-            <textarea
-              name="footerNavJson"
-              defaultValue={
-                (site as { footerNavJson?: string } | null)?.footerNavJson &&
-                (site as { footerNavJson?: string }).footerNavJson !== "[]"
-                  ? (site as { footerNavJson?: string }).footerNavJson
-                  : JSON.stringify(DEFAULT_FOOTER_COLUMNS, null, 2)
-              }
-              className="mt-1 min-h-48 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs"
-            />
+          <div className="sm:col-span-2 space-y-4 rounded-xl border border-[var(--navy)]/10 bg-[var(--mist)]/40 p-4">
+            <div>
+              <p className="text-sm font-semibold text-[var(--navy)]">Footer menus</p>
+              <p className="text-xs text-[var(--steel)]">Programs / Admissions / Students / About — label + link per row.</p>
+            </div>
+            {footerCols.map((col, c) => (
+              <div key={c} className="space-y-2 rounded-lg border border-[var(--navy)]/8 bg-white p-3">
+                <div>
+                  <Label>Column {c + 1} title</Label>
+                  <Input name={`footer_col_${c}_title`} defaultValue={col.title} />
+                </div>
+                <div className="grid gap-2">
+                  {col.links.map((link, l) => (
+                    <div key={l} className="grid gap-2 sm:grid-cols-2">
+                      <div>
+                        <Label className="text-xs">Link {l + 1} label</Label>
+                        <Input name={`footer_col_${c}_link_${l}_label`} defaultValue={link.label} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Link {l + 1} URL</Label>
+                        <Input name={`footer_col_${c}_link_${l}_href`} defaultValue={link.href} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
           <div className="sm:col-span-2">
             <Label>Copyright</Label>
@@ -817,21 +865,121 @@ export default async function AdminWebsiteCmsPage({
                   <Input name="ctaHref" defaultValue={section.ctaHref} />
                 </div>
               </div>
-              <div>
-                <Label>
-                  dataJson (advanced)
-                  {section.key === "hero"
-                    ? " — include slides: [{ imageUrl, alt }] and optional slideIntervalMs for the hero slideshow"
-                    : ""}
-                </Label>
-                <textarea
-                  name="dataJson"
-                  defaultValue={section.dataJson}
-                  className={`mt-1 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 font-mono text-xs ${
-                    section.key === "hero" ? "min-h-40" : "min-h-24"
-                  }`}
-                />
-              </div>
+              {section.key === "hero" &&
+                (() => {
+                  const hero = parseHeroData(section.dataJson);
+                  return (
+                    <div className="space-y-3 rounded-xl border border-[var(--navy)]/10 bg-[var(--mist)]/40 p-3">
+                      <p className="text-sm font-semibold text-[var(--navy)]">Hero extras</p>
+                      <div>
+                        <Label>Data eyebrow (optional override)</Label>
+                        <Input name="hero_data_eyebrow" defaultValue={hero.eyebrow || ""} />
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div>
+                          <Label>Secondary CTA label</Label>
+                          <Input name="hero_secondaryCtaLabel" defaultValue={hero.secondaryCtaLabel || ""} />
+                        </div>
+                        <div>
+                          <Label>Secondary CTA href</Label>
+                          <Input name="hero_secondaryCtaHref" defaultValue={hero.secondaryCtaHref || ""} />
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Slide interval (ms)</Label>
+                        <Input
+                          name="hero_slideIntervalMs"
+                          type="number"
+                          min={2000}
+                          step={500}
+                          defaultValue={hero.slideIntervalMs || 6500}
+                        />
+                      </div>
+                      <div>
+                        <Label>Checklist (one item per line)</Label>
+                        <textarea
+                          name="hero_checks"
+                          defaultValue={(hero.checks || []).join("\n")}
+                          className="mt-1 min-h-16 w-full rounded-md border border-[var(--navy)]/15 px-3 py-2 text-sm"
+                        />
+                      </div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--steel)]">Slideshow images</p>
+                      {(hero.slides || []).map((slide, i) => (
+                        <div key={i} className="grid gap-2 sm:grid-cols-2">
+                          <div>
+                            <Label className="text-xs">Slide {i + 1} image URL</Label>
+                            <Input name={`hero_slide_${i}_imageUrl`} defaultValue={slide.imageUrl} />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Slide {i + 1} alt text</Label>
+                            <Input name={`hero_slide_${i}_alt`} defaultValue={slide.alt || ""} />
+                          </div>
+                        </div>
+                      ))}
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--steel)]">Feature tiles</p>
+                      {[0, 1, 2].map((i) => {
+                        const tile = (hero.tiles || [])[i] || { title: "", body: "", icon: "laptop" };
+                        return (
+                          <div key={i} className="grid gap-2 rounded-lg border border-[var(--navy)]/8 bg-white p-2 sm:grid-cols-3">
+                            <div>
+                              <Label className="text-xs">Tile {i + 1} title</Label>
+                              <Input name={`hero_tile_${i}_title`} defaultValue={tile.title} />
+                            </div>
+                            <div>
+                              <Label className="text-xs">Body</Label>
+                              <Input name={`hero_tile_${i}_body`} defaultValue={tile.body} />
+                            </div>
+                            <div>
+                              <Label className="text-xs">Icon key</Label>
+                              <Input name={`hero_tile_${i}_icon`} defaultValue={tile.icon} placeholder="laptop" />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              {section.key === "trusted" &&
+                (() => {
+                  const trusted = parseTrustedData(section.dataJson);
+                  return (
+                    <div className="space-y-3 rounded-xl border border-[var(--navy)]/10 bg-[var(--mist)]/40 p-3">
+                      <p className="text-sm font-semibold text-[var(--navy)]">Why Life Star pillars</p>
+                      {(trusted.pillars || []).map((pillar, i) => (
+                        <div key={i} className="grid gap-2 rounded-lg border border-[var(--navy)]/8 bg-white p-2 sm:grid-cols-3">
+                          <div>
+                            <Label className="text-xs">Pillar {i + 1} title</Label>
+                            <Input name={`trusted_pillar_${i}_title`} defaultValue={pillar.title} />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <Label className="text-xs">Body</Label>
+                            <Input name={`trusted_pillar_${i}_body`} defaultValue={pillar.body} />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Icon key</Label>
+                            <Input name={`trusted_pillar_${i}_icon`} defaultValue={pillar.icon} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              {section.key === "cta" &&
+                (() => {
+                  const cta = parseCtaData(section.dataJson);
+                  return (
+                    <div className="grid gap-3 rounded-xl border border-[var(--navy)]/10 bg-[var(--mist)]/40 p-3 sm:grid-cols-2">
+                      <div>
+                        <Label>Secondary CTA label</Label>
+                        <Input name="cta_secondaryCtaLabel" defaultValue={cta.secondaryCtaLabel || ""} />
+                      </div>
+                      <div>
+                        <Label>Secondary CTA href</Label>
+                        <Input name="cta_secondaryCtaHref" defaultValue={cta.secondaryCtaHref || ""} />
+                      </div>
+                    </div>
+                  );
+                })()}
               <Button type="submit" size="sm" variant="outline">
                 Save section
               </Button>
