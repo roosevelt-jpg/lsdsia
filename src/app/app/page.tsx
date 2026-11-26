@@ -12,6 +12,7 @@ import {
   BadgeCheck,
   Play,
   ClipboardList,
+  FileText,
   FolderOpen,
   LifeBuoy,
   Download,
@@ -397,6 +398,7 @@ export default async function AppHomePage({
             {[
               { href: "/app/practicum", label: "Book a Practical Training", icon: CalendarDays },
               { href: "/app/quiz", label: "Take an Assessment", icon: ClipboardList },
+              { href: "/app/application", label: "Instructor Application", icon: FileText },
               { href: "/app/resources", label: "Download Resources", icon: FolderOpen },
               { href: "/app/support", label: "Get Support", icon: LifeBuoy },
             ].map((a) => {

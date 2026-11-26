@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAuthorizedUser } from "@/lib/auth";
+import { renderApplicationPdf } from "@/lib/application-pdf";
 import { prisma } from "@/lib/db";
 
 export async function GET() {
@@ -8,43 +9,51 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const packet = await prisma.applicationPacket.findUnique({ where: { userId: session.id } });
+  const packet = await prisma.applicationPacket.findUnique({
+    where: { userId: session.id },
+    include: { documents: true },
+  });
   if (!packet) {
     return NextResponse.json({ error: "No packet" }, { status: 404 });
   }
 
-  const lines = [
-    "Life Star Driving School — Instructor Application Preparation Packet",
-    "NOT the official MN DPS PS36008-10 form. File the official form with DPS.",
-    "References: Minnesota Statutes 171.33–171.41; Rules 7411.0100–7411.2000",
-    "",
-    "PART A — Identification",
-    `Full name: ${packet.fullName ?? ""}`,
-    `Birth date: ${packet.birthDate ?? ""}`,
-    `Address: ${packet.address1 ?? ""} ${packet.address2 ?? ""}`,
-    `City/State/ZIP: ${packet.city ?? ""}, ${packet.state ?? ""} ${packet.zip ?? ""}`,
-    `DL number: ${packet.dlNumber ?? ""}`,
-    `SSN last 4: ${packet.ssnLast4 ? `***-**-${packet.ssnLast4}` : ""}`,
-    `Phone: ${packet.phone ?? ""}`,
-    `Employing school: ${packet.employingSchoolName ?? ""}`,
-    `School address: ${packet.employingSchoolAddress ?? ""}`,
-    `Education provider: ${packet.educationProvider ?? ""} @ ${packet.educationLocation ?? ""}`,
-    `Classroom competencies (7411.0630): ${packet.classroomCompetencyDate ?? ""}`,
-    `Laboratory competencies (7411.0630): ${packet.laboratoryCompetencyDate ?? ""}`,
-    "",
-    "PART B — Certifications",
-    `Applicant certified: ${packet.applicantCertified ? "Yes" : "No"}`,
-    `Privacy acknowledged (M.S. 13.04): ${packet.privacyAcknowledged ? "Yes" : "No"}`,
-    `Completeness: ${packet.completenessPercent}%`,
-    "",
-    `Exported for ${session.name} <${session.email}>`,
-  ];
+  const buffer = await renderApplicationPdf({
+    lastName: packet.lastName,
+    firstName: packet.firstName,
+    middleName: packet.middleName,
+    fullName: packet.fullName,
+    birthDate: packet.birthDate,
+    address1: packet.address1,
+    address2: packet.address2,
+    city: packet.city,
+    state: packet.state,
+    zip: packet.zip,
+    dlNumber: packet.dlNumber,
+    ssnLast4: packet.ssnLast4,
+    phone: packet.phone,
+    employingSchoolName: packet.employingSchoolName,
+    employingSchoolAddress: packet.employingSchoolAddress,
+    educationProvider: packet.educationProvider,
+    educationLocation: packet.educationLocation,
+    classroomCompetencyDate: packet.classroomCompetencyDate,
+    laboratoryCompetencyDate: packet.laboratoryCompetencyDate,
+    applicantCertified: packet.applicantCertified,
+    privacyAcknowledged: packet.privacyAcknowledged,
+    applicantSignature: packet.applicantSignature,
+    applicantSignedAt: packet.applicantSignedAt,
+    officialName: packet.officialName,
+    officialSignature: packet.officialSignature,
+    officialSignedAt: packet.officialSignedAt,
+    status: packet.status,
+    documents: packet.documents.map((d) => ({ kind: d.kind, fileName: d.fileName })),
+    exportedFor: `${session.name} <${session.email}>`,
+  });
 
-  const body = lines.join("\n");
-  return new NextResponse(body, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="lsds-application-packet.txt"',
+      "Content-Type": "application/pdf",
+      "Content-Disposition": 'attachment; filename="lsds-instructor-application-prep.pdf"',
+      "Cache-Control": "private, no-store",
     },
   });
 }

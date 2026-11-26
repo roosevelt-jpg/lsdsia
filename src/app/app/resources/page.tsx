@@ -60,10 +60,19 @@ export default async function ResourcesPage() {
           )}
         </Card>
         <Card>
+          <h2 className="font-display text-lg text-[var(--navy)]">Instructor application</h2>
+          <p className="mt-2 text-sm text-[var(--steel)]">
+            Complete the PS36008-10 preparation packet, upload required attachments, then download the PDF.
+          </p>
+          <Link href="/app/application" className="mt-3 inline-block text-sm font-semibold text-[#2b6cb0] underline">
+            Open application →
+          </Link>
+        </Card>
+        <Card>
           <h2 className="font-display text-lg text-[var(--navy)]">Exam day tips</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--steel)]">
-            <li>About 100 scored questions; pass at 80% or higher</li>
-            <li>Plan for roughly a 4-hour soft time limit; arrive early</li>
+            <li>Practice exam mirrors the Q&A bank (~125 items); state exam cites ~100 scored questions</li>
+            <li>Pass at 80% or higher; academy practice exam uses a hard 4-hour timer with auto-submit</li>
             <li>Bring a pencil; contact Life Star support if problems arise before campus</li>
           </ul>
         </Card>
@@ -71,7 +80,13 @@ export default async function ResourcesPage() {
           <h2 className="font-display text-lg text-[var(--navy)]">Campus travel</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--steel)]">
             <li>Destination: {settings?.address ?? "Minnesota main campus"}</li>
-            <li>Export your application packet before you travel</li>
+            <li>
+              Export your{" "}
+              <Link href="/app/application/pdf" className="underline">
+                application PDF
+              </Link>{" "}
+              before you travel
+            </li>
             <li>Confirm practicum booking status in the academy</li>
           </ul>
         </Card>

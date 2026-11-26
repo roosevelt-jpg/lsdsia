@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { scoreResponse } from "@/lib/quiz-score";
+import { QuizTimer } from "@/components/quiz/quiz-timer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -15,6 +16,10 @@ async function submitAttempt(formData: FormData) {
   });
   if (!attempt || attempt.userId !== session.id) redirect("/app/quiz");
   if (attempt.submittedAt) redirect(`/app/quiz/attempt/${attempt.id}`);
+
+  const limitMinutes = attempt.quiz.timeLimitMinutes ?? 240;
+  const deadline = attempt.startedAt.getTime() + limitMinutes * 60_000;
+  const timedOut = Date.now() > deadline + 5_000; // small grace for clock skew
 
   let correct = 0;
   for (const q of attempt.quiz.questions) {
@@ -34,12 +39,19 @@ async function submitAttempt(formData: FormData) {
     where: { id: attemptId },
     data: { submittedAt: new Date(), scorePercent, passed },
   });
-  redirect(`/app/quiz/attempt/${attemptId}`);
+  redirect(`/app/quiz/attempt/${attemptId}${timedOut ? "?timeout=1" : ""}`);
 }
 
-export default async function AttemptPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AttemptPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ timeout?: string }>;
+}) {
   const session = await requireUser();
   const { id } = await params;
+  const sp = await searchParams;
 
   const attempt = await prisma.quizAttempt.findUnique({
     where: { id },
@@ -52,6 +64,12 @@ export default async function AttemptPage({ params }: { params: Promise<{ id: st
 
   const answerMap = new Map(attempt.answers.map((a) => [a.questionId, a]));
   const review = Boolean(attempt.submittedAt);
+  const formId = "quiz-attempt-form";
+
+  // If still open but past limit, force submit path via empty form on next interaction;
+  // client timer handles auto-submit while the page is open.
+  const limitMinutes = attempt.quiz.timeLimitMinutes ?? 240;
+  const expired = !review && Date.now() > attempt.startedAt.getTime() + limitMinutes * 60_000;
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -60,14 +78,27 @@ export default async function AttemptPage({ params }: { params: Promise<{ id: st
         <p className="mt-2 text-[var(--steel)]">
           Score <strong>{attempt.scorePercent}%</strong> — {attempt.passed ? "Passed (≥80%)" : "Below pass mark"}.
           Review mode shows correct answers from the Q&A key.
+          {sp.timeout ? " Submitted automatically when time expired." : ""}
         </p>
       ) : (
-        <p className="mt-2 text-[var(--steel)]">
-          Soft timer guidance: about {attempt.quiz.timeLimitMinutes} minutes. Submit when finished.
-        </p>
+        <>
+          <p className="mt-2 text-[var(--steel)]">
+            Hard time limit: {limitMinutes} minutes. Unanswered items score as incorrect when time expires.
+          </p>
+          <QuizTimer
+            startedAtIso={attempt.startedAt.toISOString()}
+            limitMinutes={limitMinutes}
+            formId={formId}
+          />
+          {expired && (
+            <p className="mt-2 text-sm font-semibold text-red-700">
+              Time has expired — submit now to record your score.
+            </p>
+          )}
+        </>
       )}
 
-      <form action={submitAttempt} className="mt-8 space-y-6">
+      <form id={formId} action={submitAttempt} className="mt-8 space-y-6">
         <input type="hidden" name="attemptId" value={attempt.id} />
         {attempt.quiz.questions.map((q) => {
           const choices = q.choicesJson ? (JSON.parse(q.choicesJson) as string[]) : null;
@@ -86,7 +117,6 @@ export default async function AttemptPage({ params }: { params: Promise<{ id: st
                         type="radio"
                         name={`q_${q.id}`}
                         value={idx}
-                        required={!review}
                         disabled={review}
                         defaultChecked={ans ? ans.response === String(idx) : false}
                         className="mt-1"
@@ -101,7 +131,6 @@ export default async function AttemptPage({ params }: { params: Promise<{ id: st
               ) : (
                 <textarea
                   name={`q_${q.id}`}
-                  required={!review}
                   disabled={review}
                   defaultValue={ans?.response ?? ""}
                   className="mt-3 w-full rounded-md border border-[var(--navy)]/15 p-3 text-sm"

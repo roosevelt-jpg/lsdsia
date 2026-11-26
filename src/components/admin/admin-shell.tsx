@@ -23,6 +23,7 @@ import {
   IdCard,
   Building2,
   Globe,
+  FileText,
 } from "lucide-react";
 import type { ConsoleView } from "@/lib/console-view";
 
@@ -52,7 +53,8 @@ const adminNav: NavItem[] = [
     icon: Users,
     children: [
       { href: "/admin/candidates", label: "All Students" },
-      { href: "/admin/licenses", label: "Applications" },
+      { href: "/admin/applications", label: "Applications" },
+      { href: "/admin/licenses", label: "ID / Licenses" },
       { href: "/admin/levels", label: "Enrollments" },
       { href: "/admin/quizzes", label: "Progress & Results" },
     ],
@@ -122,6 +124,7 @@ const instructorNav: NavItem[] = [
     icon: Users,
     children: [
       { href: "/admin/candidates", label: "Assigned students" },
+      { href: "/admin/applications", label: "Applications" },
       { href: "/admin/licenses", label: "ID / license review" },
     ],
   },
@@ -130,6 +133,7 @@ const instructorNav: NavItem[] = [
 const adminExtraLinks = [
   { href: "/admin/school-launch", label: "School launch", icon: Building2 },
   { href: "/admin/website", label: "Website CMS", icon: Globe },
+  { href: "/admin/applications", label: "Applications", icon: FileText },
   { href: "/admin/licenses", label: "Licenses", icon: IdCard },
 ];
 

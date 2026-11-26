@@ -363,10 +363,15 @@ export default async function AdminHome() {
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold text-[var(--navy)]">Recent Applications</h3>
-                <p className="text-xs text-[var(--steel)]">License reviews and new candidate intakes</p>
+                <p className="text-xs text-[var(--steel)]">
+                  ID reviews ·{" "}
+                  <Link href="/admin/applications" className="text-[#2b6cb0] hover:underline">
+                    PS36008 packets
+                  </Link>
+                </p>
               </div>
-              <Link href="/admin/licenses" className="text-sm font-semibold text-[#2b6cb0] hover:underline">
-                View all →
+              <Link href="/admin/applications" className="text-sm font-semibold text-[#2b6cb0] hover:underline">
+                View packets →
               </Link>
             </div>
             <div className="overflow-x-auto">

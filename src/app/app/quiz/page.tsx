@@ -35,8 +35,8 @@ export default async function QuizHubPage() {
     <div className="mx-auto max-w-3xl">
       <h1 className="font-display text-3xl text-[var(--navy)]">Practice exam</h1>
       <p className="mt-2 text-[var(--steel)]">
-        {quiz?.description ?? "Practice exam"} Pass mark {quiz?.passPercent ?? 80}%. Soft timer{" "}
-        {quiz?.timeLimitMinutes ?? 240} minutes. About {quiz?._count.questions ?? 0} questions.
+        {quiz?.description ?? "Practice exam"} Pass mark {quiz?.passPercent ?? 80}%. Hard timer{" "}
+        {quiz?.timeLimitMinutes ?? 240} minutes (auto-submits). About {quiz?._count.questions ?? 0} questions.
       </p>
       <form action={startAttempt} className="mt-6">
         <Button type="submit" size="lg">

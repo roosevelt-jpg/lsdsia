@@ -321,7 +321,11 @@ model AttemptAnswer {
 model ApplicationPacket {
   id                       String               @id @default(cuid())
   userId                   String               @unique
+  /// Legacy combined name (kept in sync from last/first/middle)
   fullName                 String?
+  lastName                 String?
+  firstName                String?
+  middleName               String?
   birthDate                String?
   address1                 String?
   address2                 String?
@@ -329,6 +333,7 @@ model ApplicationPacket {
   state                    String?
   zip                      String?
   dlNumber                 String?
+  /// Last 4 only — full SSN collected on official DPS filing, not stored here
   ssnLast4                 String?
   phone                    String?
   employingSchoolName      String?              @default("Life Star Driving School")
@@ -339,6 +344,18 @@ model ApplicationPacket {
   educationLocation        String?
   applicantCertified       Boolean              @default(false)
   privacyAcknowledged      Boolean              @default(false)
+  /// Typed signature name (applicant)
+  applicantSignature       String?
+  applicantSignedAt        String?
+  /// Authorized school official attestation (admin/coach)
+  officialName             String?
+  officialSignature        String?
+  officialSignedAt         String?
+  officialUserId           String?
+  /// draft | submitted | under_review | approved | rejected
+  status                   String               @default("draft")
+  adminNote                String?
+  submittedAt              DateTime?
   completenessPercent      Int                  @default(0)
   updatedAt                DateTime             @updatedAt
   createdAt                DateTime             @default(now())
@@ -349,9 +366,12 @@ model ApplicationPacket {
 model ApplicationDocument {
   id        String            @id @default(cuid())
   packetId  String
+  /// out_of_state_dl | diploma_ged | fingerprint_card | other
   kind      String
   fileName  String
-  filePath  String
+  /// Legacy path string; prefer uploadId → PrivateUpload / Blob
+  filePath  String            @default("")
+  uploadId  String?
   createdAt DateTime          @default(now())
   packet    ApplicationPacket @relation(fields: [packetId], references: [id], onDelete: Cascade)
 }

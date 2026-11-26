@@ -551,9 +551,12 @@ async function main() {
       applicationPacket: {
         create: {
           fullName: "Demo Candidate",
+          firstName: "Demo",
+          lastName: "Candidate",
           employingSchoolName: "Life Star Driving School",
-          employingSchoolAddress: "Minnesota main campus",
+          employingSchoolAddress: "7240 Brooklyn Blvd, Minneapolis, MN",
           completenessPercent: 15,
+          status: "draft",
         },
       },
     },
@@ -566,6 +569,39 @@ async function main() {
       data: { userId: demo.id, lessonId },
     });
   }
+
+  // Starter learning materials (public study links aligned to Q&A / application themes)
+  await prisma.learningMaterial.createMany({
+    data: [
+      {
+        title: "Minnesota Driver’s Manual (study companion)",
+        description: "Official MN DVS manual — traffic law items in the instructor practice exam.",
+        url: "https://dps.mn.gov/divisions/dvs/manuals/Pages/drivers-manual.aspx",
+        kind: "link",
+        levelId: null,
+        sortOrder: 1,
+        isActive: true,
+      },
+      {
+        title: "Commercial driver training schools & instructors (DVS)",
+        description: "Licensing overview for schools and instructors — pairs with license_admin quiz topics.",
+        url: "https://dps.mn.gov/divisions/dvs/licensing-dvs/Pages/commercial-driver-training-schools.aspx",
+        kind: "link",
+        levelId: null,
+        sortOrder: 2,
+        isActive: true,
+      },
+      {
+        title: "PS36008 instructor application (official form page)",
+        description: "Find the official MN instructor license application; complete Life Star prep packet first.",
+        url: "https://dps.mn.gov/divisions/dvs/forms-documents/Pages/default.aspx",
+        kind: "document",
+        levelId: null,
+        sortOrder: 3,
+        isActive: true,
+      },
+    ],
+  });
 
   await prisma.auditLog.create({
     data: {
