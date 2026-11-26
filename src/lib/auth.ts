@@ -79,12 +79,37 @@ export async function getSession(): Promise<SessionUser | null> {
   }
 }
 
+/**
+ * Resolve a live DB user for a JWT session.
+ * After Vercel redeploys with a fresh SQLite seed, old cookies still verify but
+ * point at deleted user ids — treat those as logged out instead of crashing on FK upserts.
+ * Do not call cookies().delete here: Next.js forbids cookie mutation during RSC render.
+ */
+async function resolveLiveSession(session: SessionUser): Promise<SessionUser | null> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: session.id },
+      select: { id: true, email: true, name: true, role: true },
+    });
+    if (!user) return null;
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role as Role,
+    };
+  } catch (err) {
+    console.error("resolveLiveSession", err);
+    return null;
+  }
+}
+
 /** For API routes: return the session or null (caller should respond 401). */
 export async function getAuthorizedUser(roles?: Role[]) {
   const session = await getSession();
   if (!session) return null;
   if (roles && !roles.includes(session.role)) return null;
-  return session;
+  return resolveLiveSession(session);
 }
 
 /** For pages and server actions: redirect to login when unauthorized. */

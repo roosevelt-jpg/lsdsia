@@ -11,9 +11,11 @@ function resolveDatabaseUrl() {
   }
 
   // On Vercel the deploy filesystem is read-only; copy the built SQLite into /tmp for R/W.
+  // Key the dest file by deployment id so each deploy gets a fresh seeded DB (avoids stale /tmp).
   if (process.env.VERCEL) {
     const source = path.join(process.cwd(), "prisma", "deploy.db");
-    const dest = "/tmp/lsds-deploy.db";
+    const deployId = process.env.VERCEL_DEPLOYMENT_ID || "local";
+    const dest = path.join("/tmp", `lsds-deploy-${deployId}.db`);
     try {
       if (fs.existsSync(source)) {
         if (!fs.existsSync(dest) || fs.statSync(source).mtimeMs > fs.statSync(dest).mtimeMs) {

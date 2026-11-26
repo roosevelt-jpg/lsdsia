@@ -2,10 +2,16 @@ import { prisma } from "@/lib/db";
 import { savePrivateUpload } from "@/lib/private-uploads";
 
 async function ensureLicenseRow(userId: string) {
-  return prisma.licenseVerification.upsert({
-    where: { userId },
-    create: { userId, status: "not_submitted" },
-    update: {},
+  const existing = await prisma.licenseVerification.findUnique({ where: { userId } });
+  if (existing) return existing;
+  // Guard: never create a license row for a user id that no longer exists
+  // (stale JWT after SQLite redeploy) — callers should have already bounced via requireUser.
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!user) {
+    throw new Error(`Cannot create license verification for unknown user ${userId}`);
+  }
+  return prisma.licenseVerification.create({
+    data: { userId, status: "not_submitted" },
   });
 }
 
