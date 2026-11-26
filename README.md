@@ -113,6 +113,8 @@ Login emails default to `admin@lifestar.academy` / `demo@lifestar.academy`; pass
 - **Digital certificate** (`/app/certificate`): auto-issued when an admin marks the program certified (if the student has passed the practice exam); admins can also **Issue certificate** from Candidates (completes program + issues, with a clear error if not eligible). Public verify: `/verify/[code]`
 - **School launch** (`/app/school-launch`): after certification, coaching to register/operate a driving school (U.S. state DMV/operator packet — not legal advice); academy welcomes students worldwide (campus practicals remain in Minnesota)
 - Admin: premium console, **Website CMS**, licenses, school-launch, print student IDs, issue certificates, levels, pricing, candidates, orders, content, quizzes, practicum
+- **Scheduling calendar** (`/admin/schedule`) — month view to create/view Minnesota campus practicum, class, campus, and info sessions (tied to `PracticumSession` / candidate `/app/practicum` bookings). Booking queue remains at `/admin/practicum`.
+- **Switch Role** (admin sidebar) — **Administrator View** = full admin nav/dashboard; **Instructor View** = teaching-focused nav + `/admin/teach` (courses, schedule, students, booking requests). Persisted via `lsds_console_view` cookie (`/admin/view?mode=…`).
 
 ### Certificate signatories & registration IDs
 

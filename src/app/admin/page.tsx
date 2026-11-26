@@ -236,7 +236,7 @@ export default async function AdminHome() {
   const quickActions = [
     { href: "/admin/candidates", label: "Add New Student", icon: UserPlus },
     { href: "/admin/content", label: "Create Course", icon: Layers },
-    { href: "/admin/practicum", label: "Schedule Class", icon: CalendarPlus },
+    { href: "/admin/schedule", label: "Schedule Class", icon: CalendarPlus },
     { href: "/admin/orders", label: "Record Payment", icon: Wallet },
     { href: "/admin#reports", label: "Generate Report", icon: FileSpreadsheet },
     { href: "/admin/website", label: "Send Announcement", icon: Megaphone },
@@ -469,7 +469,7 @@ export default async function AdminHome() {
           <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-[var(--navy)]/8">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-lg font-bold text-[var(--navy)]">Upcoming Sessions</h3>
-              <Link href="/admin/practicum" className="text-sm font-semibold text-[#2b6cb0] hover:underline">
+              <Link href="/admin/schedule" className="text-sm font-semibold text-[#2b6cb0] hover:underline">
                 Calendar →
               </Link>
             </div>

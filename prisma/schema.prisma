@@ -361,15 +361,24 @@ model CompetencyRecord {
 }
 
 model PracticumSession {
-  id             String             @id @default(cuid())
-  practicalSkuId String
-  title          String
-  startDate      String
-  endDate        String
-  capacity       Int                @default(8)
-  notes          String?
-  practicalSku   PracticalSku       @relation(fields: [practicalSkuId], references: [id], onDelete: Cascade)
-  bookings       PracticumBooking[]
+  id               String             @id @default(cuid())
+  practicalSkuId   String
+  title            String
+  /// YYYY-MM-DD (inclusive)
+  startDate        String
+  /// YYYY-MM-DD (inclusive)
+  endDate          String
+  /// Optional local times HH:mm for campus day blocks
+  startTime        String?
+  endTime          String?
+  capacity         Int                @default(8)
+  /// practicum | class | campus | info
+  kind             String             @default("practicum")
+  location         String             @default("7240 Brooklyn Blvd, Minneapolis, MN")
+  instructorName   String?
+  notes            String?
+  practicalSku     PracticalSku       @relation(fields: [practicalSkuId], references: [id], onDelete: Cascade)
+  bookings         PracticumBooking[]
 }
 
 model PracticumBooking {

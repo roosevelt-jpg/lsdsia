@@ -24,6 +24,7 @@ import {
   Building2,
   Globe,
 } from "lucide-react";
+import type { ConsoleView } from "@/lib/console-view";
 
 export type AdminShellUser = {
   id: string;
@@ -43,7 +44,7 @@ type NavItem =
   | { type: "link"; href: string; label: string; icon: typeof LayoutDashboard; badge?: number }
   | { type: "group"; label: string; icon: typeof LayoutDashboard; children: NavChild[] };
 
-const nav: NavItem[] = [
+const adminNav: NavItem[] = [
   { type: "link", href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   {
     type: "group",
@@ -74,9 +75,9 @@ const nav: NavItem[] = [
     label: "Scheduling",
     icon: CalendarDays,
     children: [
-      { href: "/admin/practicum", label: "Class Schedule" },
+      { href: "/admin/schedule", label: "Class Schedule" },
       { href: "/admin/practicum", label: "Practical Training" },
-      { href: "/admin/practicum", label: "Instructor Calendar" },
+      { href: "/admin/schedule", label: "Instructor Calendar" },
     ],
   },
   {
@@ -94,7 +95,39 @@ const nav: NavItem[] = [
   { type: "link", href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-const extraLinks = [
+const instructorNav: NavItem[] = [
+  { type: "link", href: "/admin/teach", label: "Teaching home", icon: LayoutDashboard },
+  {
+    type: "group",
+    label: "Courses",
+    icon: BookOpen,
+    children: [
+      { href: "/admin/content", label: "Courses & lessons" },
+      { href: "/admin/materials", label: "Videos & materials" },
+      { href: "/admin/quizzes", label: "Assessments" },
+    ],
+  },
+  {
+    type: "group",
+    label: "Schedule",
+    icon: CalendarDays,
+    children: [
+      { href: "/admin/schedule", label: "Calendar" },
+      { href: "/admin/practicum", label: "Booking requests" },
+    ],
+  },
+  {
+    type: "group",
+    label: "Students",
+    icon: Users,
+    children: [
+      { href: "/admin/candidates", label: "Assigned students" },
+      { href: "/admin/licenses", label: "ID / license review" },
+    ],
+  },
+];
+
+const adminExtraLinks = [
   { href: "/admin/school-launch", label: "School launch", icon: Building2 },
   { href: "/admin/website", label: "Website CMS", icon: Globe },
   { href: "/admin/licenses", label: "Licenses", icon: IdCard },
@@ -103,27 +136,31 @@ const extraLinks = [
 function pathActive(pathname: string, href: string) {
   if (href.includes("#")) return pathname === href.split("#")[0];
   if (href === "/admin") return pathname === "/admin";
+  if (href === "/admin/teach") return pathname === "/admin/teach";
   return pathname.startsWith(href);
 }
 
 export function AdminShell({
   user,
   site,
+  viewMode,
   logoutAction,
   children,
 }: {
   user: AdminShellUser;
   site: AdminShellSite;
+  viewMode: ConsoleView;
   logoutAction: () => Promise<void>;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const nav = viewMode === "instructor" ? instructorNav : adminNav;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(() => {
     const match = nav.find(
       (n) => n.type === "group" && n.children.some((c) => pathActive(pathname, c.href)),
     );
-    return match && match.type === "group" ? match.label : "Students";
+    return match && match.type === "group" ? match.label : nav[1]?.type === "group" ? nav[1].label : null;
   });
   const [menuOpen, setMenuOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -137,10 +174,13 @@ export function AdminShell({
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
+  const homeHref = viewMode === "instructor" ? "/admin/teach" : "/admin";
+  const roleLabel = viewMode === "instructor" ? "Instructor" : "Administrator";
+
   const Sidebar = (
     <aside className="flex h-full w-[272px] flex-col bg-[var(--navy-deep)] text-white">
       <div className="border-b border-white/10 px-5 py-5">
-        <Link href="/admin" className="block" onClick={() => setMobileOpen(false)}>
+        <Link href={homeHref} className="block" onClick={() => setMobileOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={site.logoUrl || "/cms/logo-full-light.png"}
@@ -214,40 +254,53 @@ export function AdminShell({
           );
         })}
 
-        <div className="pt-3">
-          <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">Academy tools</p>
-          {extraLinks.map((l) => {
-            const Icon = l.icon;
-            const active = pathActive(pathname, l.href);
-            return (
-              <Link
-                key={l.href + l.label}
-                href={l.href}
-                onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm ${
-                  active ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/8 hover:text-white"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {l.label}
-              </Link>
-            );
-          })}
-        </div>
+        {viewMode === "admin" && (
+          <div className="pt-3">
+            <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/35">Academy tools</p>
+            {adminExtraLinks.map((l) => {
+              const Icon = l.icon;
+              const active = pathActive(pathname, l.href);
+              return (
+                <Link
+                  key={l.href + l.label}
+                  href={l.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm ${
+                    active ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/8 hover:text-white"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {l.label}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </nav>
 
       <div className="space-y-2 border-t border-white/10 p-3">
         <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">Switch Role</p>
         <div className="grid grid-cols-2 gap-2">
           <Link
-            href="/app"
-            className="rounded-lg border border-white/15 px-2 py-2 text-center text-[11px] font-semibold text-white/75 hover:bg-white/8"
+            href="/admin/view?mode=instructor"
+            className={`rounded-lg px-2 py-2 text-center text-[11px] font-semibold ${
+              viewMode === "instructor"
+                ? "bg-[var(--amber)] font-bold text-[var(--navy-deep)]"
+                : "border border-white/15 text-white/75 hover:bg-white/8"
+            }`}
           >
             Instructor View
           </Link>
-          <span className="rounded-lg bg-[var(--amber)] px-2 py-2 text-center text-[11px] font-bold text-[var(--navy-deep)]">
+          <Link
+            href="/admin/view?mode=admin"
+            className={`rounded-lg px-2 py-2 text-center text-[11px] font-semibold ${
+              viewMode === "admin"
+                ? "bg-[var(--amber)] font-bold text-[var(--navy-deep)]"
+                : "border border-white/15 text-white/75 hover:bg-white/8"
+            }`}
+          >
             Administrator View
-          </span>
+          </Link>
         </div>
         <form action={logoutAction}>
           <button
@@ -288,7 +341,11 @@ export function AdminShell({
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--steel)]" />
               <input
                 name="q"
-                placeholder="Search students, courses, applications..."
+                placeholder={
+                  viewMode === "instructor"
+                    ? "Search students, sessions, courses..."
+                    : "Search students, courses, applications..."
+                }
                 className="h-10 w-full rounded-full border border-[var(--navy)]/10 bg-[#f4f7fb] py-2 pl-10 pr-3 text-sm text-[var(--navy)] outline-none placeholder:text-[var(--steel)] focus:ring-2 focus:ring-[#2b6cb0]/30"
               />
             </form>
@@ -329,7 +386,7 @@ export function AdminShell({
                   )}
                   <span className="hidden text-left sm:block">
                     <span className="block text-sm font-semibold text-[var(--navy)]">{user.name}</span>
-                    <span className="block text-[11px] text-[var(--steel)]">Administrator</span>
+                    <span className="block text-[11px] text-[var(--steel)]">{roleLabel}</span>
                   </span>
                   <ChevronDown className="h-4 w-4 text-[var(--steel)]" />
                 </button>
@@ -347,11 +404,12 @@ export function AdminShell({
                       <Settings className="h-4 w-4 text-[var(--steel)]" /> Profile & settings
                     </Link>
                     <Link
-                      href="/app"
+                      href={viewMode === "instructor" ? "/admin/view?mode=admin" : "/admin/view?mode=instructor"}
                       className="flex items-center gap-2 px-3 py-2.5 text-sm text-[var(--navy)] hover:bg-[var(--mist)]"
                       onClick={() => setMenuOpen(false)}
                     >
-                      <GraduationCap className="h-4 w-4 text-[var(--steel)]" /> Instructor / candidate view
+                      <GraduationCap className="h-4 w-4 text-[var(--steel)]" />
+                      {viewMode === "instructor" ? "Administrator view" : "Instructor view"}
                     </Link>
                     <button
                       type="button"

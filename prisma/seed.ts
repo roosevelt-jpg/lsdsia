@@ -416,6 +416,7 @@ async function main() {
     }
   }
 
+  const campus = "7240 Brooklyn Blvd, Minneapolis, MN";
   await prisma.practicumSession.createMany({
     data: [
       {
@@ -423,6 +424,11 @@ async function main() {
         title: "Spring Minnesota BTW intensive",
         startDate: "2026-04-13",
         endDate: "2026-04-17",
+        startTime: "08:00",
+        endTime: "17:00",
+        kind: "practicum",
+        location: campus,
+        instructorName: "John Addo",
         capacity: 8,
         notes: "Arrive Sunday evening; behind-the-wheel Mon–Fri.",
       },
@@ -431,6 +437,11 @@ async function main() {
         title: "Summer Minnesota BTW intensive",
         startDate: "2026-07-20",
         endDate: "2026-07-24",
+        startTime: "08:00",
+        endTime: "17:00",
+        kind: "practicum",
+        location: campus,
+        instructorName: "John Addo",
         capacity: 8,
         notes: "Bring application packet draft and DL records.",
       },
@@ -439,8 +450,39 @@ async function main() {
         title: "Fall Minnesota BTW intensive",
         startDate: "2026-10-12",
         endDate: "2026-10-16",
+        startTime: "08:00",
+        endTime: "17:00",
+        kind: "practicum",
+        location: campus,
+        instructorName: "John Addo",
         capacity: 6,
         notes: "Cooler weather — pack layers for outdoor range work.",
+      },
+      {
+        practicalSkuId: btwSku.id,
+        title: "Campus range day",
+        startDate: "2026-05-09",
+        endDate: "2026-05-09",
+        startTime: "09:00",
+        endTime: "15:00",
+        kind: "campus",
+        location: campus,
+        instructorName: "John Addo",
+        capacity: 10,
+        notes: "Range and observation — phone +1 763-390-7637.",
+      },
+      {
+        practicalSkuId: btwSku.id,
+        title: "New student orientation",
+        startDate: "2026-03-28",
+        endDate: "2026-03-28",
+        startTime: "10:00",
+        endTime: "12:00",
+        kind: "info",
+        location: campus,
+        instructorName: "John Addo",
+        capacity: 20,
+        notes: "Campus walkthrough and practicum overview.",
       },
     ],
   });
