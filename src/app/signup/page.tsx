@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Mail, User, ArrowRight } from "lucide-react";
 import { createSession, getSession, hashPassword } from "@/lib/auth";
+import { sendWelcomeEmail } from "@/lib/email";
 import { prisma } from "@/lib/db";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { PasswordField } from "@/components/auth/password-field";
@@ -60,6 +61,11 @@ async function signupAction(formData: FormData) {
       metaJson: JSON.stringify({ email }),
     },
   });
+
+  // Welcome / signup confirmation via Resend when configured (never blocks onboarding).
+  void sendWelcomeEmail({ to: user.email, name: user.name }).catch((err) =>
+    console.error("welcome email", err),
+  );
 
   redirect("/onboarding/role");
 }

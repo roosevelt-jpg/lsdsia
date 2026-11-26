@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { IdCard } from "lucide-react";
 import { requireUser } from "@/lib/auth";
+import { sendLicenseReviewEmail } from "@/lib/email";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,15 @@ async function reviewLicense(formData: FormData) {
       metaJson: JSON.stringify({ userId, adminNote }),
     },
   });
+  const student = await prisma.user.findUnique({ where: { id: userId } });
+  if (student) {
+    void sendLicenseReviewEmail({
+      to: student.email,
+      name: student.name,
+      decision: decision as "approved" | "rejected",
+      adminNote,
+    }).catch((err) => console.error("license review email", err));
+  }
   redirect("/admin/licenses?ok=1");
 }
 

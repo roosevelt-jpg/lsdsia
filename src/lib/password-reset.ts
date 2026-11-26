@@ -61,5 +61,9 @@ export async function resetPasswordWithToken(token: string, newPassword: string)
 }
 
 export function publicOrigin() {
-  return (process.env.APP_URL || process.env.NEXTAUTH_URL || "").replace(/\/$/, "");
+  return (
+    process.env.APP_URL ||
+    process.env.NEXTAUTH_URL ||
+    "https://lifestar.myflynai.com"
+  ).replace(/\/$/, "");
 }

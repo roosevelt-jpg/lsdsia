@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
+import { absoluteUrl, sendCertificateIssuedEmail } from "@/lib/email";
 import { prisma } from "@/lib/db";
 import { issueCertificate } from "@/lib/certificate";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,14 @@ async function issueCertAction(formData: FormData) {
 
   if (!result.ok) {
     redirect(`/admin/candidates?certError=${encodeURIComponent(result.error)}&user=${userId}`);
+  }
+  const student = await prisma.user.findUnique({ where: { id: userId } });
+  if (student) {
+    void sendCertificateIssuedEmail({
+      to: student.email,
+      name: student.name,
+      verifyUrl: absoluteUrl(`/verify/${result.certificate.verificationCode}`),
+    }).catch((err) => console.error("certificate email", err));
   }
   redirect(
     `/admin/candidates?certIssued=1&code=${encodeURIComponent(result.certificate.verificationCode)}&user=${userId}`,

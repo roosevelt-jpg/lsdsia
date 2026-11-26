@@ -73,6 +73,18 @@ Entitlements are granted only after `checkout.session.completed` (webhook) or an
 | `STRIPE_SECRET_KEY` | Live or test |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Matching publishable key |
 | `STRIPE_WEBHOOK_SECRET` | From Stripe webhook endpoint → `/api/webhooks/stripe` |
+| `RESEND_API_KEY` | From **Vercel Marketplace → Resend** plugin (or Resend dashboard). Required for outbound email. |
+| `EMAIL_FROM` | Verified Resend from-address, e.g. `Life Star Instructors Academy <noreply@your-domain>` |
+| `APP_URL` | Canonical site URL used in email links (defaults to `NEXTAUTH_URL` / `https://lifestar.myflynai.com`) |
+
+### Resend email (Vercel Marketplace)
+
+1. In the Vercel project: **Integrations / Marketplace → Resend** — install the Resend plugin and bind it to Production (it injects `RESEND_API_KEY`).
+2. In Resend, verify your sending domain (or use an allowed test sender while developing).
+3. Set `EMAIL_FROM` to a Life Star branded address on that domain, for example:  
+   `Life Star Instructors Academy <noreply@lifestarinstructorsacademy.com>`
+4. Redeploy. Password reset, signup welcome, license review, practicum confirmation, and certificate emails send through Resend with navy/gold HTML templates (Minneapolis campus contact in the footer).
+5. If `RESEND_API_KEY` is missing, the app **does not crash** — forgot-password shows a clear “email not configured” fallback (dev reset link only when a token was minted).
 
 5. **Postgres provider:** set `provider = "postgresql"` in `prisma/schema.prisma` for production (local can stay sqlite in a separate branch/env). Then **Deployments → Redeploy** the latest `main` commit.
 6. After a green deploy, seed once against production:  

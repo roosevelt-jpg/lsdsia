@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
+import { sendPracticumConfirmedEmail } from "@/lib/email";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,13 +10,25 @@ async function confirmBooking(formData: FormData) {
   "use server";
   const admin = await requireUser(["admin"]);
   const id = String(formData.get("id") || "");
-  await prisma.practicumBooking.update({
+  const booking = await prisma.practicumBooking.update({
     where: { id },
     data: { status: "confirmed", adminNote: "Confirmed by Life Star admin" },
+    include: { user: true, session: true },
   });
   await prisma.auditLog.create({
     data: { userId: admin.id, action: "admin.practicum_confirm", metaJson: JSON.stringify({ id }) },
   });
+  const dates =
+    booking.session.startDate === booking.session.endDate
+      ? booking.session.startDate
+      : `${booking.session.startDate} → ${booking.session.endDate}`;
+  void sendPracticumConfirmedEmail({
+    to: booking.user.email,
+    name: booking.user.name,
+    sessionTitle: booking.session.title,
+    dates,
+    location: booking.session.location,
+  }).catch((err) => console.error("practicum confirm email", err));
   redirect("/admin/practicum?ok=1");
 }
 

@@ -2,8 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Mail, ArrowRight, ArrowLeft, MailOpen } from "lucide-react";
 import { getSession } from "@/lib/auth";
-import { createPasswordResetToken, publicOrigin } from "@/lib/password-reset";
+import { absoluteUrl, isResendConfigured, sendPasswordResetEmail } from "@/lib/email";
+import { createPasswordResetToken } from "@/lib/password-reset";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { prisma } from "@/lib/db";
 
 async function requestReset(formData: FormData) {
   "use server";
@@ -13,24 +15,40 @@ async function requestReset(formData: FormData) {
   }
 
   const result = await createPasswordResetToken(email);
-  // Dev/demo: when APP_URL is set and a token was minted, include a one-time link on the success page
-  // for environments without SMTP. Production should wire email delivery later.
-  if (result.token) {
-    const origin = publicOrigin() || "";
-    const link = `${origin || ""}/reset-password?token=${result.token}`;
-    redirect(`/forgot-password?sent=1&demo=${encodeURIComponent(link)}`);
+  if (result.token && result.userId) {
+    const resetUrl = absoluteUrl(`/reset-password?token=${result.token}`);
+    const user = await prisma.user.findUnique({ where: { id: result.userId } });
+    const send = await sendPasswordResetEmail({
+      to: email,
+      name: user?.name || "there",
+      resetUrl,
+    });
+
+    if (send.ok && "skipped" in send && send.skipped) {
+      // No Resend key: keep a local/dev fallback link so resets still work.
+      redirect(`/forgot-password?sent=1&fallback=1&demo=${encodeURIComponent(resetUrl)}`);
+    }
+    if (!send.ok) {
+      redirect(
+        `/forgot-password?error=${encodeURIComponent(
+          `We could not send email (${send.error}). Check RESEND_API_KEY / EMAIL_FROM in Vercel.`,
+        )}`,
+      );
+    }
   }
+
   redirect("/forgot-password?sent=1");
 }
 
 export default async function ForgotPasswordPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; sent?: string; demo?: string }>;
+  searchParams: Promise<{ error?: string; sent?: string; demo?: string; fallback?: string }>;
 }) {
   const session = await getSession();
   if (session) redirect(session.role === "admin" ? "/admin" : "/app");
   const params = await searchParams;
+  const emailReady = isResendConfigured();
 
   return (
     <AuthShell
@@ -55,13 +73,21 @@ export default async function ForgotPasswordPage({
       )}
       {params.sent && (
         <div className="mt-4 space-y-2 rounded-lg bg-emerald-50 px-3 py-3 text-sm text-emerald-900">
-          <p>If an account exists for that email, a reset link has been created.</p>
-          {params.demo && (
-            <p className="break-all text-xs">
-              Demo reset link (configure SMTP later for email delivery):{" "}
-              <Link href={params.demo} className="font-semibold underline">
-                Open reset page
-              </Link>
+          <p>
+            {emailReady && !params.fallback
+              ? "If an account exists for that email, a Life Star reset email is on the way."
+              : "If an account exists for that email, a reset link has been created."}
+          </p>
+          {params.fallback && (
+            <p className="rounded-md bg-amber-50 px-2 py-2 text-xs text-amber-950">
+              Email delivery is not configured (<code className="font-mono">RESEND_API_KEY</code> missing). Add the
+              Resend Marketplace plugin in Vercel (or set <code className="font-mono">RESEND_API_KEY</code> +{" "}
+              <code className="font-mono">EMAIL_FROM</code>) and redeploy. Temporary reset link for this environment:{" "}
+              {params.demo ? (
+                <Link href={params.demo} className="font-semibold underline">
+                  Open reset page
+                </Link>
+              ) : null}
             </p>
           )}
         </div>
