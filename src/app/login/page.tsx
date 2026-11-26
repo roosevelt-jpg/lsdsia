@@ -83,19 +83,19 @@ export default async function LoginPage({
         { title: "Certification & Licensing Preparation" },
       ]}
     >
-      <h2 className="text-2xl font-bold text-[var(--navy)]">Sign In to Your Account</h2>
+      <h2 className="text-xl font-bold text-[var(--navy)]">Sign In to Your Account</h2>
       <p className="mt-1 text-sm text-[var(--steel)]">Continue your professional training journey.</p>
 
       {params.reset && (
-        <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+        <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
           Password updated. Sign in with your new password.
         </p>
       )}
       {params.error && (
-        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
+        <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
       )}
 
-      <form action={loginAction} className="mt-6 space-y-4">
+      <form action={loginAction} className="mt-5 space-y-3.5">
         {next ? <input type="hidden" name="next" value={next} /> : null}
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[var(--navy)]">
@@ -109,7 +109,7 @@ export default async function LoginPage({
               type="email"
               required
               autoComplete="email"
-              className="flex h-11 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
+              className="flex h-10 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
             />
           </div>
         </div>
@@ -128,7 +128,7 @@ export default async function LoginPage({
 
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--navy)] px-4 py-3 text-sm font-bold text-white hover:bg-[var(--navy-deep)]"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--navy)] px-4 py-2.5 text-sm font-bold text-white hover:bg-[var(--navy-deep)]"
         >
           Sign In <ArrowRight className="h-4 w-4" />
         </button>
@@ -167,7 +167,7 @@ export default async function LoginPage({
         </a>
       </div>
 
-      <p className="mt-6 text-center text-sm text-[var(--steel)]">
+      <p className="mt-5 text-center text-sm text-[var(--steel)]">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="font-bold text-[var(--navy)] hover:underline">
           Create Account

@@ -95,14 +95,14 @@ export default async function SignupPage({
         { title: "Ongoing Professional Support" },
       ]}
     >
-      <h2 className="text-2xl font-bold text-[var(--navy)]">Create Your Account</h2>
+      <h2 className="text-xl font-bold text-[var(--navy)]">Create Your Account</h2>
       <p className="mt-1 text-sm text-[var(--steel)]">Get started in just a few steps.</p>
 
       {params.error && (
-        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
+        <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">{params.error}</p>
       )}
 
-      <form action={signupAction} className="mt-6 space-y-4">
+      <form action={signupAction} className="mt-5 space-y-3.5">
         <div>
           <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-[var(--navy)]">
             Full Name
@@ -113,7 +113,7 @@ export default async function SignupPage({
               id="name"
               name="name"
               required
-              className="flex h-11 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
+              className="flex h-10 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
             />
           </div>
         </div>
@@ -130,7 +130,7 @@ export default async function SignupPage({
               type="email"
               required
               autoComplete="email"
-              className="flex h-11 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
+              className="flex h-10 w-full rounded-lg border border-[var(--navy)]/15 bg-white py-2 pl-10 pr-3 text-sm outline-none ring-[var(--amber)] focus:ring-2"
             />
           </div>
         </div>
@@ -161,13 +161,13 @@ export default async function SignupPage({
 
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--amber)] px-4 py-3 text-sm font-bold text-[var(--navy-deep)] hover:bg-[var(--amber-hot)]"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--amber)] px-4 py-2.5 text-sm font-bold text-[var(--navy-deep)] hover:bg-[var(--amber-hot)]"
         >
           Create Account <ArrowRight className="h-4 w-4" />
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-[var(--steel)]">
+      <p className="mt-5 text-center text-sm text-[var(--steel)]">
         Already have an account?{" "}
         <Link href="/login" className="font-bold text-[var(--navy)] hover:underline">
           Sign In

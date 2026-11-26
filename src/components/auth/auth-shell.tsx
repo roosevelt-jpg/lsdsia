@@ -88,8 +88,8 @@ export function AuthShell({
           </div>
         </aside>
 
-        <section className="flex items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-[0_18px_50px_rgba(11,31,51,0.12)] ring-1 ring-[var(--navy)]/8 sm:p-8">
+        <section className="flex items-center justify-center px-5 py-8 sm:px-8 lg:px-10">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-[0_18px_50px_rgba(11,31,51,0.12)] ring-1 ring-[var(--navy)]/8 sm:p-6">
             {children}
           </div>
         </section>
