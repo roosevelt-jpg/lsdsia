@@ -151,6 +151,12 @@ model PracticalSku {
   downPaymentPercent  Int              @default(50)
   /// Months to spread the balance after the down payment (0 = pay in full at checkout).
   installmentMonths   Int              @default(0)
+  /// JSON string array — what this package entails (display).
+  featuresJson        String           @default("[]")
+  /// Optional lower package fully included (e.g. Classroom includes Behind-the-wheel).
+  includesSkuId       String?
+  includesSku         PracticalSku?    @relation("PracticalSkuIncludes", fields: [includesSkuId], references: [id])
+  includedBy          PracticalSku[]   @relation("PracticalSkuIncludes")
   prices              PracticalPrice[]
   entitlements        Entitlement[]
   orderItems          OrderItem[]

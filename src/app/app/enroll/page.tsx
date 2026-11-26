@@ -57,9 +57,9 @@ export default async function EnrollPage() {
     <div className="mx-auto max-w-3xl">
       <h1 className="font-display text-3xl text-[var(--navy)]">Enrollment level</h1>
       <p className="mt-2 text-[var(--steel)]">
-        Your level sets à la carte online lesson and package prices. Classroom sessions ($15,000) and behind-the-wheel
-        training ($7,000) use the same tuition for every level with a 50% down payment. Current:{" "}
-        <strong>{enrollment?.level.name ?? "none"}</strong>.
+        Your level sets à la carte online lesson and package prices. Campus packages: Behind-the-wheel ($7,000) and
+        Classroom ($15,000, includes everything in Behind-the-wheel) — same tuition for every level with 50% down.
+        Current: <strong>{enrollment?.level.name ?? "none"}</strong>.
       </p>
       <div className="mt-8 space-y-4">
         {levels.map((level) => (

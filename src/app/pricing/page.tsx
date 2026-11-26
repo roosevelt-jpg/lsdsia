@@ -1,44 +1,30 @@
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { formatUsd, paymentPlanSummary } from "@/lib/money";
 import { loadCmsBundle } from "@/lib/cms";
+import {
+  TRAINING_PROGRAMS,
+  resolveIncludesLabel,
+  resolveProgramFeatures,
+} from "@/lib/training-programs";
 import { MarketingHeader } from "@/components/marketing/marketing-header";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
-/** Life Star tuition — shown even if the database is not seeded yet on Vercel. */
-const FALLBACK_PROGRAMS = [
-  {
-    id: "btw-training",
-    name: "Behind-the-wheel training",
-    description:
-      "On-campus behind-the-wheel / laboratory training at Life Star’s Minnesota main campus (7411.0630 competencies).",
-    locationNote: "Life Star Driving School — Minnesota main campus",
-    amountCents: 700_000,
-    downPaymentPercent: 50,
-    installmentMonths: 3,
-  },
-  {
-    id: "classroom-sessions",
-    name: "Classroom sessions",
-    description: "Instructor classroom sessions at Life Star Driving School — Minnesota main campus.",
-    locationNote: "Life Star Driving School — Minnesota main campus",
-    amountCents: 1_500_000,
-    downPaymentPercent: 50,
-    installmentMonths: 5,
-  },
-];
-
 type ProgramCard = {
   id: string;
+  code: string;
   name: string;
   description: string;
   locationNote: string;
   amountCents: number;
   downPaymentPercent: number;
   installmentMonths: number;
+  features: string[];
+  includesLabel: string | null;
 };
 
 type LevelCard = {
@@ -48,6 +34,21 @@ type LevelCard = {
   lessonCents: number;
   packageCents: number | null;
 };
+
+function fallbackPrograms(): ProgramCard[] {
+  return TRAINING_PROGRAMS.map((p) => ({
+    id: p.code,
+    code: p.code,
+    name: p.name,
+    description: p.description,
+    locationNote: p.locationNote,
+    amountCents: p.amountCents,
+    downPaymentPercent: p.downPaymentPercent,
+    installmentMonths: p.installmentMonths,
+    features: p.features,
+    includesLabel: resolveIncludesLabel({ code: p.code }),
+  }));
+}
 
 export default async function PricingPage() {
   let levels: LevelCard[] = [];
@@ -64,7 +65,7 @@ export default async function PricingPage() {
         },
       }),
       prisma.practicalSku.findMany({
-        include: { prices: true },
+        include: { prices: true, includesSku: true },
         orderBy: { name: "asc" },
       }),
     ]);
@@ -75,22 +76,33 @@ export default async function PricingPage() {
       lessonCents: level.lessonPrices[0]?.amountCents ?? 0,
       packageCents: level.packages[0]?.amountCents ?? null,
     }));
-    programs = skuRows.map((sku) => ({
-      id: sku.id,
-      name: sku.name,
-      description: sku.description,
-      locationNote: sku.locationNote,
-      amountCents: sku.prices[0]?.amountCents ?? 0,
-      downPaymentPercent: sku.downPaymentPercent,
-      installmentMonths: sku.installmentMonths,
-    }));
+    programs = skuRows
+      .map((sku) => ({
+        id: sku.id,
+        code: sku.code,
+        name: sku.name,
+        description: sku.description,
+        locationNote: sku.locationNote,
+        amountCents: sku.prices[0]?.amountCents ?? 0,
+        downPaymentPercent: sku.downPaymentPercent,
+        installmentMonths: sku.installmentMonths,
+        features: resolveProgramFeatures({ code: sku.code, featuresJson: sku.featuresJson }),
+        includesLabel:
+          sku.includesSku?.name ||
+          resolveIncludesLabel({ code: sku.code, includesCode: sku.includesSku?.code }),
+      }))
+      // Prefer canonical order: BTW first, Classroom second.
+      .sort((a, b) => {
+        const order = TRAINING_PROGRAMS.map((p) => p.code);
+        return (order.indexOf(a.code) + 99) - (order.indexOf(b.code) + 99);
+      });
   } catch {
     programs = [];
     levels = [];
   }
 
   if (programs.length === 0) {
-    programs = FALLBACK_PROGRAMS;
+    programs = fallbackPrograms();
   }
 
   const { site, nav } = await loadCmsBundle();
@@ -104,7 +116,8 @@ export default async function PricingPage() {
           <h1 className="mt-3 text-xl text-white/85 sm:text-2xl">Training tuition & payment plans</h1>
           <p className="mt-3 max-w-2xl text-white/70">
             Classroom and behind-the-wheel programs use a 50% down payment online; the balance is spread on a Life Star
-            payment plan. Currency: USD. Owner: John Addo.
+            payment plan. The Classroom package includes everything in Behind-the-wheel training. Currency: USD. Owner:
+            John Addo.
           </p>
         </div>
       </div>
@@ -117,9 +130,31 @@ export default async function PricingPage() {
               <div key={sku.id} className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-[var(--navy)]/10">
                 <h2 className="font-display text-2xl text-[var(--navy)]">{sku.name}</h2>
                 <p className="mt-2 text-sm text-[var(--steel)]">{sku.description}</p>
+                {sku.includesLabel ? (
+                  <p className="mt-3 rounded-md bg-[var(--navy)]/5 px-3 py-2 text-xs font-semibold text-[var(--navy)]">
+                    Includes full {sku.includesLabel} package
+                  </p>
+                ) : null}
                 <p className="mt-6 font-display text-3xl text-[var(--navy)]">{formatUsd(sku.amountCents)}</p>
                 <p className="mt-2 text-sm font-medium text-[var(--navy)]">{plan}</p>
                 <p className="mt-1 text-xs text-[var(--steel)]">{sku.locationNote}</p>
+
+                {sku.features.length > 0 ? (
+                  <div className="mt-6">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[var(--steel)]">
+                      What this package entails
+                    </p>
+                    <ul className="mt-3 space-y-2">
+                      {sku.features.map((feature) => (
+                        <li key={feature} className="flex gap-2 text-sm text-[var(--navy)]">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--amber)]" aria-hidden />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
                 <Button asChild className="mt-6 w-full">
                   <Link href="/signup">Start enrollment</Link>
                 </Button>

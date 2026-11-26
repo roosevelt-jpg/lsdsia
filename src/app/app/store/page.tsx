@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { downPaymentCents, formatUsd, paymentPlanSummary } from "@/lib/money";
 import { paymentsMessage, stripeConfigured } from "@/lib/stripe";
+import { resolveIncludesLabel, resolveProgramFeatures } from "@/lib/training-programs";
 import { BuyButton } from "@/components/buy-button";
 import { Card } from "@/components/ui/card";
 
@@ -40,7 +42,11 @@ export default async function StorePage({
     }),
     prisma.levelPackage.findMany({ where: { levelId: enrollment.levelId } }),
     prisma.practicalSku.findMany({
-      include: { prices: { where: { levelId: enrollment.levelId } } },
+      include: {
+        prices: { where: { levelId: enrollment.levelId } },
+        includesSku: true,
+      },
+      orderBy: { name: "asc" },
     }),
     prisma.entitlement.findMany({ where: { userId: session.id } }),
   ]);
@@ -86,19 +92,39 @@ export default async function StorePage({
         <h2 className="font-display text-xl text-[var(--navy)]">Classroom & behind-the-wheel</h2>
         <p className="mt-1 text-sm text-[var(--steel)]">
           Checkout collects the 50% down payment. Remaining balance follows the Life Star installment schedule.
+          Classroom includes everything in Behind-the-wheel training.
         </p>
         <div className="mt-3 space-y-3">
           {practicals.map((sku) => {
             const price = sku.prices[0]?.amountCents ?? 0;
             const down = downPaymentCents(price, sku.downPaymentPercent);
             const plan = paymentPlanSummary(price, sku.downPaymentPercent, sku.installmentMonths);
+            const features = resolveProgramFeatures({ code: sku.code, featuresJson: sku.featuresJson });
+            const includesLabel =
+              sku.includesSku?.name ||
+              resolveIncludesLabel({ code: sku.code, includesCode: sku.includesSku?.code });
             return (
-              <Card key={sku.id} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
+              <Card key={sku.id} className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 flex-1">
                   <p className="font-medium text-[var(--navy)]">{sku.name}</p>
                   <p className="text-sm text-[var(--steel)]">{sku.description}</p>
+                  {includesLabel ? (
+                    <p className="mt-2 text-xs font-semibold text-[var(--navy)]">
+                      Includes full {includesLabel} package
+                    </p>
+                  ) : null}
                   <p className="mt-1 text-sm text-[var(--steel)]">{sku.locationNote}</p>
-                  <p className="mt-2 font-semibold text-[var(--navy)]">
+                  {features.length > 0 ? (
+                    <ul className="mt-3 space-y-1.5">
+                      {features.map((feature) => (
+                        <li key={feature} className="flex gap-2 text-sm text-[var(--navy)]">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--amber)]" aria-hidden />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <p className="mt-3 font-semibold text-[var(--navy)]">
                     Full tuition: {formatUsd(price)}
                   </p>
                   <p className="mt-1 text-sm text-[var(--steel)]">{plan}</p>

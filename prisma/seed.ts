@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import fs from "fs";
 import path from "path";
 import { seedCms } from "../src/lib/cms-seed";
+import { TRAINING_PROGRAMS } from "../src/lib/training-programs";
 
 const prisma = new PrismaClient();
 
@@ -253,32 +254,6 @@ const LEVELS = [
   },
 ];
 
-/** Life Star program tuition (same for every enrollment level). Checkout collects the down payment. */
-const TRAINING_PROGRAMS = [
-  {
-    code: "btw-training",
-    name: "Behind-the-wheel training",
-    description:
-      "On-campus behind-the-wheel / laboratory training at Life Star’s Minnesota main campus (7411.0630 competencies).",
-    durationDays: 5,
-    locationNote: "Life Star Driving School — Minnesota main campus",
-    amountCents: 700_000, // $7,000
-    downPaymentPercent: 50,
-    installmentMonths: 3,
-  },
-  {
-    code: "classroom-sessions",
-    name: "Classroom sessions",
-    description:
-      "Instructor classroom sessions at Life Star Driving School — Minnesota main campus.",
-    durationDays: 10,
-    locationNote: "Life Star Driving School — Minnesota main campus",
-    amountCents: 1_500_000, // $15,000
-    downPaymentPercent: 50,
-    installmentMonths: 5,
-  },
-];
-
 async function main() {
   console.log("Seeding Life Star Academy…");
 
@@ -352,6 +327,7 @@ async function main() {
         locationNote: program.locationNote,
         downPaymentPercent: program.downPaymentPercent,
         installmentMonths: program.installmentMonths,
+        featuresJson: JSON.stringify(program.features),
       },
     });
     programRows.push(sku);
@@ -362,6 +338,18 @@ async function main() {
           levelId: level.id,
           amountCents: program.amountCents,
         },
+      });
+    }
+  }
+  // Wire cumulative includes (Classroom → Behind-the-wheel) after all SKUs exist.
+  for (const program of TRAINING_PROGRAMS) {
+    if (!program.includesCode) continue;
+    const sku = programRows.find((p) => p.code === program.code);
+    const included = programRows.find((p) => p.code === program.includesCode);
+    if (sku && included) {
+      await prisma.practicalSku.update({
+        where: { id: sku.id },
+        data: { includesSkuId: included.id },
       });
     }
   }

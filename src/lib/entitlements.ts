@@ -34,14 +34,33 @@ export async function grantOrderEntitlements(orderId: string) {
       });
     }
     if (item.type === "practical" && item.practicalSkuId) {
-      await prisma.entitlement.create({
-        data: {
-          userId: order.userId,
-          practicalSkuId: item.practicalSkuId,
-          creditsRemaining: 1,
-          sourceOrderId: order.id,
-        },
-      });
+      const skuIds = new Set<string>([item.practicalSkuId]);
+      // Cumulative packages: Classroom includes Behind-the-wheel, etc.
+      let cursor: string | null = item.practicalSkuId;
+      while (cursor) {
+        const included: { includesSkuId: string | null } | null =
+          await prisma.practicalSku.findUnique({
+            where: { id: cursor },
+            select: { includesSkuId: true },
+          });
+        if (!included?.includesSkuId || skuIds.has(included.includesSkuId)) break;
+        skuIds.add(included.includesSkuId);
+        cursor = included.includesSkuId;
+      }
+      for (const practicalSkuId of skuIds) {
+        const exists = await prisma.entitlement.findFirst({
+          where: { userId: order.userId, practicalSkuId, sourceOrderId: order.id },
+        });
+        if (exists) continue;
+        await prisma.entitlement.create({
+          data: {
+            userId: order.userId,
+            practicalSkuId,
+            creditsRemaining: 1,
+            sourceOrderId: order.id,
+          },
+        });
+      }
     }
     if (item.type === "package" && item.packageId) {
       const pkg = await prisma.levelPackage.findUnique({
